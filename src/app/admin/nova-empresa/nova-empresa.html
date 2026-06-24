@@ -1,0 +1,105 @@
+<div class="page">
+
+  <header class="header">
+    <div>
+      <h1>Cadastrar nova empresa</h1>
+      <p>Preencha os dados da empresa para liberar o acesso ao Pulso</p>
+    </div>
+
+    <button class="btn" routerLink="/admin">Voltar</button>
+  </header>
+
+  <main class="grid">
+
+    <section class="card empresa">
+      <h2>Dados da empresa</h2>
+
+      <label>Razão social</label>
+      <input type="text" placeholder="Ex.: Têxtil Vale Norte Ltda">
+
+      <label>Nome fantasia</label>
+      <input type="text" placeholder="Ex.: Vale Norte">
+
+      <label>CNPJ</label>
+      <input type="text" placeholder="00.000.000/0000-00">
+
+      <label>Inscrição estadual</label>
+      <input type="text" placeholder="Opcional">
+
+      <label>Cidade / Estado</label>
+      <input type="text" placeholder="Ex.: Blumenau, SC">
+
+      <label>Setor de atividade</label>
+      <input type="text" placeholder="Ex.: Indústria têxtil">
+    </section>
+
+    <div class="right">
+
+      <section class="card">
+        <h2>Plano e contrato</h2>
+
+        <label>Plano</label>
+
+        <div
+          class="plano"
+          [class.selected]="planoSelecionado === 'Inicial'"
+          (click)="selecionarPlano('Inicial')"
+        >
+          <div>
+            <strong>Inicial</strong>
+            <p>Até 30 usuários · 4 módulos</p>
+          </div>
+          <strong>R$ 199/mês</strong>
+        </div>
+
+        <div
+          class="plano"
+          [class.selected]="planoSelecionado === 'Profissional'"
+          (click)="selecionarPlano('Profissional')"
+        >
+          <div>
+            <strong>Profissional</strong>
+            <p>Até 150 usuários · 7 módulos</p>
+          </div>
+          <strong>R$ 499/mês</strong>
+        </div>
+
+        <div
+          class="plano"
+          [class.selected]="planoSelecionado === 'Empresarial'"
+          (click)="selecionarPlano('Empresarial')"
+        >
+          <div>
+            <strong>Empresarial</strong>
+            <p>Usuários ilimitados · todos os módulos</p>
+          </div>
+          <strong>R$ 1.490/mês</strong>
+        </div>
+
+        <label>Período de trial</label>
+        <input type="text" value="14 dias">
+      </section>
+
+      <section class="card">
+        <h2>Responsável técnico</h2>
+
+        <label>Nome completo</label>
+        <input type="text" placeholder="Nome do contato principal">
+
+        <label>E-mail</label>
+        <input type="email" placeholder="email@empresa.com.br">
+
+        <label>Telefone</label>
+        <input type="text" placeholder="(00) 00000-0000">
+      </section>
+
+      <div class="footer-actions">
+        <button class="btn" routerLink="/admin">Cancelar</button>
+        <button class="btn primary">Cadastrar empresa</button>
+      </div>
+
+    </div>
+
+  </main>
+
+</div>
