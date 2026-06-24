@@ -1,120 +1,148 @@
-<div class="container">
+<div class="erp">
 
-        <header>
-
-            <div class="logo">
-
-                <h2>Pulso.</h2>
-
-                <span class="perfil">
-                    Administrador
-                </span>
-
-            </div>
-
-            <div class="acoes">
-
-                <button>Exportar</button>
-
-                <button class="novo">
-                    Nova empresa
-                </button>
-
-            </div>
-
-        </header>
-
-        <h1>Empresas cadastradas</h1>
-
-        <p>6 empresas usando o Pulso · 4 ativas</p>
-
-
-        <div class="cards">
-
-            <div class="card">
-
-                <span>Total de empresas</span>
-
-                <h2>6</h2>
-
-            </div>
-
-            <div class="card">
-
-                <span>Usuários ativos</span>
-
-                <h2>577</h2>
-
-            </div>
-
-            <div class="card">
-
-                <span>MRR estimado</span>
-
-                <h2>R$ 32.480</h2>
-
-            </div>
-
-            <div class="card">
-
-                <span>Inadimplência</span>
-
-                <h2>1</h2>
-
-            </div>
-
-        </div>
-
-
-        <section class="empresas">
-
-            <h3>Selecione uma empresa</h3>
-
-            <div class="lista-empresas">
-
-  @for (empresa of empresas; track empresa.nome) {
-
-    <div class="empresa">
+  <header class="topbar">
+    <div class="brand">
+      <div class="brand-mark">P</div>
       <div>
-        <h4>{{ empresa.nome }}</h4>
-        <small>{{ empresa.cidade }}</small>
+        <strong>Pulso<span>.</span></strong>
+      </div>
+    </div>
+
+    <span class="role-chip">Administrador</span>
+
+    <nav class="nav">
+      <a routerLink="/admin" class="active">Admin</a>
+      <a routerLink="/gestor">Gestor</a>
+      <a routerLink="/colaborador">Colaborador</a>
+    </nav>
+
+    <div class="avatar">AD</div>
+  </header>
+
+  <main class="page">
+
+    <section class="page-header">
+      <div>
+        <h1>Empresas cadastradas</h1>
+        <p>{{ empresas.length }} empresas usando o Pulso · {{ totalAtivas() }} ativas</p>
       </div>
 
-      <div>{{ empresa.usuarios }} usuários</div>
-      <div>{{ empresa.modulos }} módulos</div>
-      <div>{{ empresa.plano }}</div>
-      <div class="status">{{ empresa.status }}</div>
-    </div>
+      <div class="actions">
+        <button class="btn">Exportar</button>
+        <button class="btn primary">Nova empresa</button>
+      </div>
+    </section>
 
-  }
+    <section class="kpis">
+      <div class="kpi">
+        <span>Total de empresas</span>
+        <strong>{{ empresas.length }}</strong>
+        <small class="up">+2 este mês</small>
+      </div>
 
+      <div class="kpi">
+        <span>Usuários ativos</span>
+        <strong>{{ totalUsuarios() }}</strong>
+        <small class="up">+47</small>
+      </div>
 
+      <div class="kpi">
+        <span>MRR estimado</span>
+        <strong>R$ 32.480</strong>
+        <small class="up">+8,4%</small>
+      </div>
 
-        <section class="modulos">
+      <div class="kpi">
+        <span>Inadimplência</span>
+        <strong>1</strong>
+        <small class="down">Requer ação</small>
+      </div>
+    </section>
 
-            <div class="topo">
+    <section class="card">
+      <div class="card-header">
+        <div>
+          <h2>Selecione uma empresa</h2>
+          <p>Clique para configurar os módulos liberados</p>
+        </div>
 
-                <h3>Configurar módulos</h3>
+        <span class="filter">Filtros</span>
+      </div>
 
-                <button>Salvar alterações</button>
+      <div class="empresas-grid">
+        <div
+          class="empresa-card"
+          *ngFor="let empresa of empresas"
+          [class.selected]="empresaSelecionada.id === empresa.id"
+          (click)="selecionarEmpresa(empresa)"
+        >
+          <div class="empresa-top">
+            <div class="empresa-logo">{{ empresa.logo }}</div>
 
+            <div class="empresa-info">
+              <strong>{{ empresa.nome }}</strong>
+              <small>{{ empresa.cidade }}</small>
             </div>
 
-            @for (modulo of modulos; track modulo) {
+            <span
+              class="badge"
+              [class.ok]="empresa.status === 'Ativa'"
+              [class.info]="empresa.status === 'Trial'"
+              [class.err]="empresa.status === 'Inadimplente'"
+            >
+              {{ empresa.status }}
+            </span>
+          </div>
 
-  <div class="modulo">
-    <div>
-      <strong>{{ modulo }}</strong>
-    </div>
+          <div class="empresa-stats">
+            <span><strong>{{ empresa.users }}</strong> usuários</span>
+            <span><strong>{{ empresa.modulos }}/10</strong> módulos</span>
+            <span>{{ empresa.plano }}</span>
+          </div>
+        </div>
+      </div>
+    </section>
 
-    <div class="switch">
-      <span>Liberado</span>
-      <input type="checkbox" checked>
-    </div>
-  </div>
+    <section class="card">
+      <div class="card-header">
+        <div>
+          <h2>Configurar módulos · {{ empresaSelecionada.nome }}</h2>
+          <p>Ative ou desative os módulos visíveis para os gestores desta empresa</p>
+        </div>
 
-}
+        <button class="btn primary">Salvar alterações</button>
+      </div>
 
-        </section>
+      <div
+        class="modulo"
+        *ngFor="let modulo of modulosSistema"
+      >
+        <div>
+          <strong>{{ modulo.nome }}</strong>
+          <p>{{ modulo.descricao }}</p>
+        </div>
 
-    </div>
+        <div class="modulo-action">
+          <span
+            class="badge"
+            [class.ok]="modulo.liberado"
+            [class.muted]="!modulo.liberado"
+          >
+            {{ modulo.liberado ? 'Liberado' : 'Bloqueado' }}
+          </span>
+
+          <button
+            class="toggle"
+            [class.on]="modulo.liberado"
+            (click)="alternarModulo(modulo)"
+          >
+            <span></span>
+          </button>
+        </div>
+      </div>
+
+    </section>
+
+  </main>
+
+</div>

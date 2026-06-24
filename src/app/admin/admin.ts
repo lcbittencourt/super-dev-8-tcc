@@ -9,69 +9,137 @@ import { CommonModule } from '@angular/common';
   styleUrl: './admin.css'
 })
 export class AdminComponent {
-
   empresas = [
     {
+      id: 'tx001',
       nome: 'Têxtil Vale Norte',
       cidade: 'Blumenau, SC',
-      usuarios: 148,
-      modulos: '8/10',
       plano: 'Empresarial',
-      status: 'Ativa'
+      users: 148,
+      modulos: 8,
+      status: 'Ativa',
+      logo: 'TV'
     },
     {
-      nome: 'Metalúrgica Muller',
+      id: 'ml002',
+      nome: 'Metalúrgica Müller',
       cidade: 'Brusque, SC',
-      usuarios: 62,
-      modulos: '6/10',
       plano: 'Profissional',
-      status: 'Ativa'
+      users: 62,
+      modulos: 6,
+      status: 'Ativa',
+      logo: 'MM'
     },
     {
+      id: 'cf003',
       nome: 'Confecções Schmitt',
       cidade: 'Pomerode, SC',
-      usuarios: 230,
-      modulos: '9/10',
       plano: 'Empresarial',
-      status: 'Ativa'
+      users: 230,
+      modulos: 9,
+      status: 'Ativa',
+      logo: 'CS'
     },
     {
+      id: 'tc004',
       nome: 'TecnoCampo Soluções',
       cidade: 'Joinville, SC',
-      usuarios: 18,
-      modulos: '4/10',
       plano: 'Inicial',
-      status: 'Trial'
+      users: 18,
+      modulos: 4,
+      status: 'Trial',
+      logo: 'TC'
     },
     {
+      id: 'al005',
       nome: 'Alimentos Beira-Rio',
       cidade: 'Itajaí, SC',
-      usuarios: 95,
-      modulos: '7/10',
       plano: 'Profissional',
-      status: 'Ativa'
+      users: 95,
+      modulos: 7,
+      status: 'Ativa',
+      logo: 'AB'
     },
     {
+      id: 'pl006',
       nome: 'Plásticos Riedel',
       cidade: 'Indaial, SC',
-      usuarios: 24,
-      modulos: '5/10',
       plano: 'Inicial',
-      status: 'Inadimplente'
+      users: 24,
+      modulos: 5,
+      status: 'Inadimplente',
+      logo: 'PR'
     }
   ];
 
-  modulos = [
-    'Dashboard',
-    'Colaboradores',
-    'Controle de ponto',
-    'Férias e afastamentos',
-    'Treinamentos',
-    'Chamados',
-    'Comunicados',
-    'Eventos',
-    'Fornecedores',
-    'Relatórios'
+  empresaSelecionada = this.empresas[0];
+
+  modulosSistema = [
+    {
+      nome: 'Dashboard',
+      descricao: 'Painel geral com indicadores',
+      liberado: true
+    },
+    {
+      nome: 'Colaboradores',
+      descricao: 'Cadastro e gestão de pessoas',
+      liberado: true
+    },
+    {
+      nome: 'Controle de ponto',
+      descricao: 'Jornada, banco de horas e exceções',
+      liberado: true
+    },
+    {
+      nome: 'Férias e afastamentos',
+      descricao: 'Solicitações, aprovações e calendário',
+      liberado: true
+    },
+    {
+      nome: 'Treinamentos',
+      descricao: 'NRs, compliance e capacitações',
+      liberado: true
+    },
+    {
+      nome: 'Chamados',
+      descricao: 'TI, manutenção e atendimento interno',
+      liberado: true
+    },
+    {
+      nome: 'Comunicados',
+      descricao: 'Mural e avisos corporativos',
+      liberado: true
+    },
+    {
+      nome: 'Eventos',
+      descricao: 'Confraternizações e datas importantes',
+      liberado: true
+    },
+    {
+      nome: 'Fornecedores',
+      descricao: 'Cadastro e contratos',
+      liberado: false
+    },
+    {
+      nome: 'Relatórios',
+      descricao: 'Exportações e análises customizadas',
+      liberado: true
+    }
   ];
 
+  selecionarEmpresa(empresa: any) {
+    this.empresaSelecionada = empresa;
+  }
+
+  alternarModulo(modulo: any) {
+    modulo.liberado = !modulo.liberado;
+  }
+
+  totalUsuarios() {
+    return this.empresas.reduce((total, empresa) => total + empresa.users, 0);
+  }
+
+  totalAtivas() {
+    return this.empresas.filter(empresa => empresa.status === 'Ativa').length;
+  }
 }
