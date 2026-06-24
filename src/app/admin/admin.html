@@ -1,0 +1,120 @@
+<div class="container">
+
+        <header>
+
+            <div class="logo">
+
+                <h2>Pulso.</h2>
+
+                <span class="perfil">
+                    Administrador
+                </span>
+
+            </div>
+
+            <div class="acoes">
+
+                <button>Exportar</button>
+
+                <button class="novo">
+                    Nova empresa
+                </button>
+
+            </div>
+
+        </header>
+
+        <h1>Empresas cadastradas</h1>
+
+        <p>6 empresas usando o Pulso · 4 ativas</p>
+
+
+        <div class="cards">
+
+            <div class="card">
+
+                <span>Total de empresas</span>
+
+                <h2>6</h2>
+
+            </div>
+
+            <div class="card">
+
+                <span>Usuários ativos</span>
+
+                <h2>577</h2>
+
+            </div>
+
+            <div class="card">
+
+                <span>MRR estimado</span>
+
+                <h2>R$ 32.480</h2>
+
+            </div>
+
+            <div class="card">
+
+                <span>Inadimplência</span>
+
+                <h2>1</h2>
+
+            </div>
+
+        </div>
+
+
+        <section class="empresas">
+
+            <h3>Selecione uma empresa</h3>
+
+            <div class="lista-empresas">
+
+  @for (empresa of empresas; track empresa.nome) {
+
+    <div class="empresa">
+      <div>
+        <h4>{{ empresa.nome }}</h4>
+        <small>{{ empresa.cidade }}</small>
+      </div>
+
+      <div>{{ empresa.usuarios }} usuários</div>
+      <div>{{ empresa.modulos }} módulos</div>
+      <div>{{ empresa.plano }}</div>
+      <div class="status">{{ empresa.status }}</div>
+    </div>
+
+  }
+
+
+
+        <section class="modulos">
+
+            <div class="topo">
+
+                <h3>Configurar módulos</h3>
+
+                <button>Salvar alterações</button>
+
+            </div>
+
+            @for (modulo of modulos; track modulo) {
+
+  <div class="modulo">
+    <div>
+      <strong>{{ modulo }}</strong>
+    </div>
+
+    <div class="switch">
+      <span>Liberado</span>
+      <input type="checkbox" checked>
+    </div>
+  </div>
+
+}
+
+        </section>
+
+    </div>
