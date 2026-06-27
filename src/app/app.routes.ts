@@ -6,4 +6,5 @@ export const routes: Routes = [
     { path: '', redirectTo: 'admin', pathMatch: 'full' },
     { path: 'admin', component: AdminComponent },
     { path: 'nova-empresa', component: NovaEmpresaComponent},
+    { path: 'nova-empresa/:id', component: NovaEmpresaComponent },
 ];

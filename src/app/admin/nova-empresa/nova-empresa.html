@@ -2,7 +2,7 @@
 
   <header class="header">
     <div>
-      <h1>Cadastrar nova empresa</h1>
+      <h1>{{ modoEdicao ? 'Editar empresa' : 'Cadastrar nova empresa' }}</h1>
       <p>Preencha os dados da empresa para liberar o acesso ao Pulso</p>
     </div>
 
@@ -15,22 +15,48 @@
       <h2>Dados da empresa</h2>
 
       <label>Razão social</label>
-      <input type="text" placeholder="Ex.: Têxtil Vale Norte Ltda">
+      <input
+        type="text"
+        placeholder="Ex.: Têxtil Vale Norte Ltda"
+        [(ngModel)]="empresa.razaoSocial"
+      >
 
       <label>Nome fantasia</label>
-      <input type="text" placeholder="Ex.: Vale Norte">
+      <input
+        type="text"
+        placeholder="Ex.: Vale Norte"
+        [(ngModel)]="empresa.nomeFantasia"
+      >
 
       <label>CNPJ</label>
-      <input type="text" placeholder="00.000.000/0000-00">
+      <input
+        type="text"
+        placeholder="00.000.000/0000-00"
+        maxlength="18"
+        [(ngModel)]="empresa.cnpj"
+        (input)="formatarCnpj()"
+      >
 
       <label>Inscrição estadual</label>
-      <input type="text" placeholder="Opcional">
+      <input
+        type="text"
+        placeholder="Opcional"
+        [(ngModel)]="empresa.inscricaoEstadual"
+      >
 
       <label>Cidade / Estado</label>
-      <input type="text" placeholder="Ex.: Blumenau, SC">
+      <input
+        type="text"
+        placeholder="Ex.: Blumenau, SC"
+        [(ngModel)]="empresa.cidade"
+      >
 
       <label>Setor de atividade</label>
-      <input type="text" placeholder="Ex.: Indústria têxtil">
+      <input
+        type="text"
+        placeholder="Ex.: Indústria têxtil"
+        [(ngModel)]="empresa.setor"
+      >
     </section>
 
     <div class="right">
@@ -49,6 +75,7 @@
             <strong>Inicial</strong>
             <p>Até 30 usuários · 4 módulos</p>
           </div>
+
           <strong>R$ 199/mês</strong>
         </div>
 
@@ -61,6 +88,7 @@
             <strong>Profissional</strong>
             <p>Até 150 usuários · 7 módulos</p>
           </div>
+
           <strong>R$ 499/mês</strong>
         </div>
 
@@ -73,29 +101,56 @@
             <strong>Empresarial</strong>
             <p>Usuários ilimitados · todos os módulos</p>
           </div>
+
           <strong>R$ 1.490/mês</strong>
         </div>
 
         <label>Período de trial</label>
-        <input type="text" value="14 dias">
+        <input
+          type="text"
+          value="14 dias"
+          readonly
+        >
       </section>
 
       <section class="card">
         <h2>Responsável técnico</h2>
 
         <label>Nome completo</label>
-        <input type="text" placeholder="Nome do contato principal">
+        <input
+          type="text"
+          placeholder="Nome do contato principal"
+          [(ngModel)]="empresa.responsavel"
+        >
 
         <label>E-mail</label>
-        <input type="email" placeholder="email@empresa.com.br">
+        <input
+          type="email"
+          placeholder="email@empresa.com.br"
+          [(ngModel)]="empresa.email"
+        >
 
         <label>Telefone</label>
-        <input type="text" placeholder="(00) 00000-0000">
+        <input
+          type="text"
+          placeholder="(00) 0000-0000"
+          maxlength="15"
+          [(ngModel)]="empresa.telefone"
+          (input)="formatarTelefone()"
+        >
       </section>
 
       <div class="footer-actions">
-        <button class="btn" routerLink="/admin">Cancelar</button>
-        <button class="btn primary">Cadastrar empresa</button>
+        <button class="btn" routerLink="/admin">
+          Cancelar
+        </button>
+
+        <button
+          class="btn primary"
+          (click)="salvarEmpresa()"
+        >
+          {{ modoEdicao ? 'Salvar alterações' : 'Salvar' }}
+        </button>
       </div>
 
     </div>

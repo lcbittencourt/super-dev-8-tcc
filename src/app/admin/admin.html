@@ -3,6 +3,7 @@
   <header class="topbar">
     <div class="brand">
       <div class="brand-mark">P</div>
+
       <div>
         <strong>Pulso<span>.</span></strong>
       </div>
@@ -24,12 +25,22 @@
     <section class="page-header">
       <div>
         <h1>Empresas cadastradas</h1>
-        <p>{{ empresas.length }} empresas usando o Pulso · {{ totalAtivas() }} ativas</p>
+        <p>
+          {{ empresas.length }} empresas usando o Pulso · {{ totalAtivas() }} ativas
+        </p>
       </div>
 
       <div class="actions">
-        <button class="btn">Exportar</button>
-        <button class="btn primary" routerLink="/nova-empresa">Nova empresa</button>
+        <button class="btn">
+          Exportar
+        </button>
+
+        <button
+          class="btn primary"
+          routerLink="/nova-empresa"
+        >
+          Nova empresa
+        </button>
       </div>
     </section>
 
@@ -60,24 +71,47 @@
     </section>
 
     <section class="card">
+
       <div class="card-header">
         <div>
           <h2>Selecione uma empresa</h2>
           <p>Clique para configurar os módulos liberados</p>
         </div>
 
-        <span class="filter">Filtros</span>
+        <div class="card-actions">
+          <button
+            class="btn"
+            type="button"
+            (click)="editarEmpresa()"
+            [disabled]="!empresaSelecionada"
+          >
+            Editar empresa
+          </button>
+
+          <button
+            class="btn danger"
+            type="button"
+            (click)="excluirEmpresa()"
+            [disabled]="!empresaSelecionada"
+          >
+            Excluir empresa
+          </button>
+
+          <span class="filter">Filtros</span>
+        </div>
       </div>
 
       <div class="empresas-grid">
         <div
           class="empresa-card"
           *ngFor="let empresa of empresas"
-          [class.selected]="empresaSelecionada.id === empresa.id"
+          [class.selected]="empresaSelecionada && empresaSelecionada.id === empresa.id"
           (click)="selecionarEmpresa(empresa)"
         >
           <div class="empresa-top">
-            <div class="empresa-logo">{{ empresa.logo }}</div>
+            <div class="empresa-logo">
+              {{ empresa.logo }}
+            </div>
 
             <div class="empresa-info">
               <strong>{{ empresa.nome }}</strong>
@@ -95,22 +129,34 @@
           </div>
 
           <div class="empresa-stats">
-            <span><strong>{{ empresa.users }}</strong> usuários</span>
-            <span><strong>{{ empresa.modulos }}/10</strong> módulos</span>
+            <span>
+              <strong>{{ empresa.users }}</strong> usuários
+            </span>
+
+            <span>
+              <strong>{{ empresa.modulos }}/10</strong> módulos
+            </span>
+
             <span>{{ empresa.plano }}</span>
           </div>
         </div>
       </div>
+
     </section>
 
-    <section class="card">
+    <section
+      class="card"
+      *ngIf="empresaSelecionada"
+    >
       <div class="card-header">
         <div>
           <h2>Configurar módulos · {{ empresaSelecionada.nome }}</h2>
           <p>Ative ou desative os módulos visíveis para os gestores desta empresa</p>
         </div>
 
-        <button class="btn primary">Salvar alterações</button>
+        <button class="btn primary">
+          Salvar alterações
+        </button>
       </div>
 
       <div
@@ -133,6 +179,7 @@
 
           <button
             class="toggle"
+            type="button"
             [class.on]="modulo.liberado"
             (click)="alternarModulo(modulo)"
           >
@@ -140,7 +187,6 @@
           </button>
         </div>
       </div>
-
     </section>
 
   </main>

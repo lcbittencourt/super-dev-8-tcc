@@ -1,6 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
+import { RouterLink, Router } from '@angular/router';
 
 @Component({
   selector: 'app-admin',
@@ -9,7 +9,8 @@ import { RouterLink } from '@angular/router';
   templateUrl: './admin.html',
   styleUrl: './admin.css'
 })
-export class AdminComponent {
+export class AdminComponent implements OnInit {
+
   empresas = [
     {
       id: 'tx001',
@@ -73,7 +74,7 @@ export class AdminComponent {
     }
   ];
 
-  empresaSelecionada = this.empresas[0];
+  empresaSelecionada: any = this.empresas[0];
 
   modulosSistema = [
     {
@@ -128,8 +129,70 @@ export class AdminComponent {
     }
   ];
 
+  constructor(private router: Router) {}
+
+  ngOnInit() {
+    const empresasSalvas = JSON.parse(
+      localStorage.getItem('empresas') || '[]'
+    );
+
+    const idsEmpresasAtuais = this.empresas.map(empresa => empresa.id);
+
+    const empresasSemDuplicar = empresasSalvas.filter(
+      (empresa: any) => !idsEmpresasAtuais.includes(empresa.id)
+    );
+
+    this.empresas = [
+      ...this.empresas,
+      ...empresasSemDuplicar
+    ];
+
+    this.empresaSelecionada = this.empresas[0];
+  }
+
   selecionarEmpresa(empresa: any) {
     this.empresaSelecionada = empresa;
+  }
+
+  editarEmpresa() {
+    if (!this.empresaSelecionada) {
+      return;
+    }
+
+    this.router.navigate(['/nova-empresa', this.empresaSelecionada.id]);
+  }
+
+  excluirEmpresa() {
+    if (!this.empresaSelecionada) {
+      return;
+    }
+
+    const confirmar = confirm(
+      `Deseja excluir a empresa ${this.empresaSelecionada.nome}?`
+    );
+
+    if (!confirmar) {
+      return;
+    }
+
+    this.empresas = this.empresas.filter(
+      empresa => empresa.id !== this.empresaSelecionada.id
+    );
+
+    const empresasSalvas = JSON.parse(
+      localStorage.getItem('empresas') || '[]'
+    );
+
+    const empresasAtualizadas = empresasSalvas.filter(
+      (empresa: any) => empresa.id !== this.empresaSelecionada.id
+    );
+
+    localStorage.setItem(
+      'empresas',
+      JSON.stringify(empresasAtualizadas)
+    );
+
+    this.empresaSelecionada = this.empresas.length > 0 ? this.empresas[0] : null;
   }
 
   alternarModulo(modulo: any) {
@@ -137,10 +200,16 @@ export class AdminComponent {
   }
 
   totalUsuarios() {
-    return this.empresas.reduce((total, empresa) => total + empresa.users, 0);
+    return this.empresas.reduce(
+      (total, empresa) => total + empresa.users,
+      0
+    );
   }
 
   totalAtivas() {
-    return this.empresas.filter(empresa => empresa.status === 'Ativa').length;
+    return this.empresas.filter(
+      empresa => empresa.status === 'Ativa'
+    ).length;
   }
+
 }
