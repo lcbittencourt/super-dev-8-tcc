@@ -1,0 +1,373 @@
+<div class="erp">
+
+  <header class="topbar">
+    <div class="brand">
+      <div class="brand-mark">P</div>
+
+      <div>
+        <strong>Pulso<span>.</span></strong>
+      </div>
+    </div>
+
+    <span class="role-chip">Gestão de pessoas</span>
+
+    <nav class="nav">
+      <a routerLink="/admin">Admin</a>
+      <a routerLink="/gestor">Gestor</a>
+      <a routerLink="/colaborador">Colaborador</a>
+    </nav>
+
+    <div class="avatar">RH</div>
+  </header>
+
+  <main class="page">
+
+    <section class="page-header">
+      <div>
+        <h1>Colaboradores</h1>
+        <p>
+          {{ colaboradores.length }} colaboradores cadastrados · {{ contarPorSituacao('Ativo') }} ativos
+        </p>
+      </div>
+
+      <div class="actions" *ngIf="tela === 'lista'">
+        <button class="btn">Exportar</button>
+
+        <button
+          class="btn primary"
+          type="button"
+          (click)="abrirCadastro()"
+        >
+          Novo colaborador
+        </button>
+      </div>
+    </section>
+
+    <ng-container *ngIf="tela === 'lista'">
+      <section class="kpis">
+        <div class="kpi">
+          <span>Total</span>
+          <strong>{{ colaboradores.length }}</strong>
+          <small class="up">Base atual</small>
+        </div>
+
+        <div class="kpi">
+          <span>Ativos</span>
+          <strong>{{ contarPorSituacao('Ativo') }}</strong>
+          <small class="up">Disponíveis</small>
+        </div>
+
+        <div class="kpi">
+          <span>Férias</span>
+          <strong>{{ contarPorSituacao('Férias') }}</strong>
+          <small class="info">Programados</small>
+        </div>
+
+        <div class="kpi">
+          <span>Inativos</span>
+          <strong>{{ contarPorSituacao('Inativo') }}</strong>
+          <small class="down">Histórico</small>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="card-header">
+          <div>
+            <h2>Lista de colaboradores</h2>
+            <p>{{ colaboradoresFiltrados.length }} resultado(s) encontrados</p>
+          </div>
+        </div>
+
+        <div class="filters">
+          <label>
+            Pesquisa
+            <input
+              type="search"
+              placeholder="Nome, cargo, departamento ou gestor"
+              [(ngModel)]="termoPesquisa"
+            >
+          </label>
+
+          <label>
+            Situação
+            <select [(ngModel)]="filtroSituacao">
+              <option>Todos</option>
+              <option>Ativo</option>
+              <option>Inativo</option>
+              <option>Férias</option>
+            </select>
+          </label>
+
+          <label>
+            Departamento
+            <select [(ngModel)]="filtroDepartamento">
+              <option>Todos</option>
+              <option *ngFor="let departamento of departamentos">
+                {{ departamento }}
+              </option>
+            </select>
+          </label>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Colaborador</th>
+                <th>Cargo</th>
+                <th>Nível</th>
+                <th>Departamento</th>
+                <th>Admissão</th>
+                <th>Salário</th>
+                <th>Gestor</th>
+                <th>Situação</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <tr *ngFor="let colaborador of colaboradoresFiltrados">
+                <td>
+                  <div class="person">
+                    <div class="photo">
+                      <img
+                        *ngIf="colaborador.foto"
+                        [src]="colaborador.foto"
+                        alt=""
+                      >
+                      <span *ngIf="!colaborador.foto">
+                        {{ gerarIniciais(colaborador.nome) }}
+                      </span>
+                    </div>
+
+                    <div>
+                      <strong>{{ colaborador.nome }}</strong>
+                      <small>{{ colaborador.email }}</small>
+                    </div>
+                  </div>
+                </td>
+                <td>{{ colaborador.cargo }}</td>
+                <td>{{ colaborador.nivel }}</td>
+                <td>{{ colaborador.departamento }}</td>
+                <td>{{ formatarData(colaborador.admissao) }}</td>
+                <td>{{ formatarSalario(colaborador.salario) }}</td>
+                <td>{{ colaborador.gestor }}</td>
+                <td>
+                  <span
+                    class="badge"
+                    [class.ok]="colaborador.situacao === 'Ativo'"
+                    [class.info]="colaborador.situacao === 'Férias'"
+                    [class.err]="colaborador.situacao === 'Inativo'"
+                  >
+                    {{ colaborador.situacao }}
+                  </span>
+                </td>
+                <td>
+                  <div class="row-actions">
+                    <button
+                      class="btn small"
+                      type="button"
+                      (click)="editarColaborador(colaborador)"
+                    >
+                      Editar
+                    </button>
+
+                    <button
+                      class="btn small danger"
+                      type="button"
+                      (click)="excluirColaborador(colaborador)"
+                    >
+                      Excluir
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div class="empty" *ngIf="colaboradoresFiltrados.length === 0">
+            Nenhum colaborador encontrado.
+          </div>
+        </div>
+      </section>
+    </ng-container>
+
+    <section class="form-grid" *ngIf="tela === 'cadastro'">
+      <form
+        class="card cadastro"
+        #formColaborador="ngForm"
+        (ngSubmit)="salvarColaborador()"
+      >
+        <div class="card-header">
+          <div>
+            <h2>{{ modoEdicao ? 'Editar colaborador' : 'Cadastrar colaborador' }}</h2>
+            <p>Preencha os dados pessoais e profissionais</p>
+          </div>
+
+          <button
+            class="btn"
+            type="button"
+            (click)="voltarLista()"
+          >
+            Voltar
+          </button>
+        </div>
+
+        <h3>Dados pessoais</h3>
+
+        <div class="upload">
+          <div class="photo large">
+            <img
+              *ngIf="colaborador.foto"
+              [src]="colaborador.foto"
+              alt=""
+            >
+            <span *ngIf="!colaborador.foto">
+              {{ gerarIniciais(colaborador.nome) }}
+            </span>
+          </div>
+
+          <label class="upload-btn">
+            Upload de foto
+            <input
+              type="file"
+              accept="image/*"
+              (change)="carregarFoto($event)"
+            >
+          </label>
+        </div>
+
+        <div class="fields">
+          <label>
+            Nome completo
+            <input
+              type="text"
+              name="nome"
+              required
+              [(ngModel)]="colaborador.nome"
+            >
+          </label>
+
+          <label>
+            E-mail
+            <input
+              type="email"
+              name="email"
+              required
+              [(ngModel)]="colaborador.email"
+            >
+          </label>
+
+          <label>
+            Telefone
+            <input
+              type="text"
+              name="telefone"
+              [(ngModel)]="colaborador.telefone"
+            >
+          </label>
+
+          <label>
+            Situação
+            <select
+              name="situacao"
+              [(ngModel)]="colaborador.situacao"
+            >
+              <option>Ativo</option>
+              <option>Inativo</option>
+              <option>Férias</option>
+            </select>
+          </label>
+        </div>
+
+        <h3>Dados profissionais</h3>
+
+        <div class="fields">
+          <label>
+            Cargo
+            <input
+              type="text"
+              name="cargo"
+              required
+              [(ngModel)]="colaborador.cargo"
+            >
+          </label>
+
+          <label>
+            Departamento
+            <input
+              type="text"
+              name="departamento"
+              required
+              [(ngModel)]="colaborador.departamento"
+            >
+          </label>
+
+          <label>
+            Nível
+            <select
+              name="nivel"
+              [(ngModel)]="colaborador.nivel"
+            >
+              <option *ngFor="let nivel of niveis">
+                {{ nivel }}
+              </option>
+            </select>
+          </label>
+
+          <label>
+            Data de admissão
+            <input
+              type="date"
+              name="admissao"
+              required
+              [(ngModel)]="colaborador.admissao"
+            >
+          </label>
+
+          <label>
+            Salário
+            <input
+              type="number"
+              name="salario"
+              min="0"
+              step="0.01"
+              required
+              [(ngModel)]="colaborador.salario"
+            >
+          </label>
+
+          <label>
+            Gestor responsável
+            <input
+              type="text"
+              name="gestor"
+              required
+              [(ngModel)]="colaborador.gestor"
+            >
+          </label>
+        </div>
+
+        <div class="footer-actions">
+          <button
+            class="btn"
+            type="button"
+            (click)="voltarLista()"
+          >
+            Cancelar
+          </button>
+
+          <button
+            class="btn primary"
+            type="submit"
+            [disabled]="formColaborador.invalid"
+          >
+            Salvar
+          </button>
+        </div>
+      </form>
+    </section>
+
+  </main>
+
+</div>

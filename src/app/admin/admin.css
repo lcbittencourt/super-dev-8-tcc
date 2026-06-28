@@ -301,6 +301,17 @@
     gap: 10px;
 }
 
+.modulo-link {
+    color: #161e2f;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.modulo-link:hover {
+    color: #b51a2b;
+    text-decoration: underline;
+}
+
 .toggle {
     width: 38px;
     height: 22px;
@@ -334,6 +345,44 @@
   display: flex;
   align-items: center;
   gap: 10px;
+}
+
+.search-company {
+  display: block;
+}
+
+.search-company input {
+  width: 260px;
+  height: 36px;
+  border: 1px solid #c9b28f;
+  border-radius: 8px;
+  background: #f5efe6;
+  color: #161e2f;
+  padding: 0 10px;
+  font-size: 13px;
+  text-transform: none;
+}
+
+.company-pager {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.company-pager span {
+  color: #6b7280;
+  font-size: 13px;
+}
+
+.empty-companies {
+  border: 1px dashed #d9cdb8;
+  border-radius: 10px;
+  color: #6b7280;
+  margin-top: 12px;
+  padding: 18px;
+  text-align: center;
 }
 
 .btn.danger {

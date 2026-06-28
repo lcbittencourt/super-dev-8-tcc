@@ -1,11 +1,13 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
+import { Inject, PLATFORM_ID } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { RouterLink, Router } from '@angular/router';
 
 @Component({
   selector: 'app-admin',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, FormsModule],
   templateUrl: './admin.html',
   styleUrl: './admin.css'
 })
@@ -75,6 +77,9 @@ export class AdminComponent implements OnInit {
   ];
 
   empresaSelecionada: any = this.empresas[0];
+  pesquisaEmpresa = '';
+  paginaEmpresas = 0;
+  empresasPorPagina = 3;
 
   modulosSistema = [
     {
@@ -129,9 +134,16 @@ export class AdminComponent implements OnInit {
     }
   ];
 
-  constructor(private router: Router) {}
+  constructor(
+    private router: Router,
+    @Inject(PLATFORM_ID) private platformId: object
+  ) {}
 
   ngOnInit() {
+    if (!this.estaNoNavegador()) {
+      return;
+    }
+
     const empresasSalvas = JSON.parse(
       localStorage.getItem('empresas') || '[]'
     );
@@ -152,6 +164,60 @@ export class AdminComponent implements OnInit {
 
   selecionarEmpresa(empresa: any) {
     this.empresaSelecionada = empresa;
+  }
+
+  pesquisarEmpresa() {
+    this.paginaEmpresas = 0;
+    this.atualizarEmpresaSelecionada();
+  }
+
+  empresasFiltradas() {
+    const pesquisa = this.pesquisaEmpresa.trim().toLowerCase();
+
+    if (!pesquisa) {
+      return this.empresas;
+    }
+
+    return this.empresas.filter(empresa => {
+      const texto = [
+        empresa.nome,
+        empresa.cidade,
+        empresa.plano,
+        empresa.status
+      ].join(' ').toLowerCase();
+
+      return texto.includes(pesquisa);
+    });
+  }
+
+  empresasVisiveis() {
+    const inicio = this.paginaEmpresas * this.empresasPorPagina;
+    return this.empresasFiltradas().slice(inicio, inicio + this.empresasPorPagina);
+  }
+
+  totalPaginasEmpresas() {
+    return Math.max(
+      1,
+      Math.ceil(this.empresasFiltradas().length / this.empresasPorPagina)
+    );
+  }
+
+  voltarEmpresas() {
+    if (this.paginaEmpresas === 0) {
+      return;
+    }
+
+    this.paginaEmpresas--;
+    this.atualizarEmpresaSelecionada();
+  }
+
+  avancarEmpresas() {
+    if (this.paginaEmpresas >= this.totalPaginasEmpresas() - 1) {
+      return;
+    }
+
+    this.paginaEmpresas++;
+    this.atualizarEmpresaSelecionada();
   }
 
   editarEmpresa() {
@@ -179,9 +245,9 @@ export class AdminComponent implements OnInit {
       empresa => empresa.id !== this.empresaSelecionada.id
     );
 
-    const empresasSalvas = JSON.parse(
-      localStorage.getItem('empresas') || '[]'
-    );
+    const empresasSalvas = this.estaNoNavegador()
+      ? JSON.parse(localStorage.getItem('empresas') || '[]')
+      : [];
 
     const empresasAtualizadas = empresasSalvas.filter(
       (empresa: any) => empresa.id !== this.empresaSelecionada.id
@@ -192,7 +258,11 @@ export class AdminComponent implements OnInit {
       JSON.stringify(empresasAtualizadas)
     );
 
-    this.empresaSelecionada = this.empresas.length > 0 ? this.empresas[0] : null;
+    if (this.paginaEmpresas > this.totalPaginasEmpresas() - 1) {
+      this.paginaEmpresas = this.totalPaginasEmpresas() - 1;
+    }
+
+    this.empresaSelecionada = this.empresasVisiveis()[0] || this.empresas[0] || null;
   }
 
   alternarModulo(modulo: any) {
@@ -210,6 +280,21 @@ export class AdminComponent implements OnInit {
     return this.empresas.filter(
       empresa => empresa.status === 'Ativa'
     ).length;
+  }
+
+  private estaNoNavegador(): boolean {
+    return isPlatformBrowser(this.platformId);
+  }
+
+  private atualizarEmpresaSelecionada() {
+    const visiveis = this.empresasVisiveis();
+    const selecionadaEstaVisivel = visiveis.some(
+      empresa => empresa.id === this.empresaSelecionada?.id
+    );
+
+    if (!selecionadaEstaVisivel) {
+      this.empresaSelecionada = visiveis[0] || null;
+    }
   }
 
 }

@@ -74,8 +74,7 @@
 
       <div class="card-header">
         <div>
-          <h2>Selecione uma empresa</h2>
-          <p>Clique para configurar os módulos liberados</p>
+          <h2>Empresas Cadastradas</h2>
         </div>
 
         <div class="card-actions">
@@ -97,14 +96,21 @@
             Excluir empresa
           </button>
 
-          <span class="filter">Filtros</span>
+          <label class="search-company">
+            <input
+              type="search"
+              placeholder="Pesquisar empresa"
+              [(ngModel)]="pesquisaEmpresa"
+              (input)="pesquisarEmpresa()"
+            >
+          </label>
         </div>
       </div>
 
       <div class="empresas-grid">
         <div
           class="empresa-card"
-          *ngFor="let empresa of empresas"
+          *ngFor="let empresa of empresasVisiveis()"
           [class.selected]="empresaSelecionada && empresaSelecionada.id === empresa.id"
           (click)="selecionarEmpresa(empresa)"
         >
@@ -142,6 +148,37 @@
         </div>
       </div>
 
+      <div
+        class="empty-companies"
+        *ngIf="empresasFiltradas().length === 0"
+      >
+        Nenhuma empresa encontrada.
+      </div>
+
+      <div class="company-pager">
+        <button
+          class="btn"
+          type="button"
+          (click)="voltarEmpresas()"
+          [disabled]="paginaEmpresas === 0"
+        >
+          Anteriores
+        </button>
+
+        <span>
+          Página {{ paginaEmpresas + 1 }} de {{ totalPaginasEmpresas() }}
+        </span>
+
+        <button
+          class="btn"
+          type="button"
+          (click)="avancarEmpresas()"
+          [disabled]="paginaEmpresas >= totalPaginasEmpresas() - 1"
+        >
+          Próximas
+        </button>
+      </div>
+
     </section>
 
     <section
@@ -164,7 +201,18 @@
         *ngFor="let modulo of modulosSistema"
       >
         <div>
-          <strong>{{ modulo.nome }}</strong>
+          <a
+            *ngIf="modulo.nome === 'Colaboradores'; else moduloNome"
+            class="modulo-link"
+            routerLink="/colaboradores"
+          >
+            {{ modulo.nome }}
+          </a>
+
+          <ng-template #moduloNome>
+            <strong>{{ modulo.nome }}</strong>
+          </ng-template>
+
           <p>{{ modulo.descricao }}</p>
         </div>
 
