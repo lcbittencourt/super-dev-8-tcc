@@ -1,17 +1,17 @@
-<div class="page">
+<div class="pagina">
 
-  <header class="header">
+  <header class="cabecalho">
     <div>
       <h1>{{ modoEdicao ? 'Editar empresa' : 'Cadastrar nova empresa' }}</h1>
       <p>Preencha os dados da empresa para liberar o acesso ao Pulso</p>
     </div>
 
-    <button class="btn" routerLink="/admin">Voltar</button>
+    <button class="botao" routerLink="/admin">Voltar</button>
   </header>
 
-  <main class="grid">
+  <main class="grade">
 
-    <section class="card empresa">
+    <section class="cartao empresa">
       <h2>Dados da empresa</h2>
 
       <label>Razão social</label>
@@ -59,16 +59,16 @@
       >
     </section>
 
-    <div class="right">
+    <div class="lateral">
 
-      <section class="card">
+      <section class="cartao">
         <h2>Plano e contrato</h2>
 
         <label>Plano</label>
 
         <div
           class="plano"
-          [class.selected]="planoSelecionado === 'Inicial'"
+          [class.selecionado]="planoSelecionado === 'Inicial'"
           (click)="selecionarPlano('Inicial')"
         >
           <div>
@@ -81,7 +81,7 @@
 
         <div
           class="plano"
-          [class.selected]="planoSelecionado === 'Profissional'"
+          [class.selecionado]="planoSelecionado === 'Profissional'"
           (click)="selecionarPlano('Profissional')"
         >
           <div>
@@ -94,7 +94,7 @@
 
         <div
           class="plano"
-          [class.selected]="planoSelecionado === 'Empresarial'"
+          [class.selecionado]="planoSelecionado === 'Empresarial'"
           (click)="selecionarPlano('Empresarial')"
         >
           <div>
@@ -113,7 +113,7 @@
         >
       </section>
 
-      <section class="card">
+      <section class="cartao">
         <h2>Responsável técnico</h2>
 
         <label>Nome completo</label>
@@ -140,13 +140,13 @@
         >
       </section>
 
-      <div class="footer-actions">
-        <button class="btn" routerLink="/admin">
+      <div class="acoes-rodape">
+        <button class="botao" routerLink="/admin">
           Cancelar
         </button>
 
         <button
-          class="btn primary"
+          class="botao principal"
           (click)="salvarEmpresa()"
         >
           {{ modoEdicao ? 'Salvar alterações' : 'Salvar' }}

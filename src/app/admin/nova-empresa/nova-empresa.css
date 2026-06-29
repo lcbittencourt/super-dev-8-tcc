@@ -10,11 +10,11 @@
   box-sizing: border-box;
 }
 
-.page {
+.pagina {
   padding: 14px;
 }
 
-.header {
+.cabecalho {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
@@ -32,13 +32,13 @@ p {
   font-size: 14px;
 }
 
-.grid {
+.grade {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 14px;
 }
 
-.card {
+.cartao {
   background: #fff;
   border: 1px solid #d3bea0;
   border-radius: 12px;
@@ -49,7 +49,7 @@ p {
   min-height: 670px;
 }
 
-.right {
+.lateral {
   display: flex;
   flex-direction: column;
   gap: 14px;
@@ -97,22 +97,22 @@ input {
   font-size: 13px;
 }
 
-.plano.selected {
+.plano.selecionado {
   border-color: #c9152d;
   background: #f7e4dd;
 }
 
-.plano.selected strong:last-child {
+.plano.selecionado strong:last-child {
   color: #c9152d;
 }
 
-.footer-actions {
+.acoes-rodape {
   display: flex;
   justify-content: flex-end;
   gap: 10px;
 }
 
-.btn {
+.botao {
   border: 1px solid #c9b28f;
   background: #fff;
   color: #161e2f;
@@ -122,7 +122,7 @@ input {
   font-weight: 500;
 }
 
-.btn.primary {
+.botao.principal {
   background: #b9152b;
   color: #fff;
   border-color: #b9152b;

@@ -4,6 +4,12 @@ import { Inject, PLATFORM_ID } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink, Router } from '@angular/router';
 
+interface ModuloSistema {
+  nome: string;
+  descricao: string;
+  liberado: boolean;
+}
+
 @Component({
   selector: 'app-admin',
   standalone: true,
@@ -19,9 +25,9 @@ export class AdminComponent implements OnInit {
       nome: 'Têxtil Vale Norte',
       cidade: 'Blumenau, SC',
       plano: 'Empresarial',
-      users: 148,
+      usuarios: 148,
       modulos: 8,
-      status: 'Ativa',
+      situacao: 'Ativa',
       logo: 'TV'
     },
     {
@@ -29,9 +35,9 @@ export class AdminComponent implements OnInit {
       nome: 'Metalúrgica Müller',
       cidade: 'Brusque, SC',
       plano: 'Profissional',
-      users: 62,
+      usuarios: 62,
       modulos: 6,
-      status: 'Ativa',
+      situacao: 'Ativa',
       logo: 'MM'
     },
     {
@@ -39,9 +45,9 @@ export class AdminComponent implements OnInit {
       nome: 'Confecções Schmitt',
       cidade: 'Pomerode, SC',
       plano: 'Empresarial',
-      users: 230,
+      usuarios: 230,
       modulos: 9,
-      status: 'Ativa',
+      situacao: 'Ativa',
       logo: 'CS'
     },
     {
@@ -49,9 +55,9 @@ export class AdminComponent implements OnInit {
       nome: 'TecnoCampo Soluções',
       cidade: 'Joinville, SC',
       plano: 'Inicial',
-      users: 18,
+      usuarios: 18,
       modulos: 4,
-      status: 'Trial',
+      situacao: 'Trial',
       logo: 'TC'
     },
     {
@@ -59,9 +65,9 @@ export class AdminComponent implements OnInit {
       nome: 'Alimentos Beira-Rio',
       cidade: 'Itajaí, SC',
       plano: 'Profissional',
-      users: 95,
+      usuarios: 95,
       modulos: 7,
-      status: 'Ativa',
+      situacao: 'Ativa',
       logo: 'AB'
     },
     {
@@ -69,9 +75,9 @@ export class AdminComponent implements OnInit {
       nome: 'Plásticos Riedel',
       cidade: 'Indaial, SC',
       plano: 'Inicial',
-      users: 24,
+      usuarios: 24,
       modulos: 5,
-      status: 'Inadimplente',
+      situacao: 'Inadimplente',
       logo: 'PR'
     }
   ];
@@ -81,7 +87,7 @@ export class AdminComponent implements OnInit {
   paginaEmpresas = 0;
   empresasPorPagina = 3;
 
-  modulosSistema = [
+  private modulosBase: ModuloSistema[] = [
     {
       nome: 'Dashboard',
       descricao: 'Painel geral com indicadores',
@@ -134,6 +140,8 @@ export class AdminComponent implements OnInit {
     }
   ];
 
+  modulosSistema: ModuloSistema[] = this.criarModulosPadrao();
+
   constructor(
     private router: Router,
     @Inject(PLATFORM_ID) private platformId: object
@@ -148,22 +156,18 @@ export class AdminComponent implements OnInit {
       localStorage.getItem('empresas') || '[]'
     );
 
-    const idsEmpresasAtuais = this.empresas.map(empresa => empresa.id);
+    this.empresas = this.mesclarEmpresasSalvas(empresasSalvas);
 
-    const empresasSemDuplicar = empresasSalvas.filter(
-      (empresa: any) => !idsEmpresasAtuais.includes(empresa.id)
-    );
-
-    this.empresas = [
-      ...this.empresas,
-      ...empresasSemDuplicar
-    ];
-
-    this.empresaSelecionada = this.empresas[0];
+    this.empresaSelecionada = this.recuperarEmpresaSelecionada() || this.empresas[0];
+    this.posicionarPaginaEmpresaSelecionada();
+    this.carregarModulosEmpresa();
+    this.salvarEmpresaSelecionada();
   }
 
   selecionarEmpresa(empresa: any) {
     this.empresaSelecionada = empresa;
+    this.carregarModulosEmpresa();
+    this.salvarEmpresaSelecionada();
   }
 
   pesquisarEmpresa() {
@@ -183,7 +187,7 @@ export class AdminComponent implements OnInit {
         empresa.nome,
         empresa.cidade,
         empresa.plano,
-        empresa.status
+        empresa.situacao
       ].join(' ').toLowerCase();
 
       return texto.includes(pesquisa);
@@ -225,6 +229,13 @@ export class AdminComponent implements OnInit {
       return;
     }
 
+    if (this.estaNoNavegador()) {
+      localStorage.setItem(
+        'empresaEmEdicao',
+        JSON.stringify(this.empresaSelecionada)
+      );
+    }
+
     this.router.navigate(['/nova-empresa', this.empresaSelecionada.id]);
   }
 
@@ -263,22 +274,84 @@ export class AdminComponent implements OnInit {
     }
 
     this.empresaSelecionada = this.empresasVisiveis()[0] || this.empresas[0] || null;
+    this.carregarModulosEmpresa();
+    this.salvarEmpresaSelecionada();
   }
 
-  alternarModulo(modulo: any) {
-    modulo.liberado = !modulo.liberado;
+  alternarModulo(modulo: ModuloSistema) {
+    if (modulo.liberado) {
+      modulo.liberado = false;
+      return;
+    }
+
+    if (this.modulosLiberados() >= this.limiteModulosEmpresa()) {
+      alert(`O plano ${this.empresaSelecionada.plano} permite liberar somente ${this.limiteModulosEmpresa()} módulo(s).`);
+      return;
+    }
+
+    modulo.liberado = true;
+  }
+
+  salvarModulosEmpresa() {
+    if (!this.estaNoNavegador() || !this.empresaSelecionada) {
+      return;
+    }
+
+    localStorage.setItem(
+      this.chaveModulosEmpresa(),
+      JSON.stringify(this.modulosSistema)
+    );
+
+    this.empresaSelecionada.modulos = this.modulosLiberados();
+    this.empresas = this.empresas.map(empresa => {
+      if (empresa.id === this.empresaSelecionada.id) {
+        return {
+          ...empresa,
+          modulos: this.empresaSelecionada.modulos
+        };
+      }
+
+      return empresa;
+    });
+
+    this.salvarEmpresaSelecionada();
+    alert(`Alterações salvas para ${this.empresaSelecionada.nome}.`);
+  }
+
+  modulosLiberados(): number {
+    return this.modulosSistema.filter(modulo => modulo.liberado).length;
+  }
+
+  limiteModulosEmpresa(): number {
+    if (!this.empresaSelecionada) {
+      return 0;
+    }
+
+    if (this.empresaSelecionada.plano === 'Inicial') {
+      return 4;
+    }
+
+    if (this.empresaSelecionada.plano === 'Profissional') {
+      return 7;
+    }
+
+    return this.modulosSistema.length;
+  }
+
+  moduloBloqueadoPorLimite(modulo: ModuloSistema): boolean {
+    return !modulo.liberado && this.modulosLiberados() >= this.limiteModulosEmpresa();
   }
 
   totalUsuarios() {
     return this.empresas.reduce(
-      (total, empresa) => total + empresa.users,
+      (total, empresa) => total + empresa.usuarios,
       0
     );
   }
 
   totalAtivas() {
     return this.empresas.filter(
-      empresa => empresa.status === 'Ativa'
+      empresa => empresa.situacao === 'Ativa'
     ).length;
   }
 
@@ -294,7 +367,142 @@ export class AdminComponent implements OnInit {
 
     if (!selecionadaEstaVisivel) {
       this.empresaSelecionada = visiveis[0] || null;
+      this.carregarModulosEmpresa();
+      this.salvarEmpresaSelecionada();
     }
+  }
+
+  private salvarEmpresaSelecionada() {
+    if (!this.estaNoNavegador() || !this.empresaSelecionada) {
+      return;
+    }
+
+    localStorage.setItem(
+      'empresaSelecionadaDashboard',
+      JSON.stringify(this.empresaSelecionada)
+    );
+  }
+
+  private recuperarEmpresaSelecionada() {
+    const empresaSalva = localStorage.getItem('empresaSelecionadaDashboard');
+
+    if (!empresaSalva) {
+      return null;
+    }
+
+    const empresa = JSON.parse(empresaSalva);
+
+    return this.empresas.find(
+      item => item.id === empresa.id
+    ) || null;
+  }
+
+  private posicionarPaginaEmpresaSelecionada() {
+    const indice = this.empresasFiltradas().findIndex(
+      empresa => empresa.id === this.empresaSelecionada?.id
+    );
+
+    if (indice < 0) {
+      this.paginaEmpresas = 0;
+      return;
+    }
+
+    this.paginaEmpresas = Math.floor(indice / this.empresasPorPagina);
+  }
+
+  private carregarModulosEmpresa() {
+    if (!this.estaNoNavegador() || !this.empresaSelecionada) {
+      this.modulosSistema = this.criarModulosPadrao();
+      return;
+    }
+
+    const modulosSalvos = localStorage.getItem(this.chaveModulosEmpresa());
+    this.modulosSistema = modulosSalvos
+      ? JSON.parse(modulosSalvos)
+      : this.criarModulosPadrao();
+
+    this.ajustarModulosAoLimite();
+    this.empresaSelecionada.modulos = this.modulosLiberados();
+    this.atualizarContagemEmpresaSelecionada();
+  }
+
+  private criarModulosPadrao(): ModuloSistema[] {
+    return this.modulosBase.map(modulo => ({ ...modulo }));
+  }
+
+  private ajustarModulosAoLimite() {
+    const limite = this.limiteModulosEmpresa();
+    let liberados = 0;
+
+    this.modulosSistema = this.modulosSistema.map(modulo => {
+      if (!modulo.liberado) {
+        return modulo;
+      }
+
+      liberados++;
+
+      if (liberados > limite) {
+        return {
+          ...modulo,
+          liberado: false
+        };
+      }
+
+      return modulo;
+    });
+  }
+
+  private chaveModulosEmpresa(): string {
+    return `modulos:${this.empresaSelecionada.id}`;
+  }
+
+  private atualizarContagemEmpresaSelecionada() {
+    this.empresas = this.empresas.map(empresa => {
+      if (empresa.id === this.empresaSelecionada.id) {
+        return {
+          ...empresa,
+          modulos: this.empresaSelecionada.modulos
+        };
+      }
+
+      return empresa;
+    });
+  }
+
+  private mesclarEmpresasSalvas(empresasSalvas: any[]) {
+    const empresasSalvasNormalizadas = empresasSalvas.map(
+      empresa => this.normalizarEmpresa(empresa)
+    );
+
+    const empresasBaseAtualizadas = this.empresas.map(empresa => {
+      const empresaSalva = empresasSalvasNormalizadas.find(
+        (salva: any) => salva.id === empresa.id
+      );
+
+      return this.normalizarEmpresa(
+        empresaSalva ? { ...empresa, ...empresaSalva } : empresa
+      );
+    });
+
+    const idsBase = this.empresas.map(empresa => empresa.id);
+    const empresasNovas = empresasSalvasNormalizadas.filter(
+      (empresa: any) => !idsBase.includes(empresa.id)
+    );
+
+    return [
+      ...empresasBaseAtualizadas,
+      ...empresasNovas
+    ];
+  }
+
+  private normalizarEmpresa(empresa: any) {
+    const { users, status, ...dadosEmpresa } = empresa;
+
+    return {
+      ...dadosEmpresa,
+      usuarios: empresa.usuarios ?? users ?? 0,
+      situacao: empresa.situacao ?? status ?? 'Ativa'
+    };
   }
 
 }

@@ -1,10 +1,9 @@
-import { CommonModule } from '@angular/common';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { Component, Inject, OnInit, PLATFORM_ID } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { isPlatformBrowser } from '@angular/common';
 import { RouterLink } from '@angular/router';
 
-type SituacaoColaborador = 'Ativo' | 'Inativo' | 'Férias';
+type SituacaoColaborador = 'Ativo' | 'Inativo' | 'Férias' | 'Licença Médica/Atestado';
 type NivelColaborador =
   | 'Não se aplica'
   | 'Junior I'
@@ -29,7 +28,15 @@ interface Colaborador {
   salario: number;
   gestor: string;
   situacao: SituacaoColaborador;
+  diasLicencaMedica: number;
   foto: string;
+}
+
+interface EmpresaSelecionada {
+  id: string;
+  nome: string;
+  cidade: string;
+  logo: string;
 }
 
 @Component({
@@ -42,6 +49,12 @@ interface Colaborador {
 export class ColaboradoresComponent implements OnInit {
 
   colaboradores: Colaborador[] = [];
+  empresaSelecionada: EmpresaSelecionada = {
+    id: 'tx001',
+    nome: 'Têxtil Vale Norte',
+    cidade: 'Blumenau, SC',
+    logo: 'TV'
+  };
   tela: 'lista' | 'cadastro' = 'lista';
   termoPesquisa = '';
   filtroSituacao = 'Todos';
@@ -63,65 +76,24 @@ export class ColaboradoresComponent implements OnInit {
 
   colaborador: Colaborador = this.criarColaboradorVazio();
 
-  private colaboradoresPadrao: Colaborador[] = [
-    {
-      id: 'col001',
-      nome: 'Mariana Costa',
-      email: 'mariana.costa@empresa.com',
-      telefone: '(11) 98888-1001',
-      cargo: 'Analista de RH',
-      departamento: 'Recursos Humanos',
-      nivel: 'Pleno I',
-      admissao: '2023-04-10',
-      salario: 6200,
-      gestor: 'Rafael Lima',
-      situacao: 'Ativo',
-      foto: ''
-    },
-    {
-      id: 'col002',
-      nome: 'Bruno Almeida',
-      email: 'bruno.almeida@empresa.com',
-      telefone: '(21) 97777-2040',
-      cargo: 'Coordenador Financeiro',
-      departamento: 'Financeiro',
-      nivel: 'Senior I',
-      admissao: '2021-09-02',
-      salario: 9800,
-      gestor: 'Carla Nunes',
-      situacao: 'Férias',
-      foto: ''
-    },
-    {
-      id: 'col003',
-      nome: 'Luiza Martins',
-      email: 'luiza.martins@empresa.com',
-      telefone: '(31) 96666-3030',
-      cargo: 'Desenvolvedora Front-end',
-      departamento: 'Tecnologia',
-      nivel: 'Junior III',
-      admissao: '2024-01-15',
-      salario: 8400,
-      gestor: 'Diego Rocha',
-      situacao: 'Ativo',
-      foto: ''
-    }
-  ];
-
   constructor(@Inject(PLATFORM_ID) private platformId: object) {}
 
   ngOnInit() {
     if (!this.estaNoNavegador()) {
-      this.colaboradores = this.colaboradoresPadrao;
+      this.colaboradores = [];
       return;
     }
 
-    const salvos = localStorage.getItem('colaboradores');
-    const colaboradores = salvos ? JSON.parse(salvos) : this.colaboradoresPadrao;
+    this.carregarEmpresaSelecionada();
+    this.migrarColaboradoresAntigos();
+
+    const salvos = localStorage.getItem(this.chaveColaboradores());
+    const colaboradores = salvos ? JSON.parse(salvos) : [];
 
     this.colaboradores = colaboradores.map((colaborador: Colaborador) => ({
       ...colaborador,
-      nivel: colaborador.nivel || 'Não se aplica'
+      nivel: colaborador.nivel || 'Não se aplica',
+      diasLicencaMedica: colaborador.diasLicencaMedica || 0
     }));
   }
 
@@ -201,6 +173,12 @@ export class ColaboradoresComponent implements OnInit {
     return this.colaboradores.filter(colaborador => colaborador.situacao === situacao).length;
   }
 
+  atualizarSituacao() {
+    if (this.colaborador.situacao !== 'Licença Médica/Atestado') {
+      this.colaborador.diasLicencaMedica = 0;
+    }
+  }
+
   formatarSalario(valor: number): string {
     return new Intl.NumberFormat('pt-BR', {
       style: 'currency',
@@ -260,6 +238,7 @@ export class ColaboradoresComponent implements OnInit {
       salario: 0,
       gestor: '',
       situacao: 'Ativo',
+      diasLicencaMedica: 0,
       foto: ''
     };
   }
@@ -269,11 +248,39 @@ export class ColaboradoresComponent implements OnInit {
       return;
     }
 
-    localStorage.setItem('colaboradores', JSON.stringify(this.colaboradores));
+    localStorage.setItem(this.chaveColaboradores(), JSON.stringify(this.colaboradores));
   }
 
   private estaNoNavegador(): boolean {
     return isPlatformBrowser(this.platformId);
+  }
+
+  private carregarEmpresaSelecionada() {
+    const empresaSalva = localStorage.getItem('empresaSelecionadaDashboard');
+
+    if (!empresaSalva) {
+      return;
+    }
+
+    this.empresaSelecionada = JSON.parse(empresaSalva);
+  }
+
+  private chaveColaboradores(): string {
+    return `colaboradores:${this.empresaSelecionada.id}`;
+  }
+
+  private migrarColaboradoresAntigos() {
+    const chaveAtual = this.chaveColaboradores();
+    const colaboradoresDaEmpresa = localStorage.getItem(chaveAtual);
+    const colaboradoresAntigos = localStorage.getItem('colaboradores');
+    const migracaoJaExecutada = localStorage.getItem('colaboradoresMigradosPorEmpresa');
+
+    if (colaboradoresDaEmpresa || !colaboradoresAntigos || migracaoJaExecutada) {
+      return;
+    }
+
+    localStorage.setItem(chaveAtual, colaboradoresAntigos);
+    localStorage.setItem('colaboradoresMigradosPorEmpresa', 'true');
   }
 
 }

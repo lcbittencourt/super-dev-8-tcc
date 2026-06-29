@@ -1,0 +1,398 @@
+<div class="sistema">
+
+  <header class="barra-superior">
+    <div class="marca">
+      <div class="simbolo-marca">P</div>
+
+      <div>
+        <strong>Pulso<span>.</span></strong>
+      </div>
+    </div>
+
+    <span class="etiqueta-perfil">Férias</span>
+
+    <nav class="navegacao">
+      <a routerLink="/admin">Admin</a>
+      <a routerLink="/gestor">Gestor</a>
+      <a routerLink="/colaborador">Colaborador</a>
+    </nav>
+
+    <div class="identificacao">{{ empresaSelecionada.logo }}</div>
+  </header>
+
+  <main class="pagina">
+
+    <section class="cabecalho-pagina">
+      <div>
+        <h1>Férias e afastamentos</h1>
+        <p>{{ empresaSelecionada.nome }} · {{ empresaSelecionada.cidade }}</p>
+      </div>
+
+      <div class="acoes">
+        <button class="botao" routerLink="/admin">Voltar</button>
+      </div>
+    </section>
+
+    <ng-container *ngIf="perfil === 'gestor'">
+      <section class="grade-painel">
+        <article class="metrica">
+          <span>Solicitações Pendentes</span>
+          <strong>{{ pendentes() }}</strong>
+        </article>
+
+        <article class="metrica">
+          <span>Colaboradores de férias</span>
+          <strong>{{ colaboradoresEmFerias().length }}</strong>
+        </article>
+
+        <article class="metrica">
+          <span>Retornam esta semana</span>
+          <strong>{{ retornamEstaSemana() }}</strong>
+        </article>
+
+        <article class="metrica">
+          <span>Próximas férias</span>
+          <strong>{{ proximasFerias().length }}</strong>
+        </article>
+      </section>
+
+      <section class="cartao">
+        <div class="cabecalho-cartao">
+          <div>
+            <h2>Lista de solicitações</h2>
+            <p>Analise, aprove ou reprove os pedidos da empresa selecionada.</p>
+          </div>
+
+          <div class="filtros">
+            <input type="search" placeholder="Pesquisar por nome" [(ngModel)]="pesquisaNome">
+            <select [(ngModel)]="filtroSituacao">
+              <option>Todos</option>
+              <option>Pendente</option>
+              <option>Aprovada</option>
+              <option>Reprovada</option>
+              <option>Cancelada</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="abas">
+          <button type="button" [class.ativo]="filtroSituacao === 'Todos'" (click)="filtroSituacao = 'Todos'">Todos</button>
+          <button type="button" [class.ativo]="filtroSituacao === 'Pendente'" (click)="filtroSituacao = 'Pendente'">Pendentes</button>
+          <button type="button" [class.ativo]="filtroSituacao === 'Aprovada'" (click)="filtroSituacao = 'Aprovada'">Aprovadas</button>
+          <button type="button" [class.ativo]="filtroSituacao === 'Reprovada'" (click)="filtroSituacao = 'Reprovada'">Reprovadas</button>
+          <button type="button" [class.ativo]="filtroSituacao === 'Cancelada'" (click)="filtroSituacao = 'Cancelada'">Canceladas</button>
+        </div>
+
+        <div class="tabela">
+          <table>
+            <thead>
+              <tr>
+                <th>Colaborador</th>
+                <th>Departamento</th>
+                <th>Período solicitado</th>
+                <th>Dias</th>
+                <th>Solicitação</th>
+                <th>Situação</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <tr *ngFor="let solicitacao of solicitacoesFiltradas()">
+                <td>{{ solicitacao.colaborador }}</td>
+                <td>{{ solicitacao.departamento }}</td>
+                <td>{{ periodoCurto(solicitacao) }}</td>
+                <td>{{ solicitacao.dias }}</td>
+                <td>{{ formatarData(solicitacao.dataSolicitacao) }}</td>
+                <td><span class="selo">{{ solicitacao.situacao }}</span></td>
+                <td>
+                  <button class="acao-texto" type="button" (click)="abrirSolicitacao(solicitacao)">
+                    {{ solicitacao.situacao === 'Pendente' ? 'Aprovar / Reprovar' : 'Visualizar' }}
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="duas-colunas">
+        <article class="cartao">
+          <div class="cabecalho-cartao">
+            <div>
+              <h2>Agenda de férias</h2>
+              <p>Julho</p>
+            </div>
+          </div>
+
+          <div class="calendario">
+            <div class="dia" *ngFor="let dia of diasCalendario">
+              <strong>{{ dia | number:'2.0-0' }}</strong>
+              <button type="button" *ngFor="let evento of eventosDoDia(dia)" (click)="abrirEventoCalendario(evento)">
+                {{ evento.colaborador.split(' ')[0] }}
+              </button>
+            </div>
+          </div>
+        </article>
+
+        <article class="cartao">
+          <div class="cabecalho-cartao">
+            <div>
+              <h2>Atualmente de férias</h2>
+              <p>Colaboradores em período ativo.</p>
+            </div>
+          </div>
+
+          <div class="lista-cartoes">
+            <div class="cartao-pessoa" *ngFor="let pessoa of colaboradoresEmFerias()">
+              <strong>{{ pessoa.colaborador }}</strong>
+              <span>{{ pessoa.departamento }}</span>
+              <span>{{ formatarData(pessoa.inicio) }}</span>
+              <span>Retorna em {{ formatarData(pessoa.fim) }}</span>
+              <small>12 dias restantes</small>
+            </div>
+          </div>
+        </article>
+      </section>
+
+      <section class="duas-colunas">
+        <article class="cartao">
+          <h2>Próximas férias</h2>
+
+          <div class="cartao-pessoa" *ngFor="let pessoa of proximasFerias()">
+            <strong>{{ pessoa.colaborador }}</strong>
+            <span>Começa em 5 dias</span>
+            <span>{{ pessoa.departamento }}</span>
+            <small>{{ pessoa.dias }} dias</small>
+          </div>
+        </article>
+
+        <article class="cartao">
+          <h2>Histórico</h2>
+
+          <div class="tabela simples">
+            <table>
+              <thead>
+                <tr>
+                  <th>2026</th>
+                  <th>Dias</th>
+                  <th>Situação</th>
+                  <th>Aprovador</th>
+                  <th>Data aprovação</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let item of historico()">
+                  <td>{{ item.colaborador }}</td>
+                  <td>{{ item.dias }} dias</td>
+                  <td>{{ item.situacao }}</td>
+                  <td>{{ item.aprovador || '-' }}</td>
+                  <td>{{ formatarData(item.dataAprovacao) }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </article>
+      </section>
+    </ng-container>
+
+    <ng-container *ngIf="perfil === 'colaborador'">
+      <section class="grade-painel">
+        <article class="metrica">
+          <span>Meu saldo</span>
+          <strong>30 dias</strong>
+        </article>
+
+        <article class="metrica">
+          <span>Período aquisitivo</span>
+          <strong>01/02/2025</strong>
+          <small>até 31/01/2026</small>
+        </article>
+
+        <article class="metrica">
+          <span>Dias vendidos</span>
+          <strong>0</strong>
+        </article>
+
+        <article class="metrica">
+          <span>Solicitações</span>
+          <strong>1 pendente</strong>
+        </article>
+      </section>
+
+      <section class="duas-colunas">
+        <article class="cartao">
+          <h2>Minhas férias</h2>
+          <div class="linha-info">
+            <span>Últimas férias</span>
+            <strong>01/03/2026 até 30/03/2026 · 30 dias</strong>
+          </div>
+
+          <h2>Nova solicitação</h2>
+          <form class="formulario" (ngSubmit)="enviarSolicitacao()">
+            <label>
+              Data início
+              <input type="date" [(ngModel)]="novaSolicitacao.inicio" name="inicio">
+            </label>
+
+            <label>
+              Quantidade de dias
+              <input type="number" min="1" max="30" [(ngModel)]="novaSolicitacao.dias" name="dias">
+            </label>
+
+            <label>
+              Abono pecuniário
+              <select [(ngModel)]="novaSolicitacao.abono" name="abono">
+                <option>Sim</option>
+                <option>Não</option>
+              </select>
+            </label>
+
+            <label>
+              Substituto
+              <select [(ngModel)]="novaSolicitacao.substituto" name="substituto">
+                <option *ngFor="let colaborador of colaboradores">{{ colaborador.nome }}</option>
+              </select>
+            </label>
+
+            <label class="campo-inteiro">
+              Observações
+              <textarea rows="4" [(ngModel)]="novaSolicitacao.observacoes" name="observacoes"></textarea>
+            </label>
+
+            <button class="botao principal" type="submit">Enviar solicitação</button>
+          </form>
+        </article>
+
+        <article class="cartao">
+          <h2>Simulação</h2>
+          <div class="resumo-simulacao">
+            <span>Você sairá</span>
+            <strong>{{ formatarData(novaSolicitacao.inicio) }}</strong>
+            <span>Retornará</span>
+            <strong>{{ formatarData(calcularRetorno()) }}</strong>
+            <span>{{ novaSolicitacao.dias }} dias</span>
+            <strong>Saldo restante: {{ saldoRestante() }} dias</strong>
+          </div>
+
+          <h2>Andamento</h2>
+          <div class="linha-tempo">
+            <div class="etapa" *ngFor="let etapa of etapas" [class.feito]="etapa.situacao === 'feito'" [class.atual]="etapa.situacao === 'atual'">
+              <span></span>
+              <strong>{{ etapa.nome }}</strong>
+            </div>
+          </div>
+        </article>
+      </section>
+
+      <section class="duas-colunas">
+        <article class="cartao">
+          <h2>Histórico</h2>
+          <div class="tabela simples">
+            <table>
+              <thead>
+                <tr>
+                  <th>Período</th>
+                  <th>Dias</th>
+                  <th>Situação</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>2026</td>
+                  <td>30</td>
+                  <td>Concluída</td>
+                </tr>
+                <tr>
+                  <td>2025</td>
+                  <td>15</td>
+                  <td>Concluída</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </article>
+
+        <article class="cartao avisos">
+          <h2>Avisos</h2>
+          <p>Seu gestor possui até 5 dias úteis para responder sua solicitação.</p>
+          <p>Você possui <strong>30 dias disponíveis</strong>.</p>
+          <p>Seu período aquisitivo encerra em <strong>31/01/2027</strong>.</p>
+
+          <div class="fluxo">
+            <span>Colaborador</span>
+            <span>Solicita férias</span>
+            <span>Gestor analisa</span>
+            <span>Calendário atualizado</span>
+            <span>Retorno automático</span>
+          </div>
+        </article>
+      </section>
+    </ng-container>
+
+  </main>
+
+  <div class="sobreposicao" *ngIf="mostrarEscolhaPerfil">
+    <section class="janela escolha">
+      <h2>Como deseja acessar férias?</h2>
+      <p>Escolha a visão para {{ empresaSelecionada.nome }}.</p>
+
+      <div class="opcoes-perfil">
+        <button class="botao principal" type="button" (click)="escolherPerfil('gestor')">Gestor</button>
+        <button class="botao" type="button" (click)="escolherPerfil('colaborador')">Colaborador</button>
+      </div>
+    </section>
+  </div>
+
+  <div class="sobreposicao" *ngIf="solicitacaoSelecionada">
+    <section class="janela">
+      <div class="cabecalho-cartao">
+        <div>
+          <h2>Solicitação de férias</h2>
+          <p>{{ solicitacaoSelecionada.colaborador }} · {{ solicitacaoSelecionada.departamento }}</p>
+        </div>
+        <button class="botao" type="button" (click)="fecharSolicitacao()">Fechar</button>
+      </div>
+
+      <div class="detalhes-solicitacao">
+        <span>Saldo disponível</span>
+        <strong>{{ solicitacaoSelecionada.saldoDisponivel }} dias</strong>
+        <span>Período solicitado</span>
+        <strong>{{ formatarData(solicitacaoSelecionada.inicio) }} até {{ formatarData(solicitacaoSelecionada.fim) }} · {{ solicitacaoSelecionada.dias }} dias</strong>
+        <span>Substituto</span>
+        <strong>{{ solicitacaoSelecionada.substituto }}</strong>
+        <span>Observação do colaborador</span>
+        <textarea rows="3" [(ngModel)]="solicitacaoSelecionada.observacaoColaborador"></textarea>
+        <span>Parecer do gestor</span>
+        <textarea rows="3" [(ngModel)]="solicitacaoSelecionada.parecerGestor"></textarea>
+      </div>
+
+      <div class="acoes">
+        <button class="botao principal" type="button" (click)="aprovarSolicitacao()">Aprovar</button>
+        <button class="botao perigo" type="button" (click)="reprovarSolicitacao()">Reprovar</button>
+      </div>
+    </section>
+  </div>
+
+  <div class="sobreposicao" *ngIf="eventoCalendarioSelecionado">
+    <section class="janela pequena">
+      <h2>{{ eventoCalendarioSelecionado.colaborador }}</h2>
+      <div class="detalhes-solicitacao">
+        <span>Início</span>
+        <strong>{{ formatarData(eventoCalendarioSelecionado.inicio) }}</strong>
+        <span>Fim</span>
+        <strong>{{ formatarData(eventoCalendarioSelecionado.fim) }}</strong>
+        <span>Quantidade de dias</span>
+        <strong>{{ eventoCalendarioSelecionado.dias }}</strong>
+        <span>Substituto</span>
+        <strong>{{ eventoCalendarioSelecionado.substituto }}</strong>
+        <span>Contato</span>
+        <strong>{{ eventoCalendarioSelecionado.contato }}</strong>
+        <span>Observações</span>
+        <strong>{{ eventoCalendarioSelecionado.observacaoColaborador || '-' }}</strong>
+      </div>
+      <button class="botao principal" type="button" (click)="eventoCalendarioSelecionado = null">OK</button>
+    </section>
+  </div>
+
+</div>

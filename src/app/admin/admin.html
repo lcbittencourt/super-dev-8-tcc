@@ -1,242 +1,208 @@
-<div class="erp">
+<div class="sistema">
 
-  <header class="topbar">
-    <div class="brand">
-      <div class="brand-mark">P</div>
+    <header class="barra-superior">
+        <div class="marca">
+            <div class="simbolo-marca">P</div>
 
-      <div>
-        <strong>Pulso<span>.</span></strong>
-      </div>
-    </div>
-
-    <span class="role-chip">Administrador</span>
-
-    <nav class="nav">
-      <a routerLink="/admin" class="active">Admin</a>
-      <a routerLink="/gestor">Gestor</a>
-      <a routerLink="/colaborador">Colaborador</a>
-    </nav>
-
-    <div class="avatar">AD</div>
-  </header>
-
-  <main class="page">
-
-    <section class="page-header">
-      <div>
-        <h1>Empresas cadastradas</h1>
-        <p>
-          {{ empresas.length }} empresas usando o Pulso · {{ totalAtivas() }} ativas
-        </p>
-      </div>
-
-      <div class="actions">
-        <button class="btn">
-          Exportar
-        </button>
-
-        <button
-          class="btn primary"
-          routerLink="/nova-empresa"
-        >
-          Nova empresa
-        </button>
-      </div>
-    </section>
-
-    <section class="kpis">
-      <div class="kpi">
-        <span>Total de empresas</span>
-        <strong>{{ empresas.length }}</strong>
-        <small class="up">+2 este mês</small>
-      </div>
-
-      <div class="kpi">
-        <span>Usuários ativos</span>
-        <strong>{{ totalUsuarios() }}</strong>
-        <small class="up">+47</small>
-      </div>
-
-      <div class="kpi">
-        <span>MRR estimado</span>
-        <strong>R$ 32.480</strong>
-        <small class="up">+8,4%</small>
-      </div>
-
-      <div class="kpi">
-        <span>Inadimplência</span>
-        <strong>1</strong>
-        <small class="down">Requer ação</small>
-      </div>
-    </section>
-
-    <section class="card">
-
-      <div class="card-header">
-        <div>
-          <h2>Empresas Cadastradas</h2>
+            <div>
+                <strong>Pulso<span>.</span></strong>
+            </div>
         </div>
 
-        <div class="card-actions">
-          <button
-            class="btn"
-            type="button"
-            (click)="editarEmpresa()"
-            [disabled]="!empresaSelecionada"
-          >
-            Editar empresa
-          </button>
+        <span class="etiqueta-perfil">Administrador</span>
 
-          <button
-            class="btn danger"
-            type="button"
-            (click)="excluirEmpresa()"
-            [disabled]="!empresaSelecionada"
-          >
-            Excluir empresa
-          </button>
+        <nav class="navegacao">
+            <a routerLink="/admin" class="ativo">Admin</a>
+            <a routerLink="/gestor">Gestor</a>
+            <a routerLink="/colaborador">Colaborador</a>
+        </nav>
 
-          <label class="search-company">
-            <input
-              type="search"
-              placeholder="Pesquisar empresa"
-              [(ngModel)]="pesquisaEmpresa"
-              (input)="pesquisarEmpresa()"
-            >
-          </label>
-        </div>
-      </div>
+        <div class="identificacao">AD</div>
+    </header>
 
-      <div class="empresas-grid">
-        <div
-          class="empresa-card"
-          *ngFor="let empresa of empresasVisiveis()"
-          [class.selected]="empresaSelecionada && empresaSelecionada.id === empresa.id"
-          (click)="selecionarEmpresa(empresa)"
-        >
-          <div class="empresa-top">
-            <div class="empresa-logo">
-              {{ empresa.logo }}
+    <main class="pagina">
+
+        <section class="cabecalho-pagina apenas-acoes">
+            <div class="acoes">
+                <button class="botao">
+                    Exportar
+                </button>
+
+                <button class="botao principal" routerLink="/nova-empresa">
+                    Nova empresa
+                </button>
+            </div>
+        </section>
+
+        <section class="indicadores">
+            <div class="indicador">
+                <span>Total de empresas</span>
+                <strong>{{ empresas.length }}</strong>
+                <small class="positivo">+2 este mês</small>
             </div>
 
-            <div class="empresa-info">
-              <strong>{{ empresa.nome }}</strong>
-              <small>{{ empresa.cidade }}</small>
+            <div class="indicador">
+                <span>Usuários ativos</span>
+                <strong>{{ totalUsuarios() }}</strong>
+                <small class="positivo">+47</small>
             </div>
 
-            <span
-              class="badge"
-              [class.ok]="empresa.status === 'Ativa'"
-              [class.info]="empresa.status === 'Trial'"
-              [class.err]="empresa.status === 'Inadimplente'"
-            >
-              {{ empresa.status }}
-            </span>
-          </div>
+            <div class="indicador">
+                <span>MRR estimado</span>
+                <strong>R$ 32.480</strong>
+                <small class="positivo">+8,4%</small>
+            </div>
 
-          <div class="empresa-stats">
-            <span>
-              <strong>{{ empresa.users }}</strong> usuários
-            </span>
+            <div class="indicador">
+                <span>Inadimplência</span>
+                <strong>1</strong>
+                <small class="negativo">Requer ação</small>
+            </div>
+        </section>
 
-            <span>
-              <strong>{{ empresa.modulos }}/10</strong> módulos
-            </span>
+        <section class="cartao">
 
-            <span>{{ empresa.plano }}</span>
-          </div>
-        </div>
-      </div>
+            <div class="cabecalho-cartao">
+                <div>
+                    <h2>Empresas Cadastradas</h2>
+                </div>
 
-      <div
-        class="empty-companies"
-        *ngIf="empresasFiltradas().length === 0"
-      >
-        Nenhuma empresa encontrada.
-      </div>
+                <div class="acoes-cartao">
+                    <button class="botao" type="button" (click)="editarEmpresa()" [disabled]="!empresaSelecionada">
+                        Editar empresa
+                    </button>
 
-      <div class="company-pager">
-        <button
-          class="btn"
-          type="button"
-          (click)="voltarEmpresas()"
-          [disabled]="paginaEmpresas === 0"
-        >
-          Anteriores
-        </button>
+                    <button class="botao perigo" type="button" (click)="excluirEmpresa()"
+                        [disabled]="!empresaSelecionada">
+                        Excluir empresa
+                    </button>
 
-        <span>
-          Página {{ paginaEmpresas + 1 }} de {{ totalPaginasEmpresas() }}
-        </span>
+                    <label class="busca-empresa">
+                        <input type="search" placeholder="Pesquisar empresa" [(ngModel)]="pesquisaEmpresa"
+                            (input)="pesquisarEmpresa()">
+                    </label>
+                </div>
+            </div>
 
-        <button
-          class="btn"
-          type="button"
-          (click)="avancarEmpresas()"
-          [disabled]="paginaEmpresas >= totalPaginasEmpresas() - 1"
-        >
-          Próximas
-        </button>
-      </div>
+            <div class="grade-empresas">
+                <div class="cartao-empresa" *ngFor="let empresa of empresasVisiveis()"
+                    [class.selecionado]="empresaSelecionada && empresaSelecionada.id === empresa.id"
+                    (click)="selecionarEmpresa(empresa)">
+                    <div class="topo-empresa">
+                        <div class="logo-empresa">
+                            {{ empresa.logo }}
+                        </div>
 
-    </section>
+                        <div class="dados-empresa">
+                            <strong>{{ empresa.nome }}</strong>
+                            <small>{{ empresa.cidade }}</small>
+                        </div>
 
-    <section
-      class="card"
-      *ngIf="empresaSelecionada"
-    >
-      <div class="card-header">
-        <div>
-          <h2>Configurar módulos · {{ empresaSelecionada.nome }}</h2>
-          <p>Ative ou desative os módulos visíveis para os gestores desta empresa</p>
-        </div>
+                        <span class="selo" [class.sucesso]="empresa.situacao === 'Ativa'"
+                            [class.informativo]="empresa.situacao === 'Trial'" [class.erro]="empresa.situacao === 'Inadimplente'">
+                            {{ empresa.situacao }}
+                        </span>
+                    </div>
 
-        <button class="btn primary">
-          Salvar alterações
-        </button>
-      </div>
+                    <div class="estatisticas-empresa">
+                        <span>
+                            <strong>{{ empresa.usuarios }}</strong> usuários
+                        </span>
 
-      <div
-        class="modulo"
-        *ngFor="let modulo of modulosSistema"
-      >
-        <div>
-          <a
-            *ngIf="modulo.nome === 'Colaboradores'; else moduloNome"
-            class="modulo-link"
-            routerLink="/colaboradores"
-          >
-            {{ modulo.nome }}
-          </a>
+                        <span>
+                            <strong>{{ empresa.modulos }}/10</strong> módulos
+                        </span>
 
-          <ng-template #moduloNome>
-            <strong>{{ modulo.nome }}</strong>
-          </ng-template>
+                        <span>{{ empresa.plano }}</span>
+                    </div>
+                </div>
+            </div>
 
-          <p>{{ modulo.descricao }}</p>
-        </div>
+            <div class="sem-empresas" *ngIf="empresasFiltradas().length === 0">
+                Nenhuma empresa encontrada.
+            </div>
 
-        <div class="modulo-action">
-          <span
-            class="badge"
-            [class.ok]="modulo.liberado"
-            [class.muted]="!modulo.liberado"
-          >
-            {{ modulo.liberado ? 'Liberado' : 'Bloqueado' }}
-          </span>
+            <div class="paginador-empresas">
+                <button class="botao" type="button" (click)="voltarEmpresas()" [disabled]="paginaEmpresas === 0">
+                    Anteriores
+                </button>
 
-          <button
-            class="toggle"
-            type="button"
-            [class.on]="modulo.liberado"
-            (click)="alternarModulo(modulo)"
-          >
-            <span></span>
-          </button>
-        </div>
-      </div>
-    </section>
+                <span>
+                    Página {{ paginaEmpresas + 1 }} de {{ totalPaginasEmpresas() }}
+                </span>
 
-  </main>
+                <button class="botao" type="button" (click)="avancarEmpresas()"
+                    [disabled]="paginaEmpresas >= totalPaginasEmpresas() - 1">
+                    Próximas
+                </button>
+            </div>
+
+        </section>
+
+        <section class="cartao" *ngIf="empresaSelecionada">
+            <div class="cabecalho-cartao">
+                <div>
+                    <h2>Configurar módulos · {{ empresaSelecionada.nome }}</h2>
+                    <p>
+                        Plano {{ empresaSelecionada.plano }} · {{ modulosLiberados() }}/{{ limiteModulosEmpresa() }}
+                        módulos liberados
+                    </p>
+                </div>
+
+                <button class="botao principal" type="button" (click)="salvarModulosEmpresa()">
+                    Salvar alterações
+                </button>
+            </div>
+
+            <div class="modulo" *ngFor="let modulo of modulosSistema"
+                [class.bloqueado-limite]="moduloBloqueadoPorLimite(modulo)">
+                <div>
+                    <a *ngIf="modulo.nome === 'Dashboard' && modulo.liberado" class="atalho-modulo"
+                        routerLink="/dashboard">
+                        {{ modulo.nome }}
+                    </a>
+
+                    <a *ngIf="modulo.nome === 'Colaboradores' && modulo.liberado" class="atalho-modulo"
+                        routerLink="/colaboradores">
+                        {{ modulo.nome }}
+                    </a>
+
+                    <a *ngIf="modulo.nome === 'Controle de ponto' && modulo.liberado" class="atalho-modulo"
+                        routerLink="/controle-ponto">
+                        {{ modulo.nome }}
+                    </a>
+
+                    <a *ngIf="modulo.nome === 'Férias e afastamentos' && modulo.liberado" class="atalho-modulo"
+                        routerLink="/ferias">
+                        {{ modulo.nome }}
+                    </a>
+
+                    <a *ngIf="modulo.nome === 'Treinamentos' && modulo.liberado" class="atalho-modulo"
+                        routerLink="/treinamentos">
+                        {{ modulo.nome }}
+                    </a>
+
+                    <ng-container
+                        *ngIf="modulo.nome !== 'Dashboard' && modulo.nome !== 'Colaboradores' && modulo.nome !== 'Controle de ponto' && modulo.nome !== 'Férias e afastamentos' && modulo.nome !== 'Treinamentos' || !modulo.liberado">
+                        <strong>{{ modulo.nome }}</strong>
+                    </ng-container>
+
+                    <p>{{ modulo.descricao }}</p>
+                </div>
+
+                <div class="acao-modulo">
+                    <span class="selo" [class.sucesso]="modulo.liberado" [class.neutro]="!modulo.liberado">
+                        {{ modulo.liberado ? 'Liberado' : 'Bloqueado' }}
+                    </span>
+
+                    <button class="alternador" type="button" [class.ligado]="modulo.liberado"
+                        [disabled]="moduloBloqueadoPorLimite(modulo)" (click)="alternarModulo(modulo)">
+                        <span></span>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+    </main>
 
 </div>

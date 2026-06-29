@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
+import { Inject, PLATFORM_ID } from '@angular/core';
 import { Router, RouterLink, ActivatedRoute } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 
@@ -14,6 +16,7 @@ export class NovaEmpresaComponent implements OnInit {
   planoSelecionado = 'Profissional';
   modoEdicao = false;
   idEdicao = '';
+  empresaOriginal: any = null;
 
   empresa = {
     razaoSocial: '',
@@ -29,7 +32,8 @@ export class NovaEmpresaComponent implements OnInit {
 
   constructor(
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    @Inject(PLATFORM_ID) private platformId: object
   ) {}
 
   ngOnInit() {
@@ -42,13 +46,18 @@ export class NovaEmpresaComponent implements OnInit {
     this.modoEdicao = true;
     this.idEdicao = id;
 
-    const empresasSalvas = JSON.parse(localStorage.getItem('empresas') || '[]');
+    if (!this.estaNoNavegador()) {
+      return;
+    }
 
+    const empresasSalvas = JSON.parse(localStorage.getItem('empresas') || '[]');
+    const empresaEmEdicao = JSON.parse(localStorage.getItem('empresaEmEdicao') || 'null');
     const empresaEncontrada = empresasSalvas.find(
       (empresa: any) => empresa.id === id
-    );
+    ) || (empresaEmEdicao?.id === id ? empresaEmEdicao : null);
 
     if (empresaEncontrada) {
+      this.empresaOriginal = empresaEncontrada;
       this.empresa.razaoSocial = empresaEncontrada.nome;
       this.empresa.nomeFantasia = empresaEncontrada.nome;
       this.empresa.cidade = empresaEncontrada.cidade;
@@ -68,15 +77,32 @@ export class NovaEmpresaComponent implements OnInit {
       nome: nomeEmpresa,
       cidade: this.empresa.cidade,
       plano: this.planoSelecionado,
-      users: 0,
+      usuarios: this.empresaOriginal?.usuarios ?? this.empresaOriginal?.users ?? 0,
       modulos: this.definirQuantidadeModulos(),
-      status: 'Trial',
+      situacao: this.empresaOriginal?.situacao ?? this.empresaOriginal?.status ?? 'Trial',
       logo: this.gerarLogo(nomeEmpresa)
     };
+
+    if (!this.estaNoNavegador()) {
+      this.router.navigate(['/admin']);
+      return;
+    }
 
     const empresasSalvas = JSON.parse(localStorage.getItem('empresas') || '[]');
 
     if (this.modoEdicao) {
+      const empresaJaSalva = empresasSalvas.some(
+        (empresa: any) => empresa.id === this.idEdicao
+      );
+
+      if (!empresaJaSalva) {
+        empresasSalvas.push(novaEmpresa);
+        localStorage.setItem('empresas', JSON.stringify(empresasSalvas));
+        localStorage.removeItem('empresaEmEdicao');
+        this.router.navigate(['/admin']);
+        return;
+      }
+
       const empresasAtualizadas = empresasSalvas.map((empresa: any) => {
         if (empresa.id === this.idEdicao) {
           return novaEmpresa;
@@ -86,6 +112,7 @@ export class NovaEmpresaComponent implements OnInit {
       });
 
       localStorage.setItem('empresas', JSON.stringify(empresasAtualizadas));
+      localStorage.removeItem('empresaEmEdicao');
       this.router.navigate(['/admin']);
       return;
     }
@@ -148,6 +175,10 @@ export class NovaEmpresaComponent implements OnInit {
     }
 
     this.empresa.telefone = valor;
+  }
+
+  private estaNoNavegador(): boolean {
+    return isPlatformBrowser(this.platformId);
   }
 
 }

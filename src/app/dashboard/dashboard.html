@@ -1,0 +1,113 @@
+<div class="sistema">
+
+  <header class="barra-superior">
+    <div class="marca">
+      <div class="simbolo-marca">P</div>
+
+      <div>
+        <strong>Pulso<span>.</span></strong>
+      </div>
+    </div>
+
+    <span class="etiqueta-perfil">Dashboard</span>
+
+    <nav class="navegacao">
+      <a routerLink="/admin">Admin</a>
+      <a routerLink="/gestor">Gestor</a>
+      <a routerLink="/colaborador">Colaborador</a>
+    </nav>
+
+    <div class="identificacao">{{ empresa.logo }}</div>
+  </header>
+
+  <main class="pagina">
+
+    <section class="cabecalho-pagina">
+      <div>
+        <h1>Dashboard</h1>
+        <p>{{ empresa.nome }} · {{ empresa.cidade }} · {{ empresa.plano }}</p>
+      </div>
+
+      <button class="botao" routerLink="/admin">
+        Voltar
+      </button>
+    </section>
+
+    <section class="cartao-empresa-destaque">
+      <div class="logo-empresa-destaque">{{ empresa.logo }}</div>
+
+      <div>
+        <strong>{{ empresa.nome }}</strong>
+        <span>{{ empresa.situacao }} · {{ empresa.modulos }}/10 módulos liberados</span>
+      </div>
+    </section>
+
+    <section class="grade-painel">
+      <article class="metrica">
+        <span>Funcionários</span>
+        <strong>{{ funcionarios() }}</strong>
+      </article>
+
+      <article class="metrica">
+        <span>Presentes Hoje</span>
+        <strong>{{ presentesHoje() }}</strong>
+      </article>
+
+      <article class="metrica">
+        <span>Férias</span>
+        <strong>{{ ferias() }}</strong>
+      </article>
+
+      <article class="metrica">
+        <span>Licença Médica/Atestado</span>
+        <strong>{{ licencaMedica() }}</strong>
+        <small>{{ totalDiasLicenca() }} dia(s) informados</small>
+      </article>
+
+      <article class="metrica">
+        <span>Aniversariantes</span>
+        <strong>{{ aniversariantes() }}</strong>
+      </article>
+
+      <article class="metrica">
+        <span>Treinamentos Pendentes</span>
+        <strong>{{ treinamentosPendentes() }}</strong>
+      </article>
+
+      <article class="metrica">
+        <span>Chamados Abertos</span>
+        <strong>{{ chamadosAbertos() }}</strong>
+      </article>
+    </section>
+
+    <section class="cartao">
+      <div class="cabecalho-cartao">
+        <div>
+          <h2>Movimentações de colaboradores</h2>
+          <p>Atualizado conforme as situações cadastradas no módulo Colaboradores</p>
+        </div>
+
+        <button class="botao principal" routerLink="/colaboradores">
+          Abrir colaboradores
+        </button>
+      </div>
+
+      <div class="linha-situacao">
+        <span>Ativos no cadastro</span>
+        <strong>{{ colaboradores.length }}</strong>
+      </div>
+
+      <div class="linha-situacao">
+        <span>Em férias</span>
+        <strong>{{ ferias() }}</strong>
+      </div>
+
+      <div class="linha-situacao">
+        <span>Em licença médica/atestado</span>
+        <strong>{{ licencaMedica() }}</strong>
+      </div>
+    </section>
+
+  </main>
+
+</div>

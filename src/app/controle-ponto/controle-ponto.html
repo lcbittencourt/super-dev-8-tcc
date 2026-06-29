@@ -1,0 +1,165 @@
+<div class="sistema">
+
+  <header class="barra-superior">
+    <div class="marca">
+      <div class="simbolo-marca">P</div>
+
+      <div>
+        <strong>Pulso<span>.</span></strong>
+      </div>
+    </div>
+
+    <span class="etiqueta-perfil">Controle de ponto</span>
+
+    <nav class="navegacao">
+      <a routerLink="/admin">Admin</a>
+      <a routerLink="/gestor">Gestor</a>
+      <a routerLink="/colaborador">Colaborador</a>
+    </nav>
+
+    <div class="identificacao">{{ empresaSelecionada.logo }}</div>
+  </header>
+
+  <main class="pagina">
+
+    <section class="cabecalho-pagina">
+      <div>
+        <h1>Controle de Ponto</h1>
+        <p>{{ empresaSelecionada.nome }} · registros informados pelos colaboradores</p>
+      </div>
+
+      <div class="acoes">
+        <button class="botao" routerLink="/admin">Voltar</button>
+        <button
+          class="botao principal"
+          type="button"
+          (click)="salvarAjustes()"
+        >
+          Salvar ajustes
+        </button>
+      </div>
+    </section>
+
+    <section class="barra-ferramentas cartao">
+      <label>
+        Data
+        <input
+          type="date"
+          [(ngModel)]="dataSelecionada"
+          (change)="alterarData()"
+        >
+      </label>
+
+      <div class="resumo">
+        <span>Funcionários</span>
+        <strong>{{ colaboradores.length }}</strong>
+      </div>
+
+      <div class="resumo">
+        <span>Registros no dia</span>
+        <strong>{{ registrosDoDia().length }}</strong>
+      </div>
+    </section>
+
+    <section class="cartao">
+      <div class="cabecalho-cartao">
+        <div>
+          <h2>Pontos do dia</h2>
+          <p>O gestor pode ajustar os horários quando houver necessidade.</p>
+        </div>
+      </div>
+
+      <div class="area-tabela">
+        <table>
+          <thead>
+            <tr>
+              <th>Nome</th>
+              <th>Entrada</th>
+              <th>Saída almoço</th>
+              <th>Retorno</th>
+              <th>Saída</th>
+              <th>Situação</th>
+              <th>Observações</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr *ngFor="let registro of registrosDoDia()">
+              <td>
+                <strong>{{ registro.nome }}</strong>
+              </td>
+              <td>
+                <input
+                  type="time"
+                  [(ngModel)]="registro.entrada"
+                  (change)="atualizarSituacao(registro)"
+                >
+              </td>
+              <td>
+                <input
+                  type="time"
+                  [(ngModel)]="registro.saidaAlmoco"
+                  (change)="atualizarSituacao(registro)"
+                >
+              </td>
+              <td>
+                <input
+                  type="time"
+                  [(ngModel)]="registro.retorno"
+                  (change)="atualizarSituacao(registro)"
+                >
+              </td>
+              <td>
+                <input
+                  type="time"
+                  [(ngModel)]="registro.saida"
+                  (change)="atualizarSituacao(registro)"
+                >
+              </td>
+              <td>
+                <span
+                  class="selo"
+                  [class.sucesso]="registro.situacao === 'Completo'"
+                  [class.informativo]="registro.situacao === 'Pendente'"
+                  [class.neutro]="registro.situacao === 'Sem registro'"
+                >
+                  {{ registro.situacao }}
+                </span>
+              </td>
+              <td>
+                <input
+                  type="text"
+                  placeholder="Ajuste, atestado, esquecimento..."
+                  [(ngModel)]="registro.observacoes"
+                >
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="vazio" *ngIf="colaboradores.length === 0">
+          Nenhum colaborador cadastrado para esta empresa.
+        </div>
+      </div>
+    </section>
+
+    <section class="grade-futuro">
+      <article class="cartao-futuro">
+        <span>Banco de horas</span>
+        <strong>Em preparação</strong>
+      </article>
+
+      <article class="cartao-futuro">
+        <span>Atrasos</span>
+        <strong>Em preparação</strong>
+      </article>
+
+      <article class="cartao-futuro">
+        <span>Horas extras</span>
+        <strong>Em preparação</strong>
+      </article>
+    </section>
+
+  </main>
+
+</div>
