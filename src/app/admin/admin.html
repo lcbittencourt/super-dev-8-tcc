@@ -38,25 +38,25 @@
             <div class="indicador">
                 <span>Total de empresas</span>
                 <strong>{{ empresas.length }}</strong>
-                <small class="positivo">+2 este mês</small>
+                <small class="positivo">{{ totalAtivas() }} ativa(s)</small>
             </div>
 
             <div class="indicador">
                 <span>Usuários ativos</span>
                 <strong>{{ totalUsuarios() }}</strong>
-                <small class="positivo">+47</small>
+                <small class="positivo">Base de colaboradores</small>
             </div>
 
             <div class="indicador">
                 <span>MRR estimado</span>
-                <strong>R$ 32.480</strong>
-                <small class="positivo">+8,4%</small>
+                <strong>{{ mrrEstimado() }}</strong>
+                <small class="positivo">0%</small>
             </div>
 
             <div class="indicador">
                 <span>Inadimplência</span>
-                <strong>1</strong>
-                <small class="negativo">Requer ação</small>
+                <strong>{{ totalInadimplentes() }}</strong>
+                <small class="negativo">{{ totalInadimplentes() }} pendente(s)</small>
             </div>
         </section>
 
@@ -182,8 +182,13 @@
                         {{ modulo.nome }}
                     </a>
 
+                    <a *ngIf="modulo.nome === 'Chamados' && modulo.liberado" class="atalho-modulo"
+                        routerLink="/chamados">
+                        {{ modulo.nome }}
+                    </a>
+
                     <ng-container
-                        *ngIf="modulo.nome !== 'Dashboard' && modulo.nome !== 'Colaboradores' && modulo.nome !== 'Controle de ponto' && modulo.nome !== 'Férias e afastamentos' && modulo.nome !== 'Treinamentos' || !modulo.liberado">
+                        *ngIf="(modulo.nome !== 'Dashboard' && modulo.nome !== 'Colaboradores' && modulo.nome !== 'Controle de ponto' && modulo.nome !== 'Férias e afastamentos' && modulo.nome !== 'Treinamentos' && modulo.nome !== 'Chamados') || !modulo.liberado">
                         <strong>{{ modulo.nome }}</strong>
                     </ng-container>
 

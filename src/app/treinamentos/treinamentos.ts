@@ -14,6 +14,14 @@ interface EmpresaSelecionada {
   logo: string;
 }
 
+interface ColaboradorTreinamento {
+  id: string;
+  nome: string;
+  departamento: string;
+  cargo?: string;
+  situacao?: string;
+}
+
 interface CursoTreinamento {
   id: string;
   nome: string;
@@ -45,6 +53,7 @@ interface PerguntaAvaliacao {
 }
 
 interface AcompanhamentoTreinamento {
+  colaboradorId?: string;
   colaborador: string;
   departamento: string;
   curso: string;
@@ -94,17 +103,12 @@ export class TreinamentosComponent implements OnInit {
   cursoSelecionado: CursoColaborador | null = null;
   feedbackAberto = false;
 
+  colaboradores: ColaboradorTreinamento[] = [];
   cursos: CursoTreinamento[] = [];
   acompanhamentos: AcompanhamentoTreinamento[] = [];
   cursosColaborador: CursoColaborador[] = [];
 
   cursoEmCadastro: CursoTreinamento = this.criarCursoVazio();
-
-  certificadoResumo = {
-    emitidos: 312,
-    pendentes: 18,
-    vencidos: 6
-  };
 
   constructor(@Inject(PLATFORM_ID) private platformId: object) {}
 
@@ -115,6 +119,7 @@ export class TreinamentosComponent implements OnInit {
     }
 
     this.carregarEmpresaSelecionada();
+    this.carregarColaboradores();
     this.carregarDados();
   }
 
@@ -162,7 +167,7 @@ export class TreinamentosComponent implements OnInit {
       pergunta: '',
       alternativas: '',
       respostaCorreta: '',
-      peso: 1
+      peso: 0
     });
   }
 
@@ -193,6 +198,10 @@ export class TreinamentosComponent implements OnInit {
     return this.acompanhamentos.filter(item => item.situacao === 'Em andamento').length;
   }
 
+  colaboradoresCadastrados(): ColaboradorTreinamento[] {
+    return this.colaboradores;
+  }
+
   mediaConclusao(): number {
     if (!this.acompanhamentos.length) {
       return 0;
@@ -216,6 +225,63 @@ export class TreinamentosComponent implements OnInit {
 
   certificadosColaborador(): number {
     return this.cursosColaborador.filter(curso => curso.certificado).length;
+  }
+
+  certificadosEmitidos(): number {
+    return this.certificadosColaborador();
+  }
+
+  certificadosPendentes(): number {
+    return this.cursosColaborador.filter(curso => !curso.certificado).length;
+  }
+
+  certificadosVencidos(): number {
+    return 0;
+  }
+
+  certificadosVencendo(): number {
+    return 0;
+  }
+
+  horasTreinadas(): number {
+    return this.cursosColaborador
+      .filter(curso => curso.progresso === 100)
+      .reduce((total, curso) => total + this.extrairHoras(curso.cargaHoraria), 0);
+  }
+
+  historicoColaborador(): CursoColaborador[] {
+    return this.cursosColaborador.filter(curso => curso.progresso === 100 || curso.certificado);
+  }
+
+  modulosConcluidos(curso: CursoColaborador): number {
+    return curso.modulos.filter(modulo => modulo.concluido).length;
+  }
+
+  totalModulos(curso: CursoColaborador): number {
+    return curso.modulos.length;
+  }
+
+  totalQuestoes(curso: CursoColaborador): number {
+    const cursoCompleto = this.cursos.find(item => item.id === curso.id);
+    return cursoCompleto?.perguntas.length || 0;
+  }
+
+  tempoRestanteAvaliacao(): number {
+    return 0;
+  }
+
+  notaMinimaAvaliacao(): number {
+    return 0;
+  }
+
+  resultadoAvaliacao(curso: CursoColaborador): string {
+    if (this.totalQuestoes(curso) === 0) {
+      return 'Sem avaliação cadastrada';
+    }
+
+    return curso.nota >= this.notaMinimaAvaliacao()
+      ? 'Parabéns, aprovado'
+      : 'Nova tentativa disponível';
   }
 
   abrirCurso(curso: CursoColaborador) {
@@ -250,14 +316,24 @@ export class TreinamentosComponent implements OnInit {
     }
   }
 
+  private carregarColaboradores() {
+    const colaboradoresSalvos = localStorage.getItem(this.chaveColaboradores());
+    const colaboradores = colaboradoresSalvos ? JSON.parse(colaboradoresSalvos) : [];
+
+    this.colaboradores = colaboradores.length
+      ? colaboradores.map((colaborador: any) => this.normalizarColaborador(colaborador))
+      : this.colaboradoresPadrao();
+  }
+
   private carregarDados() {
     const dadosSalvos = localStorage.getItem(this.chaveTreinamentos());
 
     if (dadosSalvos) {
       const dados = JSON.parse(dadosSalvos);
-      this.cursos = dados.cursos || [];
-      this.acompanhamentos = dados.acompanhamentos || [];
-      this.cursosColaborador = dados.cursosColaborador || [];
+      this.cursos = (dados.cursos || []).filter((curso: CursoTreinamento) => !this.cursoDemonstracao(curso));
+      this.acompanhamentos = this.sincronizarAcompanhamentos(dados.acompanhamentos || []);
+      this.cursosColaborador = (dados.cursosColaborador || []).filter((curso: CursoColaborador) => !this.cursoColaboradorDemonstracao(curso));
+      this.salvarDados();
       return;
     }
 
@@ -267,8 +343,28 @@ export class TreinamentosComponent implements OnInit {
 
   private carregarDadosPadrao() {
     this.cursos = this.cursosPadrao();
-    this.acompanhamentos = this.acompanhamentosPadrao();
+    this.acompanhamentos = this.sincronizarAcompanhamentos(this.acompanhamentosPadrao());
     this.cursosColaborador = this.cursosColaboradorPadrao();
+  }
+
+  private sincronizarAcompanhamentos(acompanhamentos: AcompanhamentoTreinamento[]): AcompanhamentoTreinamento[] {
+    return acompanhamentos
+      .filter(item => !this.acompanhamentoDemonstracao(item))
+      .filter(item => this.cursos.some(curso => curso.nome === item.curso))
+      .map(item => {
+        const colaborador = this.colaboradores.find(pessoa =>
+          pessoa.id === item.colaboradorId || pessoa.nome === item.colaborador
+        );
+
+        return colaborador
+          ? {
+              ...item,
+              colaboradorId: colaborador.id,
+              colaborador: colaborador.nome,
+              departamento: colaborador.departamento
+            }
+          : item;
+      });
   }
 
   private salvarDados() {
@@ -297,26 +393,13 @@ export class TreinamentosComponent implements OnInit {
       obrigatorio: true,
       situacao: 'Ativo',
       instrutor: '',
-      modulos: [
-        { titulo: 'Módulo 1', formato: 'Vídeo', concluido: false },
-        { titulo: 'Módulo 2', formato: 'PDF', concluido: false },
-        { titulo: 'Módulo 3', formato: 'Apresentação', concluido: false },
-        { titulo: 'Módulo 4', formato: 'Questionário', concluido: false },
-        { titulo: 'Módulo 5', formato: 'Avaliação Final', concluido: false }
-      ],
-      perguntas: [
-        { pergunta: '', alternativas: '', respostaCorreta: '', peso: 1 }
-      ]
+      modulos: [],
+      perguntas: []
     };
   }
 
   private cursosPadrao(): CursoTreinamento[] {
-    return [
-      this.criarCurso('integracao', 'Integração', 'RH', '4h', true, 'Editar'),
-      this.criarCurso('lgpd', 'LGPD', 'Compliance', '2h', true, 'Turmas'),
-      this.criarCurso('seguranca', 'Segurança da Informação', 'TI', '3h', true, 'Relatórios'),
-      this.criarCurso('lideranca', 'Liderança', 'Desenvolvimento', '8h', false, 'Editar')
-    ];
+    return [];
   }
 
   private criarCurso(id: string, nome: string, categoria: string, cargaHoraria: string, obrigatorio: boolean, objetivo: string): CursoTreinamento {
@@ -328,8 +411,8 @@ export class TreinamentosComponent implements OnInit {
       objetivo,
       publicoAlvo: 'Colaboradores selecionados',
       cargaHoraria,
-      prazoConclusao: '30 dias',
-      validadeCertificado: '12 meses',
+      prazoConclusao: '',
+      validadeCertificado: '',
       obrigatorio,
       situacao: 'Ativo',
       instrutor: 'Instrutor interno',
@@ -346,49 +429,55 @@ export class TreinamentosComponent implements OnInit {
           pergunta: 'Qual é o principal objetivo deste treinamento?',
           alternativas: 'Prevenir riscos;Cumprir rotina;Ignorar normas',
           respostaCorreta: 'Prevenir riscos',
-          peso: 2
+          peso: 0
         }
       ]
     };
   }
 
   private acompanhamentosPadrao(): AcompanhamentoTreinamento[] {
-    return [
-      { colaborador: 'João', departamento: 'Financeiro', curso: 'LGPD', progresso: 85, nota: 90, situacao: 'Em andamento' },
-      { colaborador: 'Maria', departamento: 'RH', curso: 'Integração', progresso: 100, nota: 98, situacao: 'Concluído' },
-      { colaborador: 'Carlos', departamento: 'TI', curso: 'Segurança da Informação', progresso: 40, nota: 0, situacao: 'Em andamento' }
-    ];
+    return [];
   }
 
   private cursosColaboradorPadrao(): CursoColaborador[] {
-    return [
-      {
-        id: 'lgpd',
-        nome: 'LGPD',
-        categoria: 'Compliance',
-        cargaHoraria: '2h',
-        instrutor: 'Instrutor interno',
-        validade: '12 meses',
-        progresso: 75,
-        nota: 90,
-        certificado: false,
-        obrigatorio: true,
-        modulos: this.criarCurso('lgpd', 'LGPD', 'Compliance', '2h', true, 'Turmas').modulos
-      },
-      {
-        id: 'integracao',
-        nome: 'Integração',
-        categoria: 'RH',
-        cargaHoraria: '4h',
-        instrutor: 'RH Corporativo',
-        validade: 'Indeterminada',
-        progresso: 100,
-        nota: 98,
-        certificado: true,
-        obrigatorio: true,
-        modulos: this.criarCurso('integracao', 'Integração', 'RH', '4h', true, 'Editar').modulos.map(modulo => ({ ...modulo, concluido: true }))
-      }
-    ];
+    return [];
+  }
+
+  private cursoDemonstracao(curso: CursoTreinamento): boolean {
+    return ['integracao', 'lgpd', 'seguranca', 'lideranca'].includes(curso.id);
+  }
+
+  private cursoColaboradorDemonstracao(curso: CursoColaborador): boolean {
+    return ['integracao', 'lgpd'].includes(curso.id);
+  }
+
+  private acompanhamentoDemonstracao(item: AcompanhamentoTreinamento): boolean {
+    return !item.colaboradorId
+      && ['João', 'Maria', 'Carlos'].includes(item.colaborador)
+      && ['LGPD', 'Integração', 'Segurança da Informação'].includes(item.curso);
+  }
+
+  private extrairHoras(cargaHoraria: string): number {
+    const horas = Number(String(cargaHoraria || '').replace(/[^0-9]/g, ''));
+    return Number.isFinite(horas) ? horas : 0;
+  }
+
+  private normalizarColaborador(colaborador: any): ColaboradorTreinamento {
+    return {
+      id: colaborador.id,
+      nome: colaborador.nome,
+      departamento: colaborador.departamento || '-',
+      cargo: colaborador.cargo || '-',
+      situacao: colaborador.situacao || 'Ativo'
+    };
+  }
+
+  private colaboradoresPadrao(): ColaboradorTreinamento[] {
+    return [];
+  }
+
+  private chaveColaboradores(): string {
+    return `colaboradores:${this.empresaSelecionada.id}`;
   }
 
   private chaveTreinamentos(): string {
