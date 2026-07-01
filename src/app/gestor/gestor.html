@@ -30,7 +30,18 @@
 
       <div class="acoes">
         <button class="botao">Exportar</button>
-        <button class="botao principal">Novo registro</button>
+
+        <div class="menu-registros">
+          <button class="botao principal" (click)="alternarMenu()">Gerenciar Registros</button>
+
+          <div class="fundo-menu" *ngIf="menuAberto" (click)="fecharMenu()"></div>
+
+          <div class="lista-menu" *ngIf="menuAberto">
+            <a>Aprovações</a>
+            <a>Chamados</a>
+            <a>Treinamentos</a>
+          </div>
+        </div>
       </div>
     </section>
 
