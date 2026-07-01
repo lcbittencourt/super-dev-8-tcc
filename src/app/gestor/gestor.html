@@ -1,0 +1,146 @@
+<div class="sistema">
+
+  <header class="barra-superior">
+    <div class="marca">
+      <div class="simbolo-marca">P</div>
+
+      <div>
+        <strong>Pulso<span>.</span></strong>
+      </div>
+    </div>
+
+    <span class="etiqueta-perfil">Gestor</span>
+
+    <nav class="navegacao">
+      <a>Admin</a>
+      <a class="ativo">Gestor</a>
+      <a>Colaborador</a>
+    </nav>
+
+    <div class="identificacao">JM</div>
+  </header>
+
+  <main class="pagina">
+
+    <section class="cabecalho-pagina">
+      <div>
+        <h1>Bom dia, {{ gestor }}.</h1>
+        <p>Aqui está o resumo da {{ empresa }} hoje</p>
+      </div>
+
+      <div class="acoes">
+        <button class="botao">Exportar</button>
+        <button class="botao principal">Novo registro</button>
+      </div>
+    </section>
+
+    <section class="indicadores">
+      <article class="indicador" *ngFor="let indicador of indicadores">
+        <span>{{ indicador.titulo }}</span>
+        <strong>{{ indicador.valor }}</strong>
+        <small [class.positivo]="indicador.tendencia === 'positiva'"
+          [class.negativo]="indicador.tendencia === 'negativa'">
+          {{ indicador.nota }}
+        </small>
+      </article>
+    </section>
+
+    <section class="graficos">
+      <article class="cartao">
+        <div class="cabecalho-cartao">
+          <div>
+            <h2>Presença ao longo do mês</h2>
+            <p>Maio de 2025</p>
+          </div>
+
+          <span class="selo sucesso">+2,1%</span>
+        </div>
+
+        <div class="grafico-barras">
+          <div class="linha-barra" *ngFor="let barra of presencaMensal">
+            <span class="rotulo-barra">{{ barra.rotulo }}</span>
+            <div class="trilha-barra">
+              <div class="nivel-barra" [style.width.%]="barra.percentual"></div>
+            </div>
+            <span class="valor-barra">{{ barra.valor }}</span>
+          </div>
+        </div>
+      </article>
+
+      <article class="cartao">
+        <div class="cabecalho-cartao">
+          <div>
+            <h2>Chamados por categoria</h2>
+            <p>Últimos 30 dias</p>
+          </div>
+        </div>
+
+        <div class="grafico-barras">
+          <div class="linha-barra" *ngFor="let barra of chamadosPorCategoria">
+            <span class="rotulo-barra">{{ barra.rotulo }}</span>
+            <div class="trilha-barra">
+              <div class="nivel-barra" [style.width.%]="barra.percentual"></div>
+            </div>
+            <span class="valor-barra">{{ barra.valor }}</span>
+          </div>
+        </div>
+      </article>
+    </section>
+
+    <section class="grade-painel">
+      <article class="metrica" *ngFor="let resumo of resumos">
+        <span>{{ resumo.titulo }}</span>
+        <strong>{{ resumo.valor }}</strong>
+        <small>{{ resumo.nota }}</small>
+      </article>
+    </section>
+
+    <section class="cartao">
+      <div class="cabecalho-cartao">
+        <div>
+          <h2>Aprovações pendentes</h2>
+          <p>Solicitações aguardando sua análise</p>
+        </div>
+      </div>
+
+      <div class="area-tabela">
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Categoria</th>
+              <th>Data abertura</th>
+              <th>Solicitante</th>
+              <th>Detalhe</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr *ngFor="let aprovacao of aprovacoes">
+              <td>{{ aprovacao.id }}</td>
+              <td>{{ aprovacao.categoria }}</td>
+              <td>{{ aprovacao.data }}</td>
+              <td>
+                <div class="pessoa">
+                  <div class="foto">{{ aprovacao.iniciais }}</div>
+                  <strong>{{ aprovacao.solicitante }}</strong>
+                </div>
+              </td>
+              <td>{{ aprovacao.detalhe }}</td>
+              <td>
+                <span class="selo" [class.alerta]="aprovacao.situacao === 'pendente'"
+                  [class.erro]="aprovacao.situacao === 'urgente'"
+                  [class.informativo]="aprovacao.situacao === 'analise'">
+                  {{ aprovacao.status }}
+                </span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+  </main>
+
+</div>
