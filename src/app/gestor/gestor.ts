@@ -43,6 +43,20 @@ export class GestorComponent {
   gestor = 'João';
   empresa = 'Têxtil Vale Norte';
 
+  menuAberto = false;
+
+  alternarMenu() {
+    if (this.menuAberto === true) {
+      this.menuAberto = false;
+    } else {
+      this.menuAberto = true;
+    }
+  }
+
+  fecharMenu() {
+    this.menuAberto = false;
+  }
+
   indicadores: Indicador[] = [
     { titulo: 'Colaboradores', valor: '148', nota: '+3 este mês', tendencia: 'positiva' },
     { titulo: 'Presença hoje', valor: '94%', nota: 'Acima da meta', tendencia: 'positiva' },
