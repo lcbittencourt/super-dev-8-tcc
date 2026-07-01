@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
+import { RouterLink } from '@angular/router';
 
 interface Indicador {
   titulo: string;
@@ -34,7 +35,7 @@ interface Aprovacao {
 @Component({
   selector: 'app-gestor',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RouterLink],
   templateUrl: './gestor.html',
   styleUrl: './gestor.css'
 })

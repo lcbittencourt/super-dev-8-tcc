@@ -1,0 +1,209 @@
+<div class="sistema">
+
+  <header class="barra-superior">
+    <div class="marca">
+      <div class="simbolo-marca">P</div>
+
+      <div>
+        <strong>Pulso<span>.</span></strong>
+      </div>
+    </div>
+
+    <span class="etiqueta-perfil">Gestor</span>
+
+    <nav class="navegacao">
+      <a>Admin</a>
+      <a class="ativo">Gestor</a>
+      <a>Colaborador</a>
+    </nav>
+
+    <div class="identificacao">GE</div>
+  </header>
+
+  <main class="pagina">
+
+    <section class="cabecalho-pagina">
+      <div>
+        <h1>Aprovações</h1>
+        <p>Analise as solicitações da {{ empresa }}</p>
+      </div>
+
+      <div class="acoes">
+        <a class="botao" routerLink="/gestor">Voltar</a>
+        <button class="botao">Exportar</button>
+      </div>
+    </section>
+
+    <section class="filtros">
+      <button class="filtro ativo">Todas</button>
+      <button class="filtro">Pendentes</button>
+      <button class="filtro">Aceitas</button>
+      <button class="filtro">Recusadas</button>
+    </section>
+
+    <section class="cartao">
+      <div class="cabecalho-cartao">
+        <div>
+          <h2>Solicitações</h2>
+          <p>Aprovações pendentes, aceitas e recusadas</p>
+        </div>
+      </div>
+
+      <div class="area-tabela">
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Categoria</th>
+              <th>Data abertura</th>
+              <th>Solicitante</th>
+              <th>Detalhe</th>
+              <th>Status</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr>
+              <td>#0412</td>
+              <td>Férias</td>
+              <td>20/05/2025</td>
+              <td>
+                <div class="pessoa">
+                  <div class="foto">AL</div>
+                  <strong>Ana Lima</strong>
+                </div>
+              </td>
+              <td>15 dias · jun/25</td>
+              <td><span class="selo alerta">Pendente</span></td>
+              <td>
+                <div class="acoes-linha">
+                  <button class="botao pequeno aceitar">Aceitar</button>
+                  <button class="botao pequeno recusar">Recusar</button>
+                </div>
+              </td>
+            </tr>
+
+            <tr>
+              <td>#0411</td>
+              <td>Hora extra</td>
+              <td>20/05/2025</td>
+              <td>
+                <div class="pessoa">
+                  <div class="foto">CS</div>
+                  <strong>Carlos Souza</strong>
+                </div>
+              </td>
+              <td>4h sábado</td>
+              <td><span class="selo alerta">Pendente</span></td>
+              <td>
+                <div class="acoes-linha">
+                  <button class="botao pequeno aceitar">Aceitar</button>
+                  <button class="botao pequeno recusar">Recusar</button>
+                </div>
+              </td>
+            </tr>
+
+            <tr>
+              <td>#0410</td>
+              <td>Chamado TI</td>
+              <td>19/05/2025</td>
+              <td>
+                <div class="pessoa">
+                  <div class="foto">MS</div>
+                  <strong>Mariana Silva</strong>
+                </div>
+              </td>
+              <td>Acesso bloqueado</td>
+              <td><span class="selo alerta">Pendente</span></td>
+              <td>
+                <div class="acoes-linha">
+                  <button class="botao pequeno aceitar">Aceitar</button>
+                  <button class="botao pequeno recusar">Recusar</button>
+                </div>
+              </td>
+            </tr>
+
+            <tr>
+              <td>#0409</td>
+              <td>Treinamento</td>
+              <td>18/05/2025</td>
+              <td>
+                <div class="pessoa">
+                  <div class="foto">PR</div>
+                  <strong>Pedro Rocha</strong>
+                </div>
+              </td>
+              <td>NR-35 renovação</td>
+              <td><span class="selo sucesso">Aceita</span></td>
+              <td>
+                <div class="acoes-linha">
+                  <button class="botao pequeno">Detalhes</button>
+                </div>
+              </td>
+            </tr>
+
+            <tr>
+              <td>#0408</td>
+              <td>Afastamento</td>
+              <td>17/05/2025</td>
+              <td>
+                <div class="pessoa">
+                  <div class="foto">FC</div>
+                  <strong>Fernanda Costa</strong>
+                </div>
+              </td>
+              <td>Atestado 5 dias</td>
+              <td><span class="selo sucesso">Aceita</span></td>
+              <td>
+                <div class="acoes-linha">
+                  <button class="botao pequeno">Detalhes</button>
+                </div>
+              </td>
+            </tr>
+
+            <tr>
+              <td>#0407</td>
+              <td>Hora extra</td>
+              <td>16/05/2025</td>
+              <td>
+                <div class="pessoa">
+                  <div class="foto">RD</div>
+                  <strong>Rafael Dias</strong>
+                </div>
+              </td>
+              <td>2h domingo</td>
+              <td><span class="selo erro">Recusada</span></td>
+              <td>
+                <div class="acoes-linha">
+                  <button class="botao pequeno">Detalhes</button>
+                </div>
+              </td>
+            </tr>
+
+            <tr>
+              <td>#0406</td>
+              <td>Férias</td>
+              <td>15/05/2025</td>
+              <td>
+                <div class="pessoa">
+                  <div class="foto">JA</div>
+                  <strong>Juliana Alves</strong>
+                </div>
+              </td>
+              <td>10 dias · jul/25</td>
+              <td><span class="selo erro">Recusada</span></td>
+              <td>
+                <div class="acoes-linha">
+                  <button class="botao pequeno">Detalhes</button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+  </main>
+
+</div>
