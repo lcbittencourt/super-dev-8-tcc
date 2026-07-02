@@ -8,6 +8,8 @@ import { FeriasComponent } from './ferias/ferias';
 import { TreinamentosComponent } from './treinamentos/treinamentos';
 import { NovaEmpresaComponent } from './admin/nova-empresa/nova-empresa';
 import { AprovacoesComponent } from './aprovacoes/aprovacoes';
+import { ChamadosComponent } from './chamados/chamados';
+import { TreinamentosEquipeComponent } from './treinamentos-equipe/treinamentos-equipe';
 
 export const routes: Routes = [
     { path: '', redirectTo: 'admin', pathMatch: 'full' },
@@ -15,6 +17,8 @@ export const routes: Routes = [
     { path: 'dashboard', component: DashboardComponent },
     { path: 'gestor', component: GestorComponent },
     { path: 'aprovacoes', component: AprovacoesComponent },
+    { path: 'chamados', component: ChamadosComponent },
+    { path: 'treinamentos-equipe', component: TreinamentosEquipeComponent },
     { path: 'colaboradores', component: ColaboradoresComponent },
     { path: 'controle-ponto', component: ControlePontoComponent },
     { path: 'ferias', component: FeriasComponent },
