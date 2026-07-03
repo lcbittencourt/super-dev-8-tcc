@@ -1,23 +1,16 @@
-import { CommonModule, isPlatformBrowser } from '@angular/common';
+import { isPlatformBrowser } from '@angular/common';
 import { Component, Inject, OnInit, PLATFORM_ID } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, RouterOutlet],
+  imports: [RouterOutlet],
   templateUrl: './app.html',
-  styleUrl: './app.css'
+  styleUrl: './app.css',
 })
 export class App implements OnInit {
-
-  private empresasRemovidas = [
-    'ml002',
-    'cf003',
-    'tc004',
-    'al005',
-    'pl006'
-  ];
+  private empresasRemovidas = ['ml002', 'cf003', 'tc004', 'al005', 'pl006'];
 
   private nomesEmpresasRemovidas = [
     'metalurgica muller',
@@ -25,7 +18,7 @@ export class App implements OnInit {
     'tecnocampo solucoes',
     'alimentos beira-rio',
     'plastico riedel',
-    'plasticos riedel'
+    'plasticos riedel',
   ];
 
   constructor(@Inject(PLATFORM_ID) private platformId: object) {}
@@ -40,12 +33,13 @@ export class App implements OnInit {
   }
 
   private limparDadosEmpresasRemovidas() {
-    const empresasSalvas = this.lerJson('empresas', [])
-      .filter((empresa: any) => !this.empresaFoiRemovida(empresa));
+    const empresasSalvas = this.lerJson('empresas', []).filter(
+      (empresa: any) => !this.empresaFoiRemovida(empresa),
+    );
 
     localStorage.setItem('empresas', JSON.stringify(empresasSalvas));
 
-    this.empresasRemovidas.forEach(id => {
+    this.empresasRemovidas.forEach((id) => {
       [
         'modulos',
         'colaboradores',
@@ -53,11 +47,11 @@ export class App implements OnInit {
         'ferias',
         'treinamentos',
         'chamados',
-        'usuariosSistema'
-      ].forEach(prefixo => localStorage.removeItem(`${prefixo}:${id}`));
+        'usuariosSistema',
+      ].forEach((prefixo) => localStorage.removeItem(`${prefixo}:${id}`));
     });
 
-    ['empresaSelecionadaDashboard', 'empresaEmEdicao'].forEach(chave => {
+    ['empresaSelecionadaDashboard', 'empresaEmEdicao'].forEach((chave) => {
       const empresa = this.lerJson(chave, null);
 
       if (empresa && this.empresaFoiRemovida(empresa)) {
@@ -66,7 +60,6 @@ export class App implements OnInit {
     });
   }
 
-
   private prepararDemonstracaoTextilValeNorte() {
     const chaveChamados = 'chamados:tx001';
     const chamadosSalvos = this.lerJson(chaveChamados, null);
@@ -74,7 +67,7 @@ export class App implements OnInit {
     if (!Array.isArray(chamadosSalvos) || chamadosSalvos.length === 0) {
       localStorage.setItem(
         chaveChamados,
-        JSON.stringify(this.chamadosDemonstracaoTextilValeNorte())
+        JSON.stringify(this.chamadosDemonstracaoTextilValeNorte()),
       );
     }
 
@@ -84,7 +77,7 @@ export class App implements OnInit {
     if (!Array.isArray(usuariosSalvos) || usuariosSalvos.length === 0) {
       localStorage.setItem(
         chaveUsuarios,
-        JSON.stringify(this.usuariosDemonstracaoTextilValeNorte())
+        JSON.stringify(this.usuariosDemonstracaoTextilValeNorte()),
       );
     }
   }
@@ -98,15 +91,21 @@ export class App implements OnInit {
       return {
         id: colaborador?.id || 'demo-col-' + String(indice + 1).padStart(3, '0'),
         nome: colaborador?.nome || nome,
-        setor: colaborador?.departamento || setor
+        setor: colaborador?.departamento || setor,
       };
     };
-    const mensagem = (autor: string, perfil: string, texto: string, data: string, interna = false) => ({
+    const mensagem = (
+      autor: string,
+      perfil: string,
+      texto: string,
+      data: string,
+      interna = false,
+    ) => ({
       autor,
       perfil,
       texto,
       data,
-      interna
+      interna,
     });
 
     const ana = solicitante(0, 'Ana Paula Martins', 'RH');
@@ -133,7 +132,8 @@ export class App implements OnInit {
         id: 'demo-chamado-001',
         numero: 'CH-' + ano + '-0001',
         titulo: 'Notebook não liga',
-        descricao: 'Equipamento do RH não liga após queda de energia. Colaboradora precisa acessar documentos de admissão.',
+        descricao:
+          'Equipamento do RH não liga após queda de energia. Colaboradora precisa acessar documentos de admissão.',
         categoria: 'Computador com problema',
         prioridade: 'Urgente',
         solicitanteId: ana.id,
@@ -146,19 +146,30 @@ export class App implements OnInit {
         sla: '8h',
         situacao: 'Em andamento',
         mensagens: [
-          mensagem(ana.nome, 'Colaborador', 'O notebook não liga e preciso acessar os arquivos do setor.', chamado1Abertura),
-          mensagem('Marcos Silva', 'Gestor', 'Chamado assumido. Vou verificar fonte, carregador e necessidade de troca do equipamento.', chamado1Atualizacao)
+          mensagem(
+            ana.nome,
+            'Colaborador',
+            'O notebook não liga e preciso acessar os arquivos do setor.',
+            chamado1Abertura,
+          ),
+          mensagem(
+            'Marcos Silva',
+            'Gestor',
+            'Chamado assumido. Vou verificar fonte, carregador e necessidade de troca do equipamento.',
+            chamado1Atualizacao,
+          ),
         ],
         observacoesInternas: [
-          'Triagem inicial: possível falha de fonte. Verificar equipamento reserva.'
+          'Triagem inicial: possível falha de fonte. Verificar equipamento reserva.',
         ],
-        arquivos: ['foto-notebook-rh.jpg']
+        arquivos: ['foto-notebook-rh.jpg'],
       },
       {
         id: 'demo-chamado-002',
         numero: 'CH-' + ano + '-0002',
         titulo: 'Solicitação de acesso ao sistema de folha',
-        descricao: 'Necessário liberar acesso de consulta ao sistema de folha para conferência mensal.',
+        descricao:
+          'Necessário liberar acesso de consulta ao sistema de folha para conferência mensal.',
         categoria: 'Solicitação de acesso',
         prioridade: 'Alta',
         solicitanteId: bruno.id,
@@ -171,19 +182,28 @@ export class App implements OnInit {
         sla: '24h',
         situacao: 'Aguardando colaborador',
         mensagens: [
-          mensagem(bruno.nome, 'Colaborador', 'Solicito acesso de consulta ao sistema de folha.', chamado2Abertura),
-          mensagem('Juliana Prado', 'Gestor', 'Por favor, envie o perfil de acesso necessário e aprovação do gestor do setor.', chamado2Atualizacao)
+          mensagem(
+            bruno.nome,
+            'Colaborador',
+            'Solicito acesso de consulta ao sistema de folha.',
+            chamado2Abertura,
+          ),
+          mensagem(
+            'Juliana Prado',
+            'Gestor',
+            'Por favor, envie o perfil de acesso necessário e aprovação do gestor do setor.',
+            chamado2Atualizacao,
+          ),
         ],
-        observacoesInternas: [
-          'Aguardar confirmação do nível de permissão antes de liberar.'
-        ],
-        arquivos: []
+        observacoesInternas: ['Aguardar confirmação do nível de permissão antes de liberar.'],
+        arquivos: [],
       },
       {
         id: 'demo-chamado-003',
         numero: 'CH-' + ano + '-0003',
         titulo: 'Dúvida sobre banco de horas',
-        descricao: 'Colaboradora solicitou conferência de saldo de banco de horas referente ao último fechamento.',
+        descricao:
+          'Colaboradora solicitou conferência de saldo de banco de horas referente ao último fechamento.',
         categoria: 'Banco de horas',
         prioridade: 'Média',
         solicitanteId: carla.id,
@@ -196,8 +216,18 @@ export class App implements OnInit {
         sla: '48h',
         situacao: 'Resolvido',
         mensagens: [
-          mensagem(carla.nome, 'Colaborador', 'Gostaria de confirmar meu saldo de banco de horas.', chamado3Abertura),
-          mensagem('Patrícia Nunes', 'Gestor', 'Saldo conferido e espelho enviado para validação.', chamado3Atualizacao)
+          mensagem(
+            carla.nome,
+            'Colaborador',
+            'Gostaria de confirmar meu saldo de banco de horas.',
+            chamado3Abertura,
+          ),
+          mensagem(
+            'Patrícia Nunes',
+            'Gestor',
+            'Saldo conferido e espelho enviado para validação.',
+            chamado3Atualizacao,
+          ),
         ],
         observacoesInternas: [],
         arquivos: ['espelho-banco-horas.pdf'],
@@ -205,14 +235,15 @@ export class App implements OnInit {
           nota: 5,
           resolvido: true,
           comentario: 'Atendimento rápido e esclarecedor.',
-          data: chamado3Atualizacao
-        }
+          data: chamado3Atualizacao,
+        },
       },
       {
         id: 'demo-chamado-004',
         numero: 'CH-' + ano + '-0004',
         titulo: 'Ar-condicionado da sala de treinamento',
-        descricao: 'A sala de treinamento está com ar-condicionado sem refrigeração desde o início da manhã.',
+        descricao:
+          'A sala de treinamento está com ar-condicionado sem refrigeração desde o início da manhã.',
         categoria: 'Ar-condicionado',
         prioridade: 'Baixa',
         solicitanteId: diego.id,
@@ -225,10 +256,15 @@ export class App implements OnInit {
         sla: '72h',
         situacao: 'Aberto',
         mensagens: [
-          mensagem(diego.nome, 'Colaborador', 'Solicito verificação do ar-condicionado da sala de treinamento.', chamado4Abertura)
+          mensagem(
+            diego.nome,
+            'Colaborador',
+            'Solicito verificação do ar-condicionado da sala de treinamento.',
+            chamado4Abertura,
+          ),
         ],
         observacoesInternas: [],
-        arquivos: []
+        arquivos: [],
       },
       {
         id: 'demo-chamado-005',
@@ -247,13 +283,21 @@ export class App implements OnInit {
         sla: '4h',
         situacao: 'Em análise',
         mensagens: [
-          mensagem(fernanda.nome, 'Colaborador', 'O sistema de pedidos está indisponível para toda a equipe comercial.', chamado5Abertura),
-          mensagem('Marcos Silva', 'Gestor', 'Incidente em análise com prioridade crítica.', chamado5Atualizacao)
+          mensagem(
+            fernanda.nome,
+            'Colaborador',
+            'O sistema de pedidos está indisponível para toda a equipe comercial.',
+            chamado5Abertura,
+          ),
+          mensagem(
+            'Marcos Silva',
+            'Gestor',
+            'Incidente em análise com prioridade crítica.',
+            chamado5Atualizacao,
+          ),
         ],
-        observacoesInternas: [
-          'Verificar integração com servidor de autenticação.'
-        ],
-        arquivos: ['erro-sistema-pedidos.png']
+        observacoesInternas: ['Verificar integração com servidor de autenticação.'],
+        arquivos: ['erro-sistema-pedidos.png'],
       },
       {
         id: 'demo-chamado-006',
@@ -272,8 +316,18 @@ export class App implements OnInit {
         sla: '48h',
         situacao: 'Resolvido',
         mensagens: [
-          mensagem(rafael.nome, 'Colaborador', 'Encaminho comprovantes para reembolso da visita técnica.', chamado6Abertura),
-          mensagem('Eduardo Almeida', 'Gestor', 'Reembolso validado e enviado para pagamento.', chamado6Atualizacao)
+          mensagem(
+            rafael.nome,
+            'Colaborador',
+            'Encaminho comprovantes para reembolso da visita técnica.',
+            chamado6Abertura,
+          ),
+          mensagem(
+            'Eduardo Almeida',
+            'Gestor',
+            'Reembolso validado e enviado para pagamento.',
+            chamado6Atualizacao,
+          ),
         ],
         observacoesInternas: [],
         arquivos: ['comprovantes-visita-tecnica.pdf'],
@@ -281,50 +335,38 @@ export class App implements OnInit {
           nota: 4,
           resolvido: true,
           comentario: 'Processo resolvido corretamente.',
-          data: chamado6Atualizacao
-        }
-      }
+          data: chamado6Atualizacao,
+        },
+      },
     ];
   }
 
   private usuariosDemonstracaoTextilValeNorte() {
     return [
       {
-        id: 'demo-usuario-001',
+        id: 'TVN001',
         nome: 'Marcos Silva',
         email: 'marcos.silva@textilvalenorte.com.br',
         login: 'marcos.silva',
-        senhaTemporaria: 'TEMP-482915',
+        senhaTemporaria: 'MS12345',
         perfil: 'Gestor',
         setor: 'TI',
         cargo: 'Coordenador de suporte',
         situacao: 'Ativo',
-        permissoes: 'Atender chamados de TI, alterar prioridade e encerrar chamados.'
+        permissoes: 'Atender chamados de TI, alterar prioridade e encerrar chamados.',
       },
       {
-        id: 'demo-usuario-002',
+        id: 'TVN002',
         nome: 'Patrícia Nunes',
         email: 'patricia.nunes@textilvalenorte.com.br',
         login: 'patricia.nunes',
-        senhaTemporaria: 'TEMP-739204',
+        senhaTemporaria: 'PN12345',
         perfil: 'Gestor',
         setor: 'RH',
         cargo: 'Analista de RH',
         situacao: 'Ativo',
-        permissoes: 'Atender chamados de RH e responder solicitações de colaboradores.'
+        permissoes: 'Atender chamados de RH e responder solicitações de colaboradores.',
       },
-      {
-        id: 'demo-usuario-003',
-        nome: 'Eduardo Almeida',
-        email: 'eduardo.almeida@textilvalenorte.com.br',
-        login: 'eduardo.almeida',
-        senhaTemporaria: 'TEMP-158640',
-        perfil: 'Administrador',
-        setor: 'Financeiro',
-        cargo: 'Controller',
-        situacao: 'Ativo',
-        permissoes: 'Administrar usuários, setores e chamados financeiros.'
-      }
     ];
   }
 
@@ -338,10 +380,11 @@ export class App implements OnInit {
 
   private empresaFoiRemovida(empresa: any): boolean {
     const id = empresa?.id;
-    const nome = this.normalizarTexto(empresa?.nome || empresa?.nomeFantasia || empresa?.razaoSocial || '');
+    const nome = this.normalizarTexto(
+      empresa?.nome || empresa?.nomeFantasia || empresa?.razaoSocial || '',
+    );
 
-    return this.empresasRemovidas.includes(id)
-      || this.nomesEmpresasRemovidas.includes(nome);
+    return this.empresasRemovidas.includes(id) || this.nomesEmpresasRemovidas.includes(nome);
   }
 
   private normalizarTexto(texto: string): string {
@@ -365,5 +408,4 @@ export class App implements OnInit {
       return retornoPadrao;
     }
   }
-
 }

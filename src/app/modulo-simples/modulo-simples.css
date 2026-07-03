@@ -1,0 +1,292 @@
+* {
+  box-sizing: border-box;
+}
+
+:host {
+  background: #f5efe6;
+  color: #161e2f;
+  display: block;
+  font-family: Arial, Helvetica, sans-serif;
+  min-height: 100vh;
+}
+
+.sistema {
+  min-height: 100vh;
+}
+
+.barra-superior {
+  align-items: center;
+  background: #fbf6ee;
+  border-bottom: 1px solid #d9cdb8;
+  display: flex;
+  gap: 14px;
+  height: 58px;
+  padding: 0 18px;
+}
+
+.marca {
+  align-items: center;
+  display: flex;
+  gap: 8px;
+}
+
+.simbolo-marca {
+  align-items: center;
+  background: #161e2f;
+  border-radius: 8px;
+  color: #ffa586;
+  display: flex;
+  font-weight: 700;
+  height: 30px;
+  justify-content: center;
+  width: 30px;
+}
+
+.marca span {
+  color: #b51a2b;
+}
+
+.etiqueta-perfil {
+  background: #f7e4dd;
+  border-radius: 999px;
+  color: #541a2e;
+  font-size: 12px;
+  padding: 4px 12px;
+}
+
+.navegacao {
+  display: flex;
+  gap: 6px;
+  margin-left: auto;
+}
+
+.navegacao a {
+  border-radius: 8px;
+  color: #384358;
+  font-size: 13px;
+  padding: 7px 12px;
+  text-decoration: none;
+}
+
+.identificacao {
+  align-items: center;
+  background: #fbe5d8;
+  border-radius: 50%;
+  color: #7a3a1e;
+  display: flex;
+  font-weight: 700;
+  height: 32px;
+  justify-content: center;
+  width: 32px;
+}
+
+.pagina {
+  padding: 22px;
+}
+
+.cabecalho-pagina,
+.cabecalho-cartao {
+  align-items: flex-start;
+  display: flex;
+  gap: 12px;
+  justify-content: space-between;
+}
+
+.cabecalho-pagina {
+  margin-bottom: 18px;
+}
+
+h1,
+h2,
+p {
+  margin-top: 0;
+}
+
+h1 {
+  font-size: 24px;
+  margin-bottom: 0;
+}
+
+h2 {
+  font-size: 16px;
+  margin-bottom: 0;
+}
+
+.cabecalho-pagina p,
+.cabecalho-cartao p {
+  color: #6b7280;
+  font-size: 13px;
+  margin: 4px 0 0;
+}
+
+.indicadores {
+  display: grid;
+  gap: 14px;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  margin-bottom: 18px;
+}
+
+.indicador,
+.cartao {
+  background: #fff;
+  border: 1px solid #d9cdb8;
+  border-radius: 12px;
+}
+
+.indicador {
+  padding: 16px;
+}
+
+.indicador span {
+  color: #6b7280;
+  display: block;
+  font-size: 13px;
+  margin-bottom: 8px;
+}
+
+.indicador strong {
+  display: block;
+  font-size: 24px;
+}
+
+.indicador small {
+  color: #6b7280;
+  display: inline-block;
+  font-size: 12px;
+  margin-top: 8px;
+}
+
+.cartao {
+  padding: 18px;
+}
+
+.cabecalho-cartao {
+  margin-bottom: 16px;
+}
+
+.estado-vazio {
+  background: #fbf6ee;
+  border: 1px dashed #d9cdb8;
+  border-radius: 8px;
+  color: #6b7280;
+  font-size: 13px;
+  padding: 18px;
+}
+
+/* Ajustes de espacamento entre textos, campos e botoes. */
+.cabecalho-pagina,
+.cabecalho-cartao {
+  gap: 16px;
+}
+
+.cabecalho-cartao {
+  margin-bottom: 18px;
+}
+
+.acoes,
+.acoes-cartao,
+.acoes-linha,
+.acoes-rodape {
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.filtros,
+.formulario,
+.campos,
+.grade-formulario,
+.grade-participantes,
+.grade-certificados,
+.lista-compacta,
+.lista-cartoes {
+  gap: 14px;
+}
+
+.formulario,
+.filtros {
+  row-gap: 14px;
+}
+
+label,
+.formulario label,
+.avaliacao label,
+.grade-participantes label {
+  line-height: 1.35;
+}
+
+.formulario label,
+.avaliacao label,
+.grade-participantes label {
+  gap: 8px;
+}
+
+input,
+select,
+textarea {
+  line-height: 1.35;
+  min-height: 42px;
+  padding: 10px 12px;
+}
+
+textarea {
+  min-height: 96px;
+  resize: vertical;
+}
+
+.botao:not(.pequeno),
+.botao-envio {
+  align-items: center;
+  display: inline-flex;
+  gap: 8px;
+  justify-content: center;
+  min-height: 40px;
+}
+
+.acao-texto {
+  line-height: 1.35;
+  padding-bottom: 4px;
+  padding-top: 4px;
+}
+
+.cartao,
+.indicador,
+.metrica {
+  min-width: 0;
+}
+
+th,
+td {
+  line-height: 1.35;
+}
+
+@media (max-width: 980px) {
+  .barra-superior,
+  .cabecalho-pagina,
+  .cabecalho-cartao {
+    align-items: flex-start;
+    flex-wrap: wrap;
+    height: auto;
+    min-height: 58px;
+  }
+
+  .navegacao {
+    margin-left: 0;
+    overflow-x: auto;
+    width: 100%;
+  }
+
+  .indicadores {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .pagina {
+    padding: 14px;
+  }
+
+  .indicadores {
+    grid-template-columns: 1fr;
+  }
+}

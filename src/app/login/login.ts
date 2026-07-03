@@ -87,6 +87,7 @@ export class LoginComponent implements OnInit {
       return;
     }
 
+<<<<<<< Updated upstream
     localStorage.setItem('acessoGestorPulso', JSON.stringify({
       empresaId: this.empresaSelecionada.id,
       empresaNome: this.empresaSelecionada.nome,
@@ -98,6 +99,22 @@ export class LoginComponent implements OnInit {
     }));
 
     this.router.navigate([this.perfil === 'gestor' ? '/gestor' : '/colaborador']);
+=======
+    localStorage.setItem(
+      'acessoGestorPulso',
+      JSON.stringify({
+        empresaId: this.empresaSelecionada.id,
+        empresaNome: this.empresaSelecionada.nome,
+        usuarioId: usuario.id,
+        nome: usuario.nome,
+        login: usuario.login,
+        perfil: usuario.perfil,
+        dataAcesso: new Date().toISOString(),
+      }),
+    );
+
+    this.router.navigate([this.perfil === 'gestor' ? '/gestor' : '/chamados']);
+>>>>>>> Stashed changes
   }
 
   tituloPerfil(): string {
@@ -113,6 +130,7 @@ export class LoginComponent implements OnInit {
     const loginInformado = this.login.trim().toLowerCase();
     const senhaInformada = this.senha.trim();
 
+<<<<<<< Updated upstream
     return usuarios.find((usuario: UsuarioSistema) => {
       const loginConfere = usuario.login.toLowerCase() === loginInformado;
       const senhaConfere = usuario.senhaTemporaria === senhaInformada;
@@ -120,6 +138,17 @@ export class LoginComponent implements OnInit {
 
       return loginConfere && senhaConfere && perfilConfere;
     }) || null;
+=======
+    return (
+      usuarios.find((usuario: UsuarioSistema) => {
+        const loginConfere = usuario.login.toLowerCase() === loginInformado;
+        const senhaConfere = usuario.senhaTemporaria === senhaInformada;
+        const perfilConfere = this.perfilPermitido(usuario);
+
+        return loginConfere && senhaConfere && perfilConfere;
+      }) || null
+    );
+>>>>>>> Stashed changes
   }
 
   private perfilPermitido(usuario: UsuarioSistema): boolean {

@@ -217,11 +217,14 @@ h2 {
   color: #b51a2b;
 }
 
+<<<<<<< Updated upstream
 .acesso-modulo-inativo,
 .acesso-modulo-inativo:hover {
   cursor: default;
 }
 
+=======
+>>>>>>> Stashed changes
 /* Ajustes de espacamento entre textos, campos e botoes. */
 .cabecalho-pagina,
 .cabecalho-cartao {
@@ -512,6 +515,7 @@ th {
     padding: 14px;
   }
 
+  .acessos-modulos,
   .indicadores,
   .grade-painel,
   .graficos {

@@ -25,6 +25,7 @@
         <h1>Chamados</h1>
         <p>Chamados abertos pela equipe da {{ empresaSelecionada.nome }}</p>
       </div>
+<<<<<<< Updated upstream
 
       <div class="acoes">
         <a class="botao" routerLink="/gestor">Voltar</a>
@@ -123,4 +124,607 @@
       </div>
     </section>
   </main>
+=======
+    </section>
+
+    @if (perfil === 'gestor') {
+      <section class="grade-painel seis-colunas">
+        <article class="metrica">
+          <span>Chamados abertos</span>
+          <strong>{{ chamadosAbertos() }}</strong>
+        </article>
+        <article class="metrica">
+          <span>Em andamento</span>
+          <strong>{{ chamadosEmAndamento() }}</strong>
+        </article>
+        <article class="metrica">
+          <span>Aguardando colaborador</span>
+          <strong>{{ aguardandoColaborador() }}</strong>
+        </article>
+        <article class="metrica">
+          <span>Resolvidos hoje</span>
+          <strong>{{ resolvidosHoje() }}</strong>
+        </article>
+        <article class="metrica">
+          <span>Tempo médio de resposta</span>
+          <strong>{{ tempoMedioResposta() }}</strong>
+        </article>
+        <article class="metrica">
+          <span>Chamados urgentes</span>
+          <strong>{{ chamadosUrgentes() }}</strong>
+        </article>
+      </section>
+      <section class="cartao">
+        <div class="cabecalho-cartao">
+          <div>
+            <h2>Lista de chamados recebidos</h2>
+            <p>Chamados registrados para a empresa selecionada.</p>
+          </div>
+        </div>
+        <div class="filtros">
+          <input
+            type="search"
+            placeholder="Buscar número, solicitante ou assunto"
+            [(ngModel)]="pesquisaChamado"
+          />
+          <select [(ngModel)]="filtroSituacao">
+            <option>Todos</option>
+            @for (situacao of situacoes; track situacao) {
+              <option>{{ situacao }}</option>
+            }
+          </select>
+          <select [(ngModel)]="filtroPrioridade">
+            <option>Todas</option>
+            @for (prioridade of prioridades; track prioridade) {
+              <option>{{ prioridade }}</option>
+            }
+          </select>
+          <select [(ngModel)]="filtroSetor">
+            <option>Todos</option>
+            @for (setor of setores(); track setor) {
+              <option>{{ setor }}</option>
+            }
+          </select>
+        </div>
+        <div class="tabela">
+          <table>
+            <thead>
+              <tr>
+                <th>Nº do chamado</th>
+                <th>Solicitante</th>
+                <th>Setor solicitante</th>
+                <th>Categoria</th>
+                <th>Prioridade</th>
+                <th>Data de abertura</th>
+                <th>Responsável</th>
+                <th>Status</th>
+                <th>SLA</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (chamado of chamadosFiltrados(); track chamado) {
+                <tr>
+                  <td>{{ chamado.numero }}</td>
+                  <td>{{ chamado.solicitante }}</td>
+                  <td>{{ chamado.setorSolicitante }}</td>
+                  <td>{{ chamado.categoria }}</td>
+                  <td>
+                    <span class="selo prioridade">{{ chamado.prioridade }}</span>
+                  </td>
+                  <td>{{ formatarDataHora(chamado.dataAbertura) }}</td>
+                  <td>{{ chamado.responsavel || '-' }}</td>
+                  <td>
+                    <span class="selo">{{ chamado.situacao }}</span>
+                  </td>
+                  <td>{{ chamado.sla }}</td>
+                  <td>
+                    <button class="acao-texto" type="button" (click)="abrirDetalheGestor(chamado)">
+                      Visualizar
+                    </button>
+                  </td>
+                </tr>
+              }
+              @if (chamadosFiltrados().length === 0) {
+                <tr>
+                  <td colspan="10">Nenhum chamado cadastrado.</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </section>
+      <section class="duas-colunas">
+        <article class="cartao">
+          <div class="cabecalho-cartao">
+            <div>
+              <h2>Usuários do sistema</h2>
+              <p>Criação de acesso, perfil e permissões.</p>
+            </div>
+          </div>
+          <form class="formulario" (ngSubmit)="salvarUsuario()">
+            <label>
+              Nome completo
+              <input type="text" [(ngModel)]="usuarioEmCadastro.nome" name="nomeUsuario" />
+            </label>
+            <label>
+              E-mail
+              <input type="email" [(ngModel)]="usuarioEmCadastro.email" name="emailUsuario" />
+            </label>
+            <label>
+              Login
+              <input type="text" [(ngModel)]="usuarioEmCadastro.login" name="loginUsuario" />
+            </label>
+            <label>
+              Senha temporária
+              <input
+                type="text"
+                [(ngModel)]="usuarioEmCadastro.senhaTemporaria"
+                name="senhaUsuario"
+              />
+            </label>
+            <label>
+              Perfil
+              <select [(ngModel)]="usuarioEmCadastro.perfil" name="perfilUsuario">
+                @for (perfilUsuario of perfisUsuario; track perfilUsuario) {
+                  <option>{{ perfilUsuario }}</option>
+                }
+              </select>
+            </label>
+            <label>
+              Status
+              <select [(ngModel)]="usuarioEmCadastro.situacao" name="situacaoUsuario">
+                <option>Ativo</option>
+                <option>Inativo</option>
+              </select>
+            </label>
+            <label>
+              Setor
+              <input type="text" [(ngModel)]="usuarioEmCadastro.setor" name="setorUsuario" />
+            </label>
+            <label>
+              Cargo
+              <input type="text" [(ngModel)]="usuarioEmCadastro.cargo" name="cargoUsuario" />
+            </label>
+            <label class="campo-inteiro">
+              Permissões
+              <textarea
+                rows="3"
+                [(ngModel)]="usuarioEmCadastro.permissoes"
+                name="permissoesUsuario"
+              ></textarea>
+            </label>
+            <button class="botao principal campo-inteiro" type="submit">
+              {{ usuarioEmEdicao ? 'Salvar usuário' : 'Criar usuário' }}
+            </button>
+          </form>
+        </article>
+        <article class="cartao">
+          <h2>Acessos cadastrados</h2>
+          <div class="lista-compacta">
+            @for (usuario of usuariosSistema; track usuario) {
+              <div class="linha-compacta">
+                <div>
+                  <strong>{{ usuario.nome }}</strong>
+                  <span
+                    >{{ usuario.perfil }} · {{ usuario.setor || '-' }} ·
+                    {{ usuario.situacao }}</span
+                  >
+                </div>
+                <div class="acoes-linha">
+                  <button class="acao-texto" type="button" (click)="editarUsuario(usuario)">
+                    Editar
+                  </button>
+                  <button class="acao-texto" type="button" (click)="redefinirSenha(usuario)">
+                    Redefinir senha
+                  </button>
+                  <button class="acao-texto" type="button" (click)="bloquearUsuario(usuario)">
+                    {{ usuario.situacao === 'Ativo' ? 'Bloquear' : 'Ativar' }}
+                  </button>
+                </div>
+              </div>
+            }
+            @if (usuariosSistema.length === 0) {
+              <div class="linha-compacta">
+                <span>Nenhum usuário cadastrado.</span>
+              </div>
+            }
+          </div>
+        </article>
+      </section>
+      <section class="duas-colunas">
+        <article class="cartao">
+          <h2>Dashboard por setor</h2>
+          <div class="lista-compacta">
+            @for (item of resumoPorSetor(); track item.setor) {
+              <div class="linha-compacta">
+                <strong>{{ item.setor }}</strong>
+                <span>{{ item.abertos }} aberto(s) · {{ item.resolvidos }} resolvido(s)</span>
+              </div>
+            }
+          </div>
+        </article>
+        <article class="cartao">
+          <h2>Categorias mais abertas</h2>
+          <div class="lista-compacta">
+            @let categoriasAbertas = categoriasMaisAbertas();
+
+            @for (item of categoriasAbertas; track item.categoria) {
+              <div class="linha-compacta">
+                <strong>{{ item.categoria }}</strong>
+                <span>{{ item.total }} chamado(s)</span>
+              </div>
+            }
+            @if (categoriasAbertas.length === 0) {
+              <div class="linha-compacta">
+                <span>Nenhuma categoria registrada.</span>
+              </div>
+            }
+          </div>
+        </article>
+      </section>
+    }
+
+    @if (perfil === 'colaborador') {
+      <section class="grade-painel">
+        <article class="metrica">
+          <span>Meus chamados abertos</span>
+          <strong>{{ meusChamadosAbertos() }}</strong>
+        </article>
+        <article class="metrica">
+          <span>Em andamento</span>
+          <strong>{{ meusChamadosEmAndamento() }}</strong>
+        </article>
+        <article class="metrica">
+          <span>Resolvidos</span>
+          <strong>{{ meusChamadosResolvidos() }}</strong>
+        </article>
+        <article class="metrica">
+          <span>Aguardando minha resposta</span>
+          <strong>{{ aguardandoMinhaResposta() }}</strong>
+        </article>
+      </section>
+      <section class="area-formulario">
+        <article class="cartao">
+          <h2>Abrir chamado</h2>
+          <form class="formulario" (ngSubmit)="enviarChamado()">
+            <label>
+              Setor solicitante
+              <input
+                type="text"
+                [(ngModel)]="novoChamado.setorSolicitante"
+                name="setorSolicitante"
+              />
+            </label>
+            <label>
+              Setor de destino
+              <select [(ngModel)]="novoChamado.setorDestino" name="setorDestino">
+                <option value="">Selecione</option>
+                @for (setor of setores(); track setor) {
+                  <option>{{ setor }}</option>
+                }
+              </select>
+            </label>
+            <label>
+              Categoria
+              <select [(ngModel)]="novoChamado.categoria" name="categoriaChamado">
+                <option value="">Selecione</option>
+                @for (categoria of categoriasDoSetor(); track categoria) {
+                  <option>{{ categoria }}</option>
+                }
+              </select>
+            </label>
+            <label>
+              Assunto
+              <input type="text" [(ngModel)]="novoChamado.titulo" name="tituloChamado" />
+            </label>
+            <label>
+              Prioridade sugerida
+              <select [(ngModel)]="novoChamado.prioridade" name="prioridadeChamado">
+                @for (prioridade of prioridades; track prioridade) {
+                  <option>{{ prioridade }}</option>
+                }
+              </select>
+            </label>
+            <label class="campo-inteiro">
+              Descrição
+              <textarea
+                rows="4"
+                [(ngModel)]="novoChamado.descricao"
+                name="descricaoChamado"
+              ></textarea>
+            </label>
+            <label class="campo-inteiro">
+              Anexar arquivo/imagem
+              <input type="file" (change)="capturarArquivo($event)" />
+            </label>
+            <button class="botao principal campo-inteiro" type="submit">Enviar chamado</button>
+          </form>
+        </article>
+      </section>
+      <section class="cartao">
+        <div class="cabecalho-cartao">
+          <div>
+            <h2>Acompanhar chamados</h2>
+            <p>Visualize o histórico dos seus chamados.</p>
+          </div>
+        </div>
+        <div class="filtros apenas-busca">
+          <input
+            type="search"
+            placeholder="Buscar número ou assunto"
+            [(ngModel)]="pesquisaChamado"
+          />
+        </div>
+        <div class="tabela">
+          <table>
+            <thead>
+              <tr>
+                <th>Número</th>
+                <th>Assunto</th>
+                <th>Setor</th>
+                <th>Data</th>
+                <th>Status</th>
+                <th>Última atualização</th>
+                <th>Ação</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (chamado of chamadosDoColaboradorFiltrados(); track chamado) {
+                <tr>
+                  <td>{{ chamado.numero }}</td>
+                  <td>{{ chamado.titulo }}</td>
+                  <td>{{ chamado.setorDestino }}</td>
+                  <td>{{ formatarDataHora(chamado.dataAbertura) }}</td>
+                  <td>
+                    <span class="selo">{{ chamado.situacao }}</span>
+                  </td>
+                  <td>{{ formatarDataHora(chamado.ultimaAtualizacao) }}</td>
+                  <td>
+                    <button
+                      class="acao-texto"
+                      type="button"
+                      (click)="abrirDetalheColaborador(chamado)"
+                    >
+                      Detalhe
+                    </button>
+                  </td>
+                </tr>
+              }
+              @if (chamadosDoColaboradorFiltrados().length === 0) {
+                <tr>
+                  <td colspan="7">Nenhum chamado encontrado.</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </section>
+    }
+  </main>
+
+  @if (mostrarEscolhaPerfil) {
+    <div class="sobreposicao">
+      <section class="janela escolha">
+        <h2>Como deseja acessar chamados?</h2>
+        <p>Escolha a visão para {{ empresaSelecionada.nome }}.</p>
+        <div class="opcoes-perfil">
+          <button class="botao principal" type="button" (click)="escolherPerfil('gestor')">
+            Gestor
+          </button>
+          <button class="botao" type="button" (click)="escolherPerfil('colaborador')">
+            Colaborador
+          </button>
+        </div>
+      </section>
+    </div>
+  }
+
+  @if (chamadoGestorSelecionado) {
+    <div class="sobreposicao">
+      <section class="janela grande">
+        <div class="cabecalho-cartao">
+          <div>
+            <h2>{{ chamadoGestorSelecionado.numero }} · {{ chamadoGestorSelecionado.titulo }}</h2>
+            <p>
+              {{ chamadoGestorSelecionado.solicitante }} ·
+              {{ chamadoGestorSelecionado.setorSolicitante }}
+            </p>
+          </div>
+          <button class="botao" type="button" (click)="fecharDetalhes()">Fechar</button>
+        </div>
+        <div class="detalhes-chamado">
+          <span>Descrição</span>
+          <strong>{{ chamadoGestorSelecionado.descricao }}</strong>
+          <span>Categoria</span>
+          <strong>{{ chamadoGestorSelecionado.categoria }}</strong>
+          <span>Data de abertura</span>
+          <strong>{{ formatarDataHora(chamadoGestorSelecionado.dataAbertura) }}</strong>
+          <span>SLA</span>
+          <strong>{{ chamadoGestorSelecionado.sla }}</strong>
+        </div>
+        <form
+          class="formulario ajustes"
+          (ngSubmit)="salvarAlteracoesChamado(chamadoGestorSelecionado)"
+        >
+          <label>
+            Status atual
+            <select [(ngModel)]="chamadoGestorSelecionado.situacao" name="situacaoDetalhe">
+              @for (situacao of situacoes; track situacao) {
+                <option>{{ situacao }}</option>
+              }
+            </select>
+          </label>
+          <label>
+            Prioridade
+            <select [(ngModel)]="chamadoGestorSelecionado.prioridade" name="prioridadeDetalhe">
+              @for (prioridade of prioridades; track prioridade) {
+                <option>{{ prioridade }}</option>
+              }
+            </select>
+          </label>
+          <label>
+            Responsável atual
+            <input
+              type="text"
+              [(ngModel)]="chamadoGestorSelecionado.responsavel"
+              name="responsavelDetalhe"
+            />
+          </label>
+          <label>
+            Encaminhar para outro setor
+            <select [(ngModel)]="chamadoGestorSelecionado.setorDestino" name="setorDestinoDetalhe">
+              @for (setor of setores(); track setor) {
+                <option>{{ setor }}</option>
+              }
+            </select>
+          </label>
+          <button class="botao principal campo-inteiro" type="submit">Salvar alterações</button>
+        </form>
+        <section class="duas-colunas internas">
+          <article class="bloco-interno">
+            <h2>Histórico de mensagens</h2>
+            @for (mensagem of chamadoGestorSelecionado.mensagens; track mensagem) {
+              <div class="mensagem">
+                <strong>{{ mensagem.autor }} · {{ formatarDataHora(mensagem.data) }}</strong>
+                <p>{{ mensagem.texto }}</p>
+              </div>
+            }
+            <textarea
+              rows="3"
+              placeholder="Responder chamado"
+              [(ngModel)]="respostaGestor"
+            ></textarea>
+            <div class="acoes">
+              <button class="botao principal" type="button" (click)="responderChamado()">
+                Responder
+              </button>
+              <button class="botao" type="button" (click)="solicitarInformacoes()">
+                Solicitar mais informações
+              </button>
+            </div>
+          </article>
+          <article class="bloco-interno">
+            <h2>Observação interna</h2>
+            @for (observacao of chamadoGestorSelecionado.observacoesInternas; track observacao) {
+              <div class="observacao-interna">
+                {{ observacao }}
+              </div>
+            }
+            <textarea
+              rows="3"
+              placeholder="Adicionar comentário interno"
+              [(ngModel)]="comentarioInterno"
+            ></textarea>
+            <button class="botao" type="button" (click)="adicionarObservacaoInterna()">
+              Adicionar observação interna
+            </button>
+            <h2>Arquivos anexados</h2>
+            @for (arquivo of chamadoGestorSelecionado.arquivos; track arquivo) {
+              <span class="arquivo">{{ arquivo }}</span>
+            }
+            <input type="file" (change)="anexarNoChamado($event, chamadoGestorSelecionado)" />
+          </article>
+        </section>
+        <div class="acoes">
+          <button class="botao principal" type="button" (click)="marcarResolvido()">
+            Marcar como resolvido
+          </button>
+          <button class="botao" type="button" (click)="reabrirChamado(chamadoGestorSelecionado)">
+            Reabrir chamado
+          </button>
+        </div>
+      </section>
+    </div>
+  }
+
+  @if (chamadoColaboradorSelecionado) {
+    <div class="sobreposicao">
+      <section class="janela grande">
+        <div class="cabecalho-cartao">
+          <div>
+            <h2>
+              {{ chamadoColaboradorSelecionado.numero }} ·
+              {{ chamadoColaboradorSelecionado.titulo }}
+            </h2>
+            <p>
+              {{ chamadoColaboradorSelecionado.situacao }} · Responsável
+              {{ chamadoColaboradorSelecionado.responsavel || '-' }}
+            </p>
+          </div>
+          <button class="botao" type="button" (click)="fecharDetalhes()">Fechar</button>
+        </div>
+        <div class="detalhes-chamado">
+          <span>Resumo</span>
+          <strong>{{ chamadoColaboradorSelecionado.descricao }}</strong>
+          <span>Prazo estimado</span>
+          <strong>{{ chamadoColaboradorSelecionado.sla }}</strong>
+          <span>Anexos enviados/recebidos</span>
+          <strong>{{ chamadoColaboradorSelecionado.arquivos.length }}</strong>
+        </div>
+        <section class="duas-colunas internas">
+          <article class="bloco-interno">
+            <h2>Histórico de respostas</h2>
+            @for (mensagem of chamadoColaboradorSelecionado.mensagens; track mensagem) {
+              <div class="mensagem">
+                <strong>{{ mensagem.autor }} · {{ formatarDataHora(mensagem.data) }}</strong>
+                <p>{{ mensagem.texto }}</p>
+              </div>
+            }
+            <textarea rows="3" placeholder="Responder" [(ngModel)]="respostaColaborador"></textarea>
+            <button class="botao principal" type="button" (click)="responderComoColaborador()">
+              Responder
+            </button>
+          </article>
+          <article class="bloco-interno">
+            <h2>Anexos</h2>
+            @for (arquivo of chamadoColaboradorSelecionado.arquivos; track arquivo) {
+              <span class="arquivo">{{ arquivo }}</span>
+            }
+            <input type="file" (change)="anexarNoChamado($event, chamadoColaboradorSelecionado)" />
+            <div class="acoes empilhadas">
+              <button
+                class="botao"
+                type="button"
+                (click)="cancelarChamado(chamadoColaboradorSelecionado)"
+              >
+                Cancelar chamado
+              </button>
+              <button
+                class="botao"
+                type="button"
+                (click)="reabrirChamado(chamadoColaboradorSelecionado)"
+              >
+                Reabrir chamado
+              </button>
+            </div>
+          </article>
+        </section>
+        @if (chamadoColaboradorSelecionado.situacao === 'Resolvido') {
+          <section class="bloco-interno avaliacao">
+            <h2>Avaliação do atendimento</h2>
+            <label>
+              Nota de 1 a 5
+              <input type="number" min="1" max="5" [(ngModel)]="avaliacaoNota" />
+            </label>
+            <label>
+              O problema foi resolvido?
+              <select [(ngModel)]="avaliacaoResolvido">
+                <option [ngValue]="true">Sim</option>
+                <option [ngValue]="false">Não</option>
+              </select>
+            </label>
+            <label>
+              Comentário
+              <textarea rows="3" [(ngModel)]="avaliacaoComentario"></textarea>
+            </label>
+            <button class="botao principal" type="button" (click)="avaliarAtendimento()">
+              Avaliar atendimento
+            </button>
+          </section>
+        }
+      </section>
+    </div>
+  }
+>>>>>>> Stashed changes
 </div>

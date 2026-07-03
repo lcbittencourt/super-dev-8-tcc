@@ -17,18 +17,39 @@
       <form class="formulario" (ngSubmit)="entrar()">
         <label>
           Login
+<<<<<<< Updated upstream
           <input type="text" [(ngModel)]="login" name="login" autocomplete="username">
+=======
+          <input type="text" [(ngModel)]="login" name="login" autocomplete="username" />
+>>>>>>> Stashed changes
         </label>
 
         <label>
           Senha
           <div class="entrada-senha">
+<<<<<<< Updated upstream
             <input [type]="mostrarSenha ? 'text' : 'password'" [(ngModel)]="senha" name="senha"
               autocomplete="current-password">
 
             <button class="botao-visualizar-senha" type="button" (click)="mostrarSenha = !mostrarSenha"
               [attr.aria-label]="mostrarSenha ? 'Ocultar senha' : 'Visualizar senha'"
               [title]="mostrarSenha ? 'Ocultar senha' : 'Visualizar senha'">
+=======
+            <input
+              [type]="mostrarSenha ? 'text' : 'password'"
+              [(ngModel)]="senha"
+              name="senha"
+              autocomplete="current-password"
+            />
+
+            <button
+              class="botao-visualizar-senha"
+              type="button"
+              (click)="mostrarSenha = !mostrarSenha"
+              [attr.aria-label]="mostrarSenha ? 'Ocultar senha' : 'Visualizar senha'"
+              [title]="mostrarSenha ? 'Ocultar senha' : 'Visualizar senha'"
+            >
+>>>>>>> Stashed changes
               <span class="material-symbols-outlined" aria-hidden="true">
                 {{ mostrarSenha ? 'visibility_off' : 'visibility' }}
               </span>

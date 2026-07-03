@@ -178,6 +178,7 @@
               <h2>Agenda de férias</h2>
               <p>{{ mesCalendario() }}</p>
             </div>
+<<<<<<< Updated upstream
             <div class="controles-calendario">
               <button class="botao-calendario" type="button" (click)="mesAnterior()">
                 ‹
@@ -204,6 +205,20 @@
                 ›
               </button>
             </div>
+=======
+          </div>
+          <div class="calendario">
+            @for (dia of diasCalendario; track dia) {
+              <div class="dia">
+                <strong>{{ dia | number: '2.0-0' }}</strong>
+                @for (evento of eventosDoDia(dia); track evento) {
+                  <button type="button" (click)="abrirEventoCalendario(evento)">
+                    {{ evento.colaborador.split(' ')[0] }}
+                  </button>
+                }
+              </div>
+            }
+>>>>>>> Stashed changes
           </div>
           <div class="calendario">
             @for (diaSemana of diasSemana; track diaSemana) {
