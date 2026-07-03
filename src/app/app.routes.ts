@@ -10,6 +10,7 @@ import { NovaEmpresaComponent } from './admin/nova-empresa/nova-empresa';
 import { AprovacoesComponent } from './aprovacoes/aprovacoes';
 import { ChamadosComponent } from './chamados/chamados';
 import { TreinamentosEquipeComponent } from './treinamentos-equipe/treinamentos-equipe';
+import { ColaboradorComponent } from './colaborador/colaborador';
 
 export const routes: Routes = [
     { path: '', redirectTo: 'admin', pathMatch: 'full' },
@@ -20,6 +21,7 @@ export const routes: Routes = [
     { path: 'chamados', component: ChamadosComponent },
     { path: 'treinamentos-equipe', component: TreinamentosEquipeComponent },
     { path: 'colaboradores', component: ColaboradoresComponent },
+    { path: 'colaborador', component: ColaboradorComponent },
     { path: 'controle-ponto', component: ControlePontoComponent },
     { path: 'ferias', component: FeriasComponent },
     { path: 'treinamentos', component: TreinamentosComponent },
