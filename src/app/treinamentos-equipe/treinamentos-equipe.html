@@ -1,0 +1,212 @@
+<div class="sistema">
+
+  <header class="barra-superior">
+    <div class="marca">
+      <div class="simbolo-marca">P</div>
+
+      <div>
+        <strong>Pulso<span>.</span></strong>
+      </div>
+    </div>
+
+    <span class="etiqueta-perfil">Gestor</span>
+
+    <nav class="navegacao">
+      <a>Admin</a>
+      <a class="ativo">Gestor</a>
+      <a>Colaborador</a>
+    </nav>
+
+    <div class="identificacao">GE</div>
+  </header>
+
+  <main class="pagina">
+
+    <section class="cabecalho-pagina">
+      <div>
+        <h1>Treinamentos</h1>
+        <p>Gerencie os treinamentos disponíveis para a equipe da {{ empresa }}</p>
+      </div>
+
+      <div class="acoes">
+        <a class="botao" routerLink="/gestor">Voltar</a>
+        <button class="botao principal">Adicionar treinamento</button>
+      </div>
+    </section>
+
+    <section class="filtros">
+      <button class="filtro ativo">Todos</button>
+      <button class="filtro">Disponíveis</button>
+      <button class="filtro">Indisponíveis</button>
+      <button class="filtro">Obrigatórios</button>
+    </section>
+
+    <section class="conteudo">
+
+      <article class="cartao">
+        <div class="cabecalho-cartao">
+          <div>
+            <h2>Disponibilidade por colaborador</h2>
+            <p>Controle quais treinamentos cada colaborador pode acessar</p>
+          </div>
+        </div>
+
+        <div class="area-tabela">
+          <table>
+            <thead>
+              <tr>
+                <th>Colaborador</th>
+                <th>Treinamento</th>
+                <th>Categoria</th>
+                <th>Carga horária</th>
+                <th>Disponibilidade</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <tr>
+                <td>
+                  <div class="pessoa">
+                    <div class="foto">AL</div>
+                    <strong>Ana Lima</strong>
+                  </div>
+                </td>
+                <td>Integração</td>
+                <td>RH</td>
+                <td>4h</td>
+                <td><span class="selo sucesso">Disponível</span></td>
+                <td>
+                  <div class="acoes-linha">
+                    <button class="botao pequeno bloquear">Bloquear</button>
+                    <button class="botao pequeno">Detalhes</button>
+                  </div>
+                </td>
+              </tr>
+
+              <tr>
+                <td>
+                  <div class="pessoa">
+                    <div class="foto">CS</div>
+                    <strong>Carlos Souza</strong>
+                  </div>
+                </td>
+                <td>LGPD</td>
+                <td>Compliance</td>
+                <td>2h</td>
+                <td><span class="selo sucesso">Disponível</span></td>
+                <td>
+                  <div class="acoes-linha">
+                    <button class="botao pequeno bloquear">Bloquear</button>
+                    <button class="botao pequeno">Detalhes</button>
+                  </div>
+                </td>
+              </tr>
+
+              <tr>
+                <td>
+                  <div class="pessoa">
+                    <div class="foto">MS</div>
+                    <strong>Mariana Silva</strong>
+                  </div>
+                </td>
+                <td>Segurança da Informação</td>
+                <td>TI</td>
+                <td>3h</td>
+                <td><span class="selo alerta">Indisponível</span></td>
+                <td>
+                  <div class="acoes-linha">
+                    <button class="botao pequeno liberar">Liberar</button>
+                    <button class="botao pequeno">Detalhes</button>
+                  </div>
+                </td>
+              </tr>
+
+              <tr>
+                <td>
+                  <div class="pessoa">
+                    <div class="foto">PR</div>
+                    <strong>Pedro Rocha</strong>
+                  </div>
+                </td>
+                <td>Liderança</td>
+                <td>Desenvolvimento</td>
+                <td>8h</td>
+                <td><span class="selo alerta">Indisponível</span></td>
+                <td>
+                  <div class="acoes-linha">
+                    <button class="botao pequeno liberar">Liberar</button>
+                    <button class="botao pequeno">Detalhes</button>
+                  </div>
+                </td>
+              </tr>
+
+              <tr>
+                <td>
+                  <div class="pessoa">
+                    <div class="foto">FC</div>
+                    <strong>Fernanda Costa</strong>
+                  </div>
+                </td>
+                <td>Integração</td>
+                <td>RH</td>
+                <td>4h</td>
+                <td><span class="selo sucesso">Disponível</span></td>
+                <td>
+                  <div class="acoes-linha">
+                    <button class="botao pequeno bloquear">Bloquear</button>
+                    <button class="botao pequeno">Detalhes</button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </article>
+
+      <article class="cartao formulario">
+        <div class="cabecalho-cartao">
+          <div>
+            <h2>Adicionar treinamento</h2>
+            <p>Cadastre um novo treinamento para disponibilizar à equipe</p>
+          </div>
+        </div>
+
+        <div class="campo">
+          <label>Nome do treinamento</label>
+          <input type="text" placeholder="Ex.: Segurança no trabalho">
+        </div>
+
+        <div class="campo">
+          <label>Categoria</label>
+          <input type="text" placeholder="Ex.: TI, RH, Compliance">
+        </div>
+
+        <div class="linha-campos">
+          <div class="campo">
+            <label>Carga horária</label>
+            <input type="text" placeholder="Ex.: 4h">
+          </div>
+
+          <div class="campo">
+            <label>Obrigatório</label>
+            <select>
+              <option>Sim</option>
+              <option>Não</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="campo">
+          <label>Descrição</label>
+          <textarea rows="3" placeholder="Objetivo do treinamento"></textarea>
+        </div>
+
+        <button class="botao principal">Salvar treinamento</button>
+      </article>
+
+    </section>
+
+  </main>
+
+</div>

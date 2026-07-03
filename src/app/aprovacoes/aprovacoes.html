@@ -24,8 +24,8 @@
 
     <section class="cabecalho-pagina">
       <div>
-        <h1>Chamados</h1>
-        <p>Chamados abertos pela equipe da {{ empresa }}</p>
+        <h1>Aprovações</h1>
+        <p>Analise as solicitações da {{ empresa }}</p>
       </div>
 
       <div class="acoes">
@@ -35,17 +35,17 @@
     </section>
 
     <section class="filtros">
-      <button class="filtro ativo">Todos</button>
-      <button class="filtro">Abertos</button>
-      <button class="filtro">Em andamento</button>
-      <button class="filtro">Resolvidos</button>
+      <button class="filtro ativo">Todas</button>
+      <button class="filtro">Pendentes</button>
+      <button class="filtro">Aceitas</button>
+      <button class="filtro">Recusadas</button>
     </section>
 
     <section class="cartao">
       <div class="cabecalho-cartao">
         <div>
-          <h2>Chamados da equipe</h2>
-          <p>Acompanhe e intervenha nos chamados da sua equipe</p>
+          <h2>Solicitações</h2>
+          <p>Aprovações pendentes, aceitas e recusadas</p>
         </div>
       </div>
 
@@ -54,11 +54,10 @@
           <thead>
             <tr>
               <th>ID</th>
-              <th>Assunto</th>
               <th>Categoria</th>
+              <th>Data abertura</th>
               <th>Solicitante</th>
-              <th>Abertura</th>
-              <th>Prioridade</th>
+              <th>Detalhe</th>
               <th>Status</th>
               <th>Ações</th>
             </tr>
@@ -66,102 +65,77 @@
 
           <tbody>
             <tr>
-              <td>#2051</td>
-              <td>Computador não liga</td>
-              <td>TI</td>
+              <td>#0412</td>
+              <td>Férias</td>
+              <td>20/05/2025</td>
               <td>
                 <div class="pessoa">
                   <div class="foto">AL</div>
                   <strong>Ana Lima</strong>
                 </div>
               </td>
-              <td>20/05/2025</td>
-              <td><span class="selo erro">Alta</span></td>
-              <td><span class="selo alerta">Aberto</span></td>
+              <td>15 dias · jun/25</td>
+              <td><span class="selo alerta">Pendente</span></td>
               <td>
                 <div class="acoes-linha">
-                  <button class="botao pequeno atender">Atender</button>
-                  <button class="botao pequeno">Encaminhar</button>
+                  <button class="botao pequeno aceitar">Aceitar</button>
+                  <button class="botao pequeno recusar">Recusar</button>
                 </div>
               </td>
             </tr>
 
             <tr>
-              <td>#2050</td>
-              <td>Troca de cadeira</td>
-              <td>Predial</td>
+              <td>#0411</td>
+              <td>Hora extra</td>
+              <td>20/05/2025</td>
               <td>
                 <div class="pessoa">
                   <div class="foto">CS</div>
                   <strong>Carlos Souza</strong>
                 </div>
               </td>
-              <td>20/05/2025</td>
-              <td><span class="selo informativo">Baixa</span></td>
-              <td><span class="selo alerta">Aberto</span></td>
+              <td>4h sábado</td>
+              <td><span class="selo alerta">Pendente</span></td>
               <td>
                 <div class="acoes-linha">
-                  <button class="botao pequeno atender">Atender</button>
-                  <button class="botao pequeno">Encaminhar</button>
+                  <button class="botao pequeno aceitar">Aceitar</button>
+                  <button class="botao pequeno recusar">Recusar</button>
                 </div>
               </td>
             </tr>
 
             <tr>
-              <td>#2049</td>
-              <td>Acesso ao sistema bloqueado</td>
-              <td>TI</td>
+              <td>#0410</td>
+              <td>Chamado TI</td>
+              <td>19/05/2025</td>
               <td>
                 <div class="pessoa">
                   <div class="foto">MS</div>
                   <strong>Mariana Silva</strong>
                 </div>
               </td>
-              <td>19/05/2025</td>
-              <td><span class="selo erro">Alta</span></td>
-              <td><span class="selo informativo">Em andamento</span></td>
+              <td>Acesso bloqueado</td>
+              <td><span class="selo alerta">Pendente</span></td>
               <td>
                 <div class="acoes-linha">
-                  <button class="botao pequeno atender">Responder</button>
-                  <button class="botao pequeno encerrar">Encerrar</button>
+                  <button class="botao pequeno aceitar">Aceitar</button>
+                  <button class="botao pequeno recusar">Recusar</button>
                 </div>
               </td>
             </tr>
 
             <tr>
-              <td>#2048</td>
-              <td>Ar-condicionado com defeito</td>
-              <td>Manutenção</td>
+              <td>#0409</td>
+              <td>Treinamento</td>
+              <td>18/05/2025</td>
               <td>
                 <div class="pessoa">
                   <div class="foto">PR</div>
                   <strong>Pedro Rocha</strong>
                 </div>
               </td>
-              <td>18/05/2025</td>
-              <td><span class="selo alerta">Média</span></td>
-              <td><span class="selo informativo">Em andamento</span></td>
-              <td>
-                <div class="acoes-linha">
-                  <button class="botao pequeno atender">Responder</button>
-                  <button class="botao pequeno encerrar">Encerrar</button>
-                </div>
-              </td>
-            </tr>
-
-            <tr>
-              <td>#2047</td>
-              <td>Solicitação de crachá</td>
-              <td>RH</td>
-              <td>
-                <div class="pessoa">
-                  <div class="foto">FC</div>
-                  <strong>Fernanda Costa</strong>
-                </div>
-              </td>
-              <td>17/05/2025</td>
-              <td><span class="selo informativo">Baixa</span></td>
-              <td><span class="selo sucesso">Resolvido</span></td>
+              <td>NR-35 renovação</td>
+              <td><span class="selo sucesso">Aceita</span></td>
               <td>
                 <div class="acoes-linha">
                   <button class="botao pequeno">Detalhes</button>
@@ -170,18 +144,55 @@
             </tr>
 
             <tr>
-              <td>#2046</td>
-              <td>Instalação de software</td>
-              <td>TI</td>
+              <td>#0408</td>
+              <td>Afastamento</td>
+              <td>17/05/2025</td>
+              <td>
+                <div class="pessoa">
+                  <div class="foto">FC</div>
+                  <strong>Fernanda Costa</strong>
+                </div>
+              </td>
+              <td>Atestado 5 dias</td>
+              <td><span class="selo sucesso">Aceita</span></td>
+              <td>
+                <div class="acoes-linha">
+                  <button class="botao pequeno">Detalhes</button>
+                </div>
+              </td>
+            </tr>
+
+            <tr>
+              <td>#0407</td>
+              <td>Hora extra</td>
+              <td>16/05/2025</td>
               <td>
                 <div class="pessoa">
                   <div class="foto">RD</div>
                   <strong>Rafael Dias</strong>
                 </div>
               </td>
-              <td>16/05/2025</td>
-              <td><span class="selo alerta">Média</span></td>
-              <td><span class="selo sucesso">Resolvido</span></td>
+              <td>2h domingo</td>
+              <td><span class="selo erro">Recusada</span></td>
+              <td>
+                <div class="acoes-linha">
+                  <button class="botao pequeno">Detalhes</button>
+                </div>
+              </td>
+            </tr>
+
+            <tr>
+              <td>#0406</td>
+              <td>Férias</td>
+              <td>15/05/2025</td>
+              <td>
+                <div class="pessoa">
+                  <div class="foto">JA</div>
+                  <strong>Juliana Alves</strong>
+                </div>
+              </td>
+              <td>10 dias · jul/25</td>
+              <td><span class="selo erro">Recusada</span></td>
               <td>
                 <div class="acoes-linha">
                   <button class="botao pequeno">Detalhes</button>

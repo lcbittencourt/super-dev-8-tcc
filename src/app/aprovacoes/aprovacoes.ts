@@ -3,13 +3,13 @@ import { Component } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
 @Component({
-  selector: 'app-chamados',
+  selector: 'app-aprovacoes',
   standalone: true,
   imports: [CommonModule, RouterLink],
-  templateUrl: './chamados.html',
-  styleUrl: './chamados.css'
+  templateUrl: './aprovacoes.html',
+  styleUrl: './aprovacoes.css'
 })
-export class ChamadosComponent {
+export class AprovacoesComponent {
 
   gestor = 'João';
   empresa = 'Têxtil Vale Norte';

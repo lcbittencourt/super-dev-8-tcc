@@ -242,11 +242,6 @@ th {
   color: #854f0b;
 }
 
-.selo.informativo {
-  background: #e6f1fb;
-  color: #0c447c;
-}
-
 .acoes-linha {
   display: flex;
   gap: 6px;
@@ -257,16 +252,16 @@ th {
   font-size: 12px;
 }
 
-.botao.atender {
-  background: #e6f1fb;
-  color: #0c447c;
-  border-color: #aecdec;
-}
-
-.botao.encerrar {
+.botao.aceitar {
   background: #eaf3de;
   color: #3b6d11;
   border-color: #bcd79a;
+}
+
+.botao.recusar {
+  background: #fcebeb;
+  color: #791f1f;
+  border-color: #e6b5b5;
 }
 
 @media (max-width: 980px) {

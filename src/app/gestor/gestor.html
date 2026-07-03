@@ -17,7 +17,7 @@
       <a>Colaborador</a>
     </nav>
 
-    <div class="identificacao">JM</div>
+    <div class="identificacao">GE</div>
   </header>
 
   <main class="pagina">
@@ -37,9 +37,9 @@
           <div class="fundo-menu" *ngIf="menuAberto" (click)="fecharMenu()"></div>
 
           <div class="lista-menu" *ngIf="menuAberto">
-            <a>Aprovações</a>
-            <a>Chamados</a>
-            <a>Treinamentos</a>
+            <a routerLink="/aprovacoes">Aprovações</a>
+            <a routerLink="/chamados">Chamados</a>
+            <a routerLink="/treinamentos-equipe">Treinamentos</a>
           </div>
         </div>
       </div>

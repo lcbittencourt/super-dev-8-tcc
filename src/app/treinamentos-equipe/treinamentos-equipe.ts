@@ -3,13 +3,13 @@ import { Component } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
 @Component({
-  selector: 'app-chamados',
+  selector: 'app-treinamentos-equipe',
   standalone: true,
   imports: [CommonModule, RouterLink],
-  templateUrl: './chamados.html',
-  styleUrl: './chamados.css'
+  templateUrl: './treinamentos-equipe.html',
+  styleUrl: './treinamentos-equipe.css'
 })
-export class ChamadosComponent {
+export class TreinamentosEquipeComponent {
 
   gestor = 'João';
   empresa = 'Têxtil Vale Norte';
