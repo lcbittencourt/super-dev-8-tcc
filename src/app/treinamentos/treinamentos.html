@@ -27,8 +27,6 @@
         <h1>Treinamentos</h1>
         <p>{{ empresaSelecionada.nome }} · {{ empresaSelecionada.cidade }}</p>
       </div>
-
-      <button class="botao" routerLink="/admin">Voltar</button>
     </section>
 
     <ng-container *ngIf="perfil === 'gestor'">
@@ -50,18 +48,48 @@
 
         <article class="metrica">
           <span>Certificados emitidos</span>
-          <strong>{{ certificadoResumo.emitidos }}</strong>
+          <strong>{{ certificadosEmitidos() }}</strong>
         </article>
 
         <article class="metrica">
           <span>Vencendo em 30 dias</span>
-          <strong>9</strong>
+          <strong>{{ certificadosVencendo() }}</strong>
         </article>
 
         <article class="metrica">
           <span>Média geral de conclusão</span>
           <strong>{{ mediaConclusao() }}%</strong>
         </article>
+      </section>
+
+      <section class="cartao" *ngIf="telaGestor === 'painel'">
+        <div class="cabecalho-cartao">
+          <div>
+            <h2>Colaboradores cadastrados</h2>
+            <p>Participantes puxados diretamente do módulo Colaboradores desta empresa.</p>
+          </div>
+        </div>
+
+        <div class="tabela simples">
+          <table>
+            <thead>
+              <tr>
+                <th>Colaborador</th>
+                <th>Departamento</th>
+                <th>Cargo</th>
+                <th>Situação</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let colaborador of colaboradoresCadastrados()">
+                <td>{{ colaborador.nome }}</td>
+                <td>{{ colaborador.departamento }}</td>
+                <td>{{ colaborador.cargo || '-' }}</td>
+                <td><span class="selo">{{ colaborador.situacao || 'Ativo' }}</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </section>
 
       <section class="cartao" *ngIf="telaGestor === 'painel'">
@@ -242,9 +270,9 @@
             </div>
 
             <div class="configuracao-avaliacao">
-              <span>Quantas tentativas? <strong>3</strong></span>
-              <span>Nota mínima <strong>70%</strong></span>
-              <span>Embaralhar perguntas <strong>Sim</strong></span>
+              <span>Quantas tentativas? <strong>0</strong></span>
+              <span>Nota mínima <strong>0%</strong></span>
+              <span>Embaralhar perguntas <strong>Não</strong></span>
             </div>
           </section>
 
@@ -254,11 +282,13 @@
               <span>Empresa: {{ empresaSelecionada.nome }}</span>
               <span>Departamento</span>
               <span>Cargo</span>
-              <span>Colaboradores</span>
               <label class="opcao-marcada">
                 <input type="checkbox" checked>
                 Atribuir para todos
               </label>
+              <span *ngFor="let colaborador of colaboradoresCadastrados()">
+                {{ colaborador.nome }} · {{ colaborador.departamento }}
+              </span>
             </div>
           </section>
 
@@ -296,14 +326,13 @@
         <article class="cartao">
           <h2>Certificados</h2>
           <div class="grade-certificados">
-            <span>Emitidos <strong>{{ certificadoResumo.emitidos }}</strong></span>
-            <span>Pendentes <strong>{{ certificadoResumo.pendentes }}</strong></span>
-            <span>Vencidos <strong>{{ certificadoResumo.vencidos }}</strong></span>
+            <span>Emitidos <strong>{{ certificadosEmitidos() }}</strong></span>
+            <span>Pendentes <strong>{{ certificadosPendentes() }}</strong></span>
+            <span>Vencidos <strong>{{ certificadosVencidos() }}</strong></span>
           </div>
 
           <h2>Feedback recebido</h2>
-          <div class="linha-info"><span>Integração</span><strong>★★★★★ 4,8</strong></div>
-          <div class="linha-info"><span>LGPD</span><strong>★★★★ 4,2</strong></div>
+          <div class="linha-info"><span>Nenhum feedback real cadastrado</span><strong>0</strong></div>
           <button class="botao" type="button">Comentários, sugestões e avaliações</button>
         </article>
       </section>
@@ -338,7 +367,7 @@
         </article>
         <article class="metrica">
           <span>Horas treinadas</span>
-          <strong>46h</strong>
+          <strong>{{ horasTreinadas() }}h</strong>
         </article>
         <article class="metrica">
           <span>Certificados</span>
@@ -382,15 +411,15 @@
             <strong>{{ cursoSelecionado.nome }}</strong>
             <p>Material central do treinamento para estudo do colaborador.</p>
             <div class="barra-progresso grande"><span [style.width.%]="cursoSelecionado.progresso"></span></div>
-            <p>Progresso {{ cursoSelecionado.progresso }}% · 3 de 5 módulos</p>
+            <p>Progresso {{ cursoSelecionado.progresso }}% · {{ modulosConcluidos(cursoSelecionado) }} de {{ totalModulos(cursoSelecionado) }} módulos</p>
           </article>
         </div>
 
         <section class="duas-colunas internas">
           <article class="cartao-interno">
             <h2>Avaliação</h2>
-            <p>10 questões · Tempo restante 18 min · Nota mínima 70%</p>
-            <strong>Resultado: {{ cursoSelecionado.nota >= 70 ? 'Parabéns, aprovado' : 'Nova tentativa disponível' }}</strong>
+            <p>{{ totalQuestoes(cursoSelecionado) }} questões · Tempo restante {{ tempoRestanteAvaliacao() }} min · Nota mínima {{ notaMinimaAvaliacao() }}%</p>
+            <strong>Resultado: {{ resultadoAvaliacao(cursoSelecionado) }}</strong>
             <span>{{ cursoSelecionado.nota }}%</span>
           </article>
 
@@ -445,17 +474,17 @@
                 </tr>
               </thead>
               <tbody>
-                <tr>
-                  <td>LGPD</td>
-                  <td>10/06</td>
-                  <td>90</td>
-                  <td>PDF</td>
+                <tr *ngFor="let curso of historicoColaborador()">
+                  <td>{{ curso.nome }}</td>
+                  <td>-</td>
+                  <td>{{ curso.nota }}</td>
+                  <td>{{ curso.certificado ? 'PDF' : '-' }}</td>
                 </tr>
-                <tr>
-                  <td>Integração</td>
-                  <td>01/04</td>
-                  <td>98</td>
-                  <td>PDF</td>
+                <tr *ngIf="historicoColaborador().length === 0">
+                  <td>-</td>
+                  <td>-</td>
+                  <td>0</td>
+                  <td>-</td>
                 </tr>
               </tbody>
             </table>
@@ -464,9 +493,7 @@
 
         <article class="cartao">
           <h2>Notificações</h2>
-          <div class="notificacao">Você possui um treinamento obrigatório pendente.</div>
-          <div class="notificacao">Seu certificado de NR10 vence em 25 dias.</div>
-          <div class="notificacao">Novo curso disponível.</div>
+          <div class="notificacao">Nenhuma notificação real cadastrada.</div>
 
           <h2>Fluxo do módulo</h2>
           <div class="fluxo">

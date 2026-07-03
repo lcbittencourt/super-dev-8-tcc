@@ -6,6 +6,7 @@ import { DashboardComponent } from './dashboard/dashboard';
 import { GestorComponent } from './gestor/gestor';
 import { FeriasComponent } from './ferias/ferias';
 import { TreinamentosComponent } from './treinamentos/treinamentos';
+import { ChamadosComponent } from './chamados/chamados';
 import { NovaEmpresaComponent } from './admin/nova-empresa/nova-empresa';
 import { AprovacoesComponent } from './aprovacoes/aprovacoes';
 import { ChamadosComponent } from './chamados/chamados';
@@ -23,6 +24,7 @@ export const routes: Routes = [
     { path: 'controle-ponto', component: ControlePontoComponent },
     { path: 'ferias', component: FeriasComponent },
     { path: 'treinamentos', component: TreinamentosComponent },
+    { path: 'chamados', component: ChamadosComponent },
     { path: 'nova-empresa', component: NovaEmpresaComponent},
     { path: 'nova-empresa/:id', component: NovaEmpresaComponent },
 ];

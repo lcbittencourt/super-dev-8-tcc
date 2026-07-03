@@ -18,6 +18,7 @@ interface ColaboradorFerias {
   nome: string;
   departamento: string;
   cargo?: string;
+  situacao?: string;
 }
 
 interface SolicitacaoFerias {
@@ -66,10 +67,10 @@ export class FeriasComponent implements OnInit {
   solicitacoes: SolicitacaoFerias[] = [];
 
   novaSolicitacao = {
-    inicio: '2026-09-01',
-    dias: 20,
+    inicio: '',
+    dias: 0,
     abono: 'Não',
-    substituto: 'Fulano',
+    substituto: '',
     observacoes: ''
   };
 
@@ -82,7 +83,7 @@ export class FeriasComponent implements OnInit {
     { nome: 'Retorno', situacao: 'vazio' }
   ];
 
-  diasCalendario = Array.from({ length: 31 }, (_, indice) => indice + 1);
+  diasCalendario = this.criarDiasCalendario();
 
   constructor(@Inject(PLATFORM_ID) private platformId: object) {}
 
@@ -121,23 +122,45 @@ export class FeriasComponent implements OnInit {
   }
 
   colaboradoresEmFerias(): SolicitacaoFerias[] {
-    return this.solicitacoes.filter(solicitacao => solicitacao.situacao === 'Aprovada' && solicitacao.inicio <= '2026-07-29');
+    return this.solicitacoes.filter(solicitacao => solicitacao.situacao === 'Aprovada' && solicitacao.inicio <= this.dataHoje() && solicitacao.fim >= this.dataHoje());
   }
 
   retornamEstaSemana(): number {
-    return this.solicitacoes.filter(solicitacao => solicitacao.situacao === 'Aprovada' && solicitacao.fim >= '2026-07-29').length;
+    return this.solicitacoes.filter(solicitacao => solicitacao.situacao === 'Aprovada' && solicitacao.fim >= this.dataHoje() && solicitacao.fim <= this.dataDaquiSeteDias()).length;
   }
 
   proximasFerias(): SolicitacaoFerias[] {
-    return this.solicitacoes.filter(solicitacao => solicitacao.situacao === 'Aprovada' && solicitacao.inicio > '2026-07-29');
+    return this.solicitacoes.filter(solicitacao => solicitacao.situacao === 'Aprovada' && solicitacao.inicio > this.dataHoje());
   }
 
   eventosDoDia(dia: number): SolicitacaoFerias[] {
-    return this.solicitacoes.filter(solicitacao => {
-      const inicio = this.diaDaData(solicitacao.inicio);
-      const fim = this.diaDaData(solicitacao.fim);
+    const hoje = new Date();
+    const dataDia = new Date(hoje.getFullYear(), hoje.getMonth(), dia);
 
-      return solicitacao.situacao === 'Aprovada' && dia >= inicio && dia <= fim;
+    return this.solicitacoes.filter(solicitacao => {
+      const inicio = new Date(`${solicitacao.inicio}T00:00:00`);
+      const fim = new Date(`${solicitacao.fim}T00:00:00`);
+
+      return solicitacao.situacao === 'Aprovada' && dataDia >= inicio && dataDia <= fim;
+    });
+  }
+
+  colaboradoresCadastrados(): ColaboradorFerias[] {
+    const pesquisa = this.pesquisaNome.trim().toLowerCase();
+
+    if (!pesquisa) {
+      return this.colaboradores;
+    }
+
+    return this.colaboradores.filter(colaborador => {
+      const texto = [
+        colaborador.nome,
+        colaborador.departamento,
+        colaborador.cargo,
+        colaborador.situacao
+      ].join(' ').toLowerCase();
+
+      return texto.includes(pesquisa);
     });
   }
 
@@ -162,11 +185,12 @@ export class FeriasComponent implements OnInit {
   }
 
   enviarSolicitacao() {
-    const colaborador = this.colaboradores[0] || {
-      id: 'colaborador-atual',
-      nome: 'Colaborador',
-      departamento: 'Departamento'
-    };
+    const colaborador = this.colaboradores[0];
+
+    if (!colaborador || !this.novaSolicitacao.inicio || Number(this.novaSolicitacao.dias || 0) <= 0) {
+      alert('Informe um colaborador cadastrado, data de início e quantidade de dias.');
+      return;
+    }
 
     const nova: SolicitacaoFerias = {
       id: Date.now().toString(),
@@ -176,15 +200,15 @@ export class FeriasComponent implements OnInit {
       inicio: this.novaSolicitacao.inicio,
       fim: this.calcularRetorno(-1),
       dias: Number(this.novaSolicitacao.dias || 0),
-      dataSolicitacao: '2026-06-29',
+      dataSolicitacao: this.dataHoje(),
       situacao: 'Pendente',
       substituto: this.novaSolicitacao.substituto,
-      contato: 'gestor@empresa.com',
+      contato: '',
       observacaoColaborador: this.novaSolicitacao.observacoes,
       parecerGestor: '',
       aprovador: '',
       dataAprovacao: '',
-      saldoDisponivel: 30
+      saldoDisponivel: this.saldoFerias()
     };
 
     this.solicitacoes = [nova, ...this.solicitacoes];
@@ -193,14 +217,48 @@ export class FeriasComponent implements OnInit {
   }
 
   calcularRetorno(ajusteDias = 0): string {
+    if (!this.novaSolicitacao.inicio || Number(this.novaSolicitacao.dias || 0) <= 0) {
+      return '';
+    }
+
     const data = new Date(`${this.novaSolicitacao.inicio}T00:00:00`);
     data.setDate(data.getDate() + Number(this.novaSolicitacao.dias || 0) + ajusteDias);
 
     return data.toISOString().slice(0, 10);
   }
 
+  saldoFerias(): number {
+    return 0;
+  }
+
+  diasVendidos(): number {
+    return 0;
+  }
+
+  solicitacoesPendentesColaborador(): number {
+    return this.pendentes();
+  }
+
   saldoRestante(): number {
-    return Math.max(30 - Number(this.novaSolicitacao.dias || 0), 0);
+    return Math.max(this.saldoFerias() - Number(this.novaSolicitacao.dias || 0), 0);
+  }
+
+  diasRestantesFerias(solicitacao: SolicitacaoFerias): number {
+    return this.diferencaDias(new Date(), new Date(`${solicitacao.fim}T00:00:00`));
+  }
+
+  diasParaInicio(solicitacao: SolicitacaoFerias): number {
+    return this.diferencaDias(new Date(), new Date(`${solicitacao.inicio}T00:00:00`));
+  }
+
+  ultimaFeriasTexto(): string {
+    const ultima = this.historico()[0];
+
+    if (!ultima) {
+      return '-';
+    }
+
+    return `${this.formatarData(ultima.inicio)} até ${this.formatarData(ultima.fim)} · ${ultima.dias} dias`;
   }
 
   historico(): SolicitacaoFerias[] {
@@ -219,6 +277,12 @@ export class FeriasComponent implements OnInit {
     return `${this.formatarDiaMes(solicitacao.inicio)} a ${this.formatarDiaMes(solicitacao.fim)}`;
   }
 
+  mesCalendario(): string {
+    const mes = new Intl.DateTimeFormat('pt-BR', { month: 'long' }).format(new Date());
+
+    return mes.charAt(0).toUpperCase() + mes.slice(1);
+  }
+
   private atualizarSolicitacaoSelecionada(situacao: SituacaoFerias) {
     if (!this.solicitacaoSelecionada) {
       return;
@@ -228,7 +292,7 @@ export class FeriasComponent implements OnInit {
       ...this.solicitacaoSelecionada,
       situacao,
       aprovador: 'Gestor responsável',
-      dataAprovacao: '2026-06-29'
+      dataAprovacao: this.dataHoje()
     };
 
     this.solicitacoes = this.solicitacoes.map(solicitacao => {
@@ -256,7 +320,7 @@ export class FeriasComponent implements OnInit {
     const colaboradores = colaboradoresSalvos ? JSON.parse(colaboradoresSalvos) : [];
 
     this.colaboradores = colaboradores.length
-      ? colaboradores
+      ? colaboradores.map((colaborador: any) => this.normalizarColaborador(colaborador))
       : this.colaboradoresPadrao();
   }
 
@@ -264,7 +328,9 @@ export class FeriasComponent implements OnInit {
     const solicitacoesSalvas = localStorage.getItem(this.chaveFerias());
 
     this.solicitacoes = solicitacoesSalvas
-      ? JSON.parse(solicitacoesSalvas).map((solicitacao: any) => this.normalizarSolicitacao(solicitacao))
+      ? JSON.parse(solicitacoesSalvas)
+          .map((solicitacao: any) => this.normalizarSolicitacao(solicitacao))
+          .filter((solicitacao: SolicitacaoFerias) => !this.solicitacaoDemonstracao(solicitacao))
       : this.solicitacoesPadrao();
 
     this.salvarSolicitacoes();
@@ -287,86 +353,67 @@ export class FeriasComponent implements OnInit {
     };
   }
 
-  private colaboradoresPadrao(): ColaboradorFerias[] {
-    const nomesPorEmpresa: Record<string, ColaboradorFerias[]> = {
-      tx001: [
-        { id: 'joao', nome: 'João Silva', departamento: 'Financeiro' },
-        { id: 'maria', nome: 'Maria Souza', departamento: 'RH' },
-        { id: 'carlos', nome: 'Carlos Mendes', departamento: 'Financeiro' }
-      ],
-      ml002: [
-        { id: 'ana', nome: 'Ana Müller', departamento: 'Produção' },
-        { id: 'bruno', nome: 'Bruno Keller', departamento: 'Manutenção' },
-        { id: 'livia', nome: 'Lívia Stein', departamento: 'Qualidade' }
-      ]
+  private normalizarColaborador(colaborador: any): ColaboradorFerias {
+    return {
+      id: colaborador.id,
+      nome: colaborador.nome,
+      departamento: colaborador.departamento || '-',
+      cargo: colaborador.cargo || '-',
+      situacao: colaborador.situacao || 'Ativo'
     };
+  }
 
-    return nomesPorEmpresa[this.empresaSelecionada.id] || [
-      { id: 'joao', nome: 'João Silva', departamento: 'Financeiro' },
-      { id: 'maria', nome: 'Maria Souza', departamento: 'RH' },
-      { id: 'carlos', nome: 'Carlos Mendes', departamento: 'Operações' }
-    ];
+  private colaboradoresPadrao(): ColaboradorFerias[] {
+    return [];
   }
 
   private solicitacoesPadrao(): SolicitacaoFerias[] {
-    const [primeiro, segundo, terceiro] = this.colaboradoresPadrao();
+    return [];
+  }
 
-    return [
-      {
-        id: `${this.empresaSelecionada.id}-1`,
-        colaboradorId: primeiro.id,
-        colaborador: primeiro.nome,
-        departamento: primeiro.departamento,
-        inicio: '2026-09-01',
-        fim: '2026-09-20',
-        dias: 20,
-        dataSolicitacao: '2026-07-15',
-        situacao: 'Pendente',
-        substituto: 'Fulano',
-        contato: 'joao@empresa.com',
-        observacaoColaborador: '',
-        parecerGestor: '',
-        aprovador: '',
-        dataAprovacao: '',
-        saldoDisponivel: 30
-      },
-      {
-        id: `${this.empresaSelecionada.id}-2`,
-        colaboradorId: segundo.id,
-        colaborador: segundo.nome,
-        departamento: segundo.departamento,
-        inicio: '2026-07-05',
-        fim: '2026-07-25',
-        dias: 20,
-        dataSolicitacao: '2026-07-10',
-        situacao: 'Aprovada',
-        substituto: terceiro.nome,
-        contato: 'maria@empresa.com',
-        observacaoColaborador: 'Viagem familiar programada.',
-        parecerGestor: 'Aprovado conforme saldo disponível.',
-        aprovador: 'Gestor responsável',
-        dataAprovacao: '2026-07-12',
-        saldoDisponivel: 30
-      },
-      {
-        id: `${this.empresaSelecionada.id}-3`,
-        colaboradorId: terceiro.id,
-        colaborador: terceiro.nome,
-        departamento: terceiro.departamento,
-        inicio: '2026-08-03',
-        fim: '2026-09-01',
-        dias: 30,
-        dataSolicitacao: '2026-06-20',
-        situacao: 'Aprovada',
-        substituto: primeiro.nome,
-        contato: 'carlos@empresa.com',
-        observacaoColaborador: '',
-        parecerGestor: 'Escala validada.',
-        aprovador: 'Gestor responsável',
-        dataAprovacao: '2026-06-24',
-        saldoDisponivel: 30
-      }
+  private solicitacaoDemonstracao(solicitacao: SolicitacaoFerias): boolean {
+    const idsDemonstracao = [
+      `${this.empresaSelecionada.id}-1`,
+      `${this.empresaSelecionada.id}-2`,
+      `${this.empresaSelecionada.id}-3`
     ];
+
+    return idsDemonstracao.includes(solicitacao.id)
+      && ['João Silva', 'Maria Souza', 'Carlos Mendes'].includes(solicitacao.colaborador);
+  }
+
+  private dataHoje(): string {
+    return this.dataParaCampo(new Date());
+  }
+
+  private dataDaquiSeteDias(): string {
+    const data = new Date();
+    data.setDate(data.getDate() + 7);
+
+    return this.dataParaCampo(data);
+  }
+
+  private criarDiasCalendario(): number[] {
+    const hoje = new Date();
+    const totalDias = new Date(hoje.getFullYear(), hoje.getMonth() + 1, 0).getDate();
+
+    return Array.from({ length: totalDias }, (_, indice) => indice + 1);
+  }
+
+  private dataParaCampo(data: Date): string {
+    const ano = data.getFullYear();
+    const mes = String(data.getMonth() + 1).padStart(2, '0');
+    const dia = String(data.getDate()).padStart(2, '0');
+
+    return `${ano}-${mes}-${dia}`;
+  }
+
+
+  private diferencaDias(inicio: Date, fim: Date): number {
+    const milissegundosDia = 1000 * 60 * 60 * 24;
+    const diferenca = Math.ceil((fim.getTime() - inicio.getTime()) / milissegundosDia);
+
+    return Math.max(diferenca, 0);
   }
 
   private formatarDiaMes(data: string): string {

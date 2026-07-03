@@ -33,7 +33,7 @@ export class DashboardComponent implements OnInit {
     nome: 'Têxtil Vale Norte',
     cidade: 'Blumenau, SC',
     plano: 'Empresarial',
-    usuarios: 147,
+    usuarios: 0,
     modulos: 8,
     situacao: 'Ativa',
     logo: 'TV'
@@ -60,7 +60,7 @@ export class DashboardComponent implements OnInit {
   }
 
   funcionarios(): number {
-    return this.colaboradores.length || this.empresa.usuarios || 0;
+    return this.colaboradores.length;
   }
 
   ferias(): number {
@@ -79,15 +79,43 @@ export class DashboardComponent implements OnInit {
   }
 
   aniversariantes(): number {
-    return 3;
+    return 0;
   }
 
   treinamentosPendentes(): number {
-    return 14;
+    if (!this.estaNoNavegador()) {
+      return 0;
+    }
+
+    const dadosTreinamentos = JSON.parse(
+      localStorage.getItem(`treinamentos:${this.empresa.id}`) || 'null'
+    );
+
+    if (!dadosTreinamentos) {
+      return 0;
+    }
+
+    const cursosColaborador = (dadosTreinamentos.cursosColaborador || [])
+      .filter((curso: any) => !['integracao', 'lgpd'].includes(curso.id));
+    const acompanhamentos = (dadosTreinamentos.acompanhamentos || [])
+      .filter((item: any) => item.colaboradorId);
+
+    return cursosColaborador.filter((curso: any) => Number(curso.progresso || 0) < 100).length
+      + acompanhamentos.filter((item: any) => item.situacao === 'Pendente').length;
   }
 
   chamadosAbertos(): number {
-    return 9;
+    if (!this.estaNoNavegador()) {
+      return 0;
+    }
+
+    const chamados = JSON.parse(
+      localStorage.getItem('chamados:' + this.empresa.id) || '[]'
+    );
+
+    return Array.isArray(chamados)
+      ? chamados.filter((chamado: any) => !['Resolvido', 'Cancelado'].includes(chamado.situacao || chamado.status)).length
+      : 0;
   }
 
   totalDiasLicenca(): number {

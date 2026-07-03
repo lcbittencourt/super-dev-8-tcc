@@ -27,10 +27,6 @@
         <h1>Férias e afastamentos</h1>
         <p>{{ empresaSelecionada.nome }} · {{ empresaSelecionada.cidade }}</p>
       </div>
-
-      <div class="acoes">
-        <button class="botao" routerLink="/admin">Voltar</button>
-      </div>
     </section>
 
     <ng-container *ngIf="perfil === 'gestor'">
@@ -59,6 +55,36 @@
       <section class="cartao">
         <div class="cabecalho-cartao">
           <div>
+            <h2>Colaboradores cadastrados</h2>
+            <p>Lista puxada diretamente do módulo Colaboradores desta empresa.</p>
+          </div>
+        </div>
+
+        <div class="tabela simples">
+          <table>
+            <thead>
+              <tr>
+                <th>Colaborador</th>
+                <th>Departamento</th>
+                <th>Cargo</th>
+                <th>Situação</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let colaborador of colaboradoresCadastrados()">
+                <td>{{ colaborador.nome }}</td>
+                <td>{{ colaborador.departamento }}</td>
+                <td>{{ colaborador.cargo || '-' }}</td>
+                <td><span class="selo">{{ colaborador.situacao || 'Ativo' }}</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="cartao">
+        <div class="cabecalho-cartao">
+          <div>
             <h2>Lista de solicitações</h2>
             <p>Analise, aprove ou reprove os pedidos da empresa selecionada.</p>
           </div>
@@ -76,11 +102,16 @@
         </div>
 
         <div class="abas">
-          <button type="button" [class.ativo]="filtroSituacao === 'Todos'" (click)="filtroSituacao = 'Todos'">Todos</button>
-          <button type="button" [class.ativo]="filtroSituacao === 'Pendente'" (click)="filtroSituacao = 'Pendente'">Pendentes</button>
-          <button type="button" [class.ativo]="filtroSituacao === 'Aprovada'" (click)="filtroSituacao = 'Aprovada'">Aprovadas</button>
-          <button type="button" [class.ativo]="filtroSituacao === 'Reprovada'" (click)="filtroSituacao = 'Reprovada'">Reprovadas</button>
-          <button type="button" [class.ativo]="filtroSituacao === 'Cancelada'" (click)="filtroSituacao = 'Cancelada'">Canceladas</button>
+          <button type="button" [class.ativo]="filtroSituacao === 'Todos'"
+            (click)="filtroSituacao = 'Todos'">Todos</button>
+          <button type="button" [class.ativo]="filtroSituacao === 'Pendente'"
+            (click)="filtroSituacao = 'Pendente'">Pendentes</button>
+          <button type="button" [class.ativo]="filtroSituacao === 'Aprovada'"
+            (click)="filtroSituacao = 'Aprovada'">Aprovadas</button>
+          <button type="button" [class.ativo]="filtroSituacao === 'Reprovada'"
+            (click)="filtroSituacao = 'Reprovada'">Reprovadas</button>
+          <button type="button" [class.ativo]="filtroSituacao === 'Cancelada'"
+            (click)="filtroSituacao = 'Cancelada'">Canceladas</button>
         </div>
 
         <div class="tabela">
@@ -121,7 +152,7 @@
           <div class="cabecalho-cartao">
             <div>
               <h2>Agenda de férias</h2>
-              <p>Julho</p>
+              <p>{{ mesCalendario() }}</p>
             </div>
           </div>
 
@@ -149,7 +180,7 @@
               <span>{{ pessoa.departamento }}</span>
               <span>{{ formatarData(pessoa.inicio) }}</span>
               <span>Retorna em {{ formatarData(pessoa.fim) }}</span>
-              <small>12 dias restantes</small>
+              <small>{{ diasRestantesFerias(pessoa) }} dias restantes</small>
             </div>
           </div>
         </article>
@@ -161,7 +192,7 @@
 
           <div class="cartao-pessoa" *ngFor="let pessoa of proximasFerias()">
             <strong>{{ pessoa.colaborador }}</strong>
-            <span>Começa em 5 dias</span>
+            <span>Começa em {{ diasParaInicio(pessoa) }} dias</span>
             <span>{{ pessoa.departamento }}</span>
             <small>{{ pessoa.dias }} dias</small>
           </div>
@@ -174,7 +205,7 @@
             <table>
               <thead>
                 <tr>
-                  <th>2026</th>
+                  <th>Colaborador</th>
                   <th>Dias</th>
                   <th>Situação</th>
                   <th>Aprovador</th>
@@ -200,23 +231,23 @@
       <section class="grade-painel">
         <article class="metrica">
           <span>Meu saldo</span>
-          <strong>30 dias</strong>
+          <strong>{{ saldoFerias() }} dias</strong>
         </article>
 
         <article class="metrica">
           <span>Período aquisitivo</span>
-          <strong>01/02/2025</strong>
-          <small>até 31/01/2026</small>
+          <strong>-</strong>
+          <small>até -</small>
         </article>
 
         <article class="metrica">
           <span>Dias vendidos</span>
-          <strong>0</strong>
+          <strong>{{ diasVendidos() }}</strong>
         </article>
 
         <article class="metrica">
           <span>Solicitações</span>
-          <strong>1 pendente</strong>
+          <strong>{{ solicitacoesPendentesColaborador() }} pendente(s)</strong>
         </article>
       </section>
 
@@ -225,7 +256,7 @@
           <h2>Minhas férias</h2>
           <div class="linha-info">
             <span>Últimas férias</span>
-            <strong>01/03/2026 até 30/03/2026 · 30 dias</strong>
+            <strong>{{ ultimaFeriasTexto() }}</strong>
           </div>
 
           <h2>Nova solicitação</h2>
@@ -237,7 +268,7 @@
 
             <label>
               Quantidade de dias
-              <input type="number" min="1" max="30" [(ngModel)]="novaSolicitacao.dias" name="dias">
+              <input type="number" min="0" [max]="saldoFerias()" [(ngModel)]="novaSolicitacao.dias" name="dias">
             </label>
 
             <label>
@@ -251,6 +282,7 @@
             <label>
               Substituto
               <select [(ngModel)]="novaSolicitacao.substituto" name="substituto">
+                <option value="">Selecione</option>
                 <option *ngFor="let colaborador of colaboradores">{{ colaborador.nome }}</option>
               </select>
             </label>
@@ -277,7 +309,8 @@
 
           <h2>Andamento</h2>
           <div class="linha-tempo">
-            <div class="etapa" *ngFor="let etapa of etapas" [class.feito]="etapa.situacao === 'feito'" [class.atual]="etapa.situacao === 'atual'">
+            <div class="etapa" *ngFor="let etapa of etapas" [class.feito]="etapa.situacao === 'feito'"
+              [class.atual]="etapa.situacao === 'atual'">
               <span></span>
               <strong>{{ etapa.nome }}</strong>
             </div>
@@ -298,15 +331,15 @@
                 </tr>
               </thead>
               <tbody>
-                <tr>
-                  <td>2026</td>
-                  <td>30</td>
-                  <td>Concluída</td>
+                <tr *ngFor="let item of historico()">
+                  <td>{{ periodoCurto(item) }}</td>
+                  <td>{{ item.dias }}</td>
+                  <td>{{ item.situacao }}</td>
                 </tr>
-                <tr>
-                  <td>2025</td>
-                  <td>15</td>
-                  <td>Concluída</td>
+                <tr *ngIf="historico().length === 0">
+                  <td>-</td>
+                  <td>0</td>
+                  <td>Sem histórico</td>
                 </tr>
               </tbody>
             </table>
@@ -315,9 +348,9 @@
 
         <article class="cartao avisos">
           <h2>Avisos</h2>
-          <p>Seu gestor possui até 5 dias úteis para responder sua solicitação.</p>
-          <p>Você possui <strong>30 dias disponíveis</strong>.</p>
-          <p>Seu período aquisitivo encerra em <strong>31/01/2027</strong>.</p>
+          <p>Prazo de resposta não cadastrado.</p>
+          <p>Você possui <strong>{{ saldoFerias() }} dias disponíveis</strong>.</p>
+          <p>Período aquisitivo não cadastrado.</p>
 
           <div class="fluxo">
             <span>Colaborador</span>
@@ -358,7 +391,8 @@
         <span>Saldo disponível</span>
         <strong>{{ solicitacaoSelecionada.saldoDisponivel }} dias</strong>
         <span>Período solicitado</span>
-        <strong>{{ formatarData(solicitacaoSelecionada.inicio) }} até {{ formatarData(solicitacaoSelecionada.fim) }} · {{ solicitacaoSelecionada.dias }} dias</strong>
+        <strong>{{ formatarData(solicitacaoSelecionada.inicio) }} até {{ formatarData(solicitacaoSelecionada.fim) }} ·
+          {{ solicitacaoSelecionada.dias }} dias</strong>
         <span>Substituto</span>
         <strong>{{ solicitacaoSelecionada.substituto }}</strong>
         <span>Observação do colaborador</span>
