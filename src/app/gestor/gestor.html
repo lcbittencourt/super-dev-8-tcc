@@ -12,13 +12,8 @@
 
     <nav class="navegacao">
       <a routerLink="/admin">Admin</a>
-<<<<<<< Updated upstream
       <a class="ativo" routerLink="/gestor">Gestor</a>
       <a routerLink="/colaborador">Colaborador</a>
-=======
-      <a class="ativo">Gestor</a>
-      <a>Colaborador</a>
->>>>>>> Stashed changes
     </nav>
 
     <div class="identificacao">{{ iniciaisEmpresa() }}</div>
@@ -43,15 +38,9 @@
 
           @if (menuAberto) {
             <div class="lista-menu">
-<<<<<<< Updated upstream
               <a routerLink="/aprovacoes">Aprovações</a>
               <a routerLink="/chamados">Chamados</a>
               <a routerLink="/treinamentos-equipe">Treinamentos</a>
-=======
-              <a>Aprovações</a>
-              <a>Chamados</a>
-              <a>Treinamentos</a>
->>>>>>> Stashed changes
             </div>
           }
         </div>
@@ -79,19 +68,11 @@
       <a class="acesso-modulo" routerLink="/controle-ponto">Controle de ponto</a>
       <a class="acesso-modulo" routerLink="/ferias" [queryParams]="{ perfil: 'gestor' }">Férias</a>
       <a class="acesso-modulo" routerLink="/treinamentos" [queryParams]="{ perfil: 'gestor' }">Treinamentos</a>
-<<<<<<< Updated upstream
       <a class="acesso-modulo" routerLink="/chamados">Chamados</a>
       <span class="acesso-modulo acesso-modulo-inativo" aria-disabled="true">Comunicados</span>
       <span class="acesso-modulo acesso-modulo-inativo" aria-disabled="true">Eventos</span>
       <span class="acesso-modulo acesso-modulo-inativo" aria-disabled="true">Fornecedores</span>
       <span class="acesso-modulo acesso-modulo-inativo" aria-disabled="true">Relatórios</span>
-=======
-      <a class="acesso-modulo" routerLink="/chamados" [queryParams]="{ perfil: 'gestor' }">Chamados</a>
-      <a class="acesso-modulo" routerLink="/comunicados">Comunicados</a>
-      <a class="acesso-modulo" routerLink="/eventos">Eventos</a>
-      <a class="acesso-modulo" routerLink="/fornecedores">Fornecedores</a>
-      <a class="acesso-modulo" routerLink="/relatorios">Relatórios</a>
->>>>>>> Stashed changes
     </section>
 
     <section class="graficos">
@@ -196,15 +177,6 @@
                 </td>
               </tr>
             }
-<<<<<<< Updated upstream
-=======
-
-            @if (aprovacoes.length === 0) {
-              <tr>
-                <td colspan="6">Nenhuma pendência encontrada para esta empresa.</td>
-              </tr>
-            }
->>>>>>> Stashed changes
           </tbody>
         </table>
       </div>

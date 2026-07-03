@@ -23,7 +23,6 @@
     <section class="cabecalho-pagina apenas-acoes">
       <div class="acoes">
         <button class="botao">Exportar</button>
-
         <button class="botao principal" routerLink="/nova-empresa">Nova empresa</button>
       </div>
     </section>
@@ -122,117 +121,11 @@
                 <strong>{{ empresa.modulos }}/10</strong> módulos
               </span>
               <span>{{ empresa.plano }}</span>
-<<<<<<< Updated upstream
-=======
             </div>
           </div>
         }
       </div>
 
-      @if (empresasFiltradas().length === 0) {
-        <div class="sem-empresas">Nenhuma empresa encontrada.</div>
-      }
-
-      <div class="paginador-empresas">
-        <button
-          class="botao"
-          type="button"
-          (click)="voltarEmpresas()"
-          [disabled]="paginaEmpresas === 0"
-        >
-          Anteriores
-        </button>
-
-        <span> Página {{ paginaEmpresas + 1 }} de {{ totalPaginasEmpresas() }} </span>
-
-        <button
-          class="botao"
-          type="button"
-          (click)="avancarEmpresas()"
-          [disabled]="paginaEmpresas >= totalPaginasEmpresas() - 1"
-        >
-          Próximas
-        </button>
-      </div>
-    </section>
-
-    @if (empresaSelecionada) {
-      <section class="cartao">
-        <div class="cabecalho-cartao">
-          <div>
-            <h2>Configurar módulos · {{ empresaSelecionada.nome }}</h2>
-            <p>
-              Plano {{ empresaSelecionada.plano }} · {{ modulosLiberados() }}/{{
-                limiteModulosEmpresa()
-              }}
-              módulos liberados
-            </p>
-          </div>
-
-          <button class="botao principal" type="button" (click)="salvarModulosEmpresa()">
-            Salvar alterações
-          </button>
-        </div>
-
-        @for (modulo of modulosSistema; track modulo.nome) {
-          <div class="modulo" [class.bloqueado-limite]="moduloBloqueadoPorLimite(modulo)">
-            <div>
-              @if (modulo.nome === 'Dashboard' && modulo.liberado) {
-                <a class="atalho-modulo" routerLink="/dashboard">
-                  {{ modulo.nome }}
-                </a>
-              }
-
-              @if (modulo.nome === 'Colaboradores' && modulo.liberado) {
-                <a class="atalho-modulo" routerLink="/colaboradores">
-                  {{ modulo.nome }}
-                </a>
-              }
-
-              @if (modulo.nome === 'Controle de ponto' && modulo.liberado) {
-                <a class="atalho-modulo" routerLink="/controle-ponto">
-                  {{ modulo.nome }}
-                </a>
-              }
-
-              @if (modulo.nome === 'Férias e afastamentos' && modulo.liberado) {
-                <a class="atalho-modulo" routerLink="/ferias">
-                  {{ modulo.nome }}
-                </a>
-              }
-
-              @if (modulo.nome === 'Treinamentos' && modulo.liberado) {
-                <a class="atalho-modulo" routerLink="/treinamentos">
-                  {{ modulo.nome }}
-                </a>
-              }
-
-              @if (modulo.nome === 'Chamados' && modulo.liberado) {
-                <a class="atalho-modulo" routerLink="/chamados">
-                  {{ modulo.nome }}
-                </a>
-              }
-
-              @if (
-                (modulo.nome !== 'Dashboard' &&
-                  modulo.nome !== 'Colaboradores' &&
-                  modulo.nome !== 'Controle de ponto' &&
-                  modulo.nome !== 'Férias e afastamentos' &&
-                  modulo.nome !== 'Treinamentos' &&
-                  modulo.nome !== 'Chamados') ||
-                !modulo.liberado
-              ) {
-                <strong>{{ modulo.nome }}</strong>
-              }
-
-              <p>{{ modulo.descricao }}</p>
->>>>>>> Stashed changes
-            </div>
-          </div>
-        }
-      </div>
-
-<<<<<<< Updated upstream
       @if (empresasFiltradas().length === 0) {
         <div class="sem-empresas">Nenhuma empresa encontrada.</div>
       }
@@ -276,7 +169,8 @@
             Salvar alterações
           </button>
         </div>
-        @for (modulo of modulosSistema; track modulo) {
+
+        @for (modulo of modulosSistema; track modulo.nome) {
           <div class="modulo" [class.bloqueado-limite]="moduloBloqueadoPorLimite(modulo)">
             <div>
               @if (modulo.nome === 'Dashboard' && modulo.liberado) {
@@ -295,12 +189,12 @@
                 </a>
               }
               @if (modulo.nome === 'Férias e afastamentos' && modulo.liberado) {
-                <a class="atalho-modulo" routerLink="/ferias">
+                <a class="atalho-modulo" routerLink="/ferias" [queryParams]="{ perfil: 'gestor' }">
                   {{ modulo.nome }}
                 </a>
               }
               @if (modulo.nome === 'Treinamentos' && modulo.liberado) {
-                <a class="atalho-modulo" routerLink="/treinamentos">
+                <a class="atalho-modulo" routerLink="/treinamentos" [queryParams]="{ perfil: 'gestor' }">
                   {{ modulo.nome }}
                 </a>
               }
@@ -322,25 +216,7 @@
               }
               <p>{{ modulo.descricao }}</p>
             </div>
-            <div class="acao-modulo">
-              <span
-                class="selo"
-                [class.sucesso]="modulo.liberado"
-                [class.neutro]="!modulo.liberado"
-              >
-                {{ modulo.liberado ? 'Liberado' : 'Bloqueado' }}
-              </span>
-              <button
-                class="alternador"
-                type="button"
-                [class.ligado]="modulo.liberado"
-                [disabled]="moduloBloqueadoPorLimite(modulo)"
-                (click)="alternarModulo(modulo)"
-              >
-                <span></span>
-              </button>
-            </div>
-=======
+
             <div class="acao-modulo">
               <span
                 class="selo"
@@ -360,7 +236,6 @@
                 <span></span>
               </button>
             </div>
->>>>>>> Stashed changes
           </div>
         }
       </section>

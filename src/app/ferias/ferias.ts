@@ -111,11 +111,7 @@ export class FeriasComponent implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
-<<<<<<< Updated upstream
     @Inject(PLATFORM_ID) private platformId: object,
-=======
-    @Inject(PLATFORM_ID) private platformId: object
->>>>>>> Stashed changes
   ) {}
 
   ngOnInit() {

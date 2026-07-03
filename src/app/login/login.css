@@ -88,11 +88,7 @@ p {
 
 .formulario {
   display: grid;
-<<<<<<< Updated upstream
   gap: 14px;
-=======
-  gap: 12px;
->>>>>>> Stashed changes
   margin-top: 22px;
 }
 
@@ -100,11 +96,7 @@ label {
   color: #384358;
   display: grid;
   font-size: 13px;
-<<<<<<< Updated upstream
   gap: 8px;
-=======
-  gap: 6px;
->>>>>>> Stashed changes
 }
 
 input {
@@ -113,12 +105,8 @@ input {
   border-radius: 8px;
   color: #161e2f;
   font: inherit;
-<<<<<<< Updated upstream
   min-height: 42px;
   padding: 10px 12px;
-=======
-  padding: 10px;
->>>>>>> Stashed changes
   width: 100%;
 }
 
@@ -134,23 +122,16 @@ input {
 }
 
 .botao {
-<<<<<<< Updated upstream
   align-items: center;
-=======
->>>>>>> Stashed changes
   background: #fff;
   border: 1px solid #c4b59a;
   border-radius: 8px;
   color: #161e2f;
   cursor: pointer;
-<<<<<<< Updated upstream
   display: inline-flex;
   font-weight: 500;
   justify-content: center;
   min-height: 40px;
-=======
-  font-weight: 500;
->>>>>>> Stashed changes
   padding: 10px 14px;
 }
 
