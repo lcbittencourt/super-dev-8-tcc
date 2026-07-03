@@ -189,6 +189,132 @@ h2 {
   background: #f5efe6;
 }
 
+.acessos-modulos {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(10, minmax(0, 1fr));
+  margin-bottom: 18px;
+}
+
+.acesso-modulo {
+  align-items: center;
+  background: #fff;
+  border: 1px solid #d9cdb8;
+  border-radius: 8px;
+  color: #161e2f;
+  display: flex;
+  font-size: 13px;
+  font-weight: 700;
+  justify-content: center;
+  min-height: 62px;
+  padding: 10px;
+  text-align: center;
+  text-decoration: none;
+}
+
+.acesso-modulo:hover {
+  border-color: #b51a2b;
+  color: #b51a2b;
+}
+
+.acesso-modulo-inativo,
+.acesso-modulo-inativo:hover {
+  cursor: default;
+}
+
+/* Ajustes de espacamento entre textos, campos e botoes. */
+.cabecalho-pagina,
+.cabecalho-cartao {
+  gap: 16px;
+}
+
+.cabecalho-cartao {
+  margin-bottom: 18px;
+}
+
+.acoes,
+.acoes-cartao,
+.acoes-linha,
+.acoes-rodape {
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.filtros,
+.formulario,
+.campos,
+.grade-formulario,
+.grade-participantes,
+.grade-certificados,
+.lista-compacta,
+.lista-cartoes {
+  gap: 14px;
+}
+
+.formulario,
+.filtros {
+  row-gap: 14px;
+}
+
+label,
+.formulario label,
+.avaliacao label,
+.grade-participantes label {
+  line-height: 1.35;
+}
+
+.formulario label,
+.avaliacao label,
+.grade-participantes label {
+  gap: 8px;
+}
+
+input,
+select,
+textarea {
+  line-height: 1.35;
+  min-height: 42px;
+  padding: 10px 12px;
+}
+
+textarea {
+  min-height: 96px;
+  resize: vertical;
+}
+
+.botao:not(.pequeno),
+.botao-envio {
+  align-items: center;
+  display: inline-flex;
+  gap: 8px;
+  justify-content: center;
+  min-height: 40px;
+}
+
+.acao-texto {
+  line-height: 1.35;
+  padding-bottom: 4px;
+  padding-top: 4px;
+}
+
+.cartao,
+.indicador,
+.metrica {
+  min-width: 0;
+}
+
+th,
+td {
+  line-height: 1.35;
+}
+
+@media (max-width: 1280px) {
+  .acessos-modulos {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
+}
+
 .indicadores,
 .grade-painel {
   display: grid;
@@ -373,6 +499,7 @@ th {
     width: 100%;
   }
 
+  .acessos-modulos,
   .indicadores,
   .grade-painel,
   .graficos {

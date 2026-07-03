@@ -1,5 +1,4 @@
 <div class="sistema">
-
   <header class="barra-superior">
     <div class="marca">
       <div class="simbolo-marca">P</div>
@@ -21,7 +20,6 @@
   </header>
 
   <main class="pagina">
-
     <section class="cabecalho-pagina">
       <div>
         <h1>Férias e afastamentos</h1>
@@ -29,37 +27,31 @@
       </div>
     </section>
 
-    <ng-container *ngIf="perfil === 'gestor'">
+    @if (perfil === 'gestor') {
       <section class="grade-painel">
         <article class="metrica">
           <span>Solicitações Pendentes</span>
           <strong>{{ pendentes() }}</strong>
         </article>
-
         <article class="metrica">
           <span>Colaboradores de férias</span>
           <strong>{{ colaboradoresEmFerias().length }}</strong>
         </article>
-
         <article class="metrica">
           <span>Retornam esta semana</span>
           <strong>{{ retornamEstaSemana() }}</strong>
         </article>
-
         <article class="metrica">
           <span>Próximas férias</span>
           <strong>{{ proximasFerias().length }}</strong>
         </article>
       </section>
-
       <section class="cartao">
         <div class="cabecalho-cartao">
           <div>
             <h2>Colaboradores cadastrados</h2>
-            <p>Lista puxada diretamente do módulo Colaboradores desta empresa.</p>
           </div>
         </div>
-
         <div class="tabela simples">
           <table>
             <thead>
@@ -71,26 +63,27 @@
               </tr>
             </thead>
             <tbody>
-              <tr *ngFor="let colaborador of colaboradoresCadastrados()">
-                <td>{{ colaborador.nome }}</td>
-                <td>{{ colaborador.departamento }}</td>
-                <td>{{ colaborador.cargo || '-' }}</td>
-                <td><span class="selo">{{ colaborador.situacao || 'Ativo' }}</span></td>
-              </tr>
+              @for (colaborador of colaboradoresCadastrados(); track colaborador) {
+                <tr>
+                  <td>{{ colaborador.nome }}</td>
+                  <td>{{ colaborador.departamento }}</td>
+                  <td>{{ colaborador.cargo || '-' }}</td>
+                  <td>
+                    <span class="selo">{{ colaborador.situacao || 'Ativo' }}</span>
+                  </td>
+                </tr>
+              }
             </tbody>
           </table>
         </div>
       </section>
-
       <section class="cartao">
         <div class="cabecalho-cartao">
           <div>
             <h2>Lista de solicitações</h2>
-            <p>Analise, aprove ou reprove os pedidos da empresa selecionada.</p>
           </div>
-
           <div class="filtros">
-            <input type="search" placeholder="Pesquisar por nome" [(ngModel)]="pesquisaNome">
+            <input type="search" placeholder="Pesquisar por nome" [(ngModel)]="pesquisaNome" />
             <select [(ngModel)]="filtroSituacao">
               <option>Todos</option>
               <option>Pendente</option>
@@ -100,20 +93,43 @@
             </select>
           </div>
         </div>
-
         <div class="abas">
-          <button type="button" [class.ativo]="filtroSituacao === 'Todos'"
-            (click)="filtroSituacao = 'Todos'">Todos</button>
-          <button type="button" [class.ativo]="filtroSituacao === 'Pendente'"
-            (click)="filtroSituacao = 'Pendente'">Pendentes</button>
-          <button type="button" [class.ativo]="filtroSituacao === 'Aprovada'"
-            (click)="filtroSituacao = 'Aprovada'">Aprovadas</button>
-          <button type="button" [class.ativo]="filtroSituacao === 'Reprovada'"
-            (click)="filtroSituacao = 'Reprovada'">Reprovadas</button>
-          <button type="button" [class.ativo]="filtroSituacao === 'Cancelada'"
-            (click)="filtroSituacao = 'Cancelada'">Canceladas</button>
+          <button
+            type="button"
+            [class.ativo]="filtroSituacao === 'Todos'"
+            (click)="filtroSituacao = 'Todos'"
+          >
+            Todos
+          </button>
+          <button
+            type="button"
+            [class.ativo]="filtroSituacao === 'Pendente'"
+            (click)="filtroSituacao = 'Pendente'"
+          >
+            Pendentes
+          </button>
+          <button
+            type="button"
+            [class.ativo]="filtroSituacao === 'Aprovada'"
+            (click)="filtroSituacao = 'Aprovada'"
+          >
+            Aprovadas
+          </button>
+          <button
+            type="button"
+            [class.ativo]="filtroSituacao === 'Reprovada'"
+            (click)="filtroSituacao = 'Reprovada'"
+          >
+            Reprovadas
+          </button>
+          <button
+            type="button"
+            [class.ativo]="filtroSituacao === 'Cancelada'"
+            (click)="filtroSituacao = 'Cancelada'"
+          >
+            Canceladas
+          </button>
         </div>
-
         <div class="tabela">
           <table>
             <thead>
@@ -127,80 +143,121 @@
                 <th>Ações</th>
               </tr>
             </thead>
-
             <tbody>
-              <tr *ngFor="let solicitacao of solicitacoesFiltradas()">
-                <td>{{ solicitacao.colaborador }}</td>
-                <td>{{ solicitacao.departamento }}</td>
-                <td>{{ periodoCurto(solicitacao) }}</td>
-                <td>{{ solicitacao.dias }}</td>
-                <td>{{ formatarData(solicitacao.dataSolicitacao) }}</td>
-                <td><span class="selo">{{ solicitacao.situacao }}</span></td>
-                <td>
-                  <button class="acao-texto" type="button" (click)="abrirSolicitacao(solicitacao)">
-                    {{ solicitacao.situacao === 'Pendente' ? 'Aprovar / Reprovar' : 'Visualizar' }}
-                  </button>
-                </td>
-              </tr>
+              @for (solicitacao of solicitacoesFiltradas(); track solicitacao) {
+                <tr>
+                  <td>{{ solicitacao.colaborador }}</td>
+                  <td>{{ solicitacao.departamento }}</td>
+                  <td>{{ periodoCurto(solicitacao) }}</td>
+                  <td>{{ solicitacao.dias }}</td>
+                  <td>{{ formatarData(solicitacao.dataSolicitacao) }}</td>
+                  <td>
+                    <span class="selo">{{ solicitacao.situacao }}</span>
+                  </td>
+                  <td>
+                    <button
+                      class="acao-texto"
+                      type="button"
+                      (click)="abrirSolicitacao(solicitacao)"
+                    >
+                      {{
+                        solicitacao.situacao === 'Pendente' ? 'Aprovar / Reprovar' : 'Visualizar'
+                      }}
+                    </button>
+                  </td>
+                </tr>
+              }
             </tbody>
           </table>
         </div>
       </section>
-
       <section class="duas-colunas">
         <article class="cartao">
-          <div class="cabecalho-cartao">
+          <div class="cabecalho-cartao cabecalho-calendario">
             <div>
               <h2>Agenda de férias</h2>
               <p>{{ mesCalendario() }}</p>
             </div>
-          </div>
-
-          <div class="calendario">
-            <div class="dia" *ngFor="let dia of diasCalendario">
-              <strong>{{ dia | number:'2.0-0' }}</strong>
-              <button type="button" *ngFor="let evento of eventosDoDia(dia)" (click)="abrirEventoCalendario(evento)">
-                {{ evento.colaborador.split(' ')[0] }}
+            <div class="controles-calendario">
+              <button class="botao-calendario" type="button" (click)="mesAnterior()">
+                ‹
+              </button>
+              <select
+                [ngModel]="mesSelecionado"
+                (ngModelChange)="alterarMesCalendario($event)"
+                aria-label="Selecionar mês"
+              >
+                @for (mes of mesesCalendario; track mes.valor) {
+                  <option [ngValue]="mes.valor">{{ mes.nome }}</option>
+                }
+              </select>
+              <select
+                [ngModel]="anoSelecionado"
+                (ngModelChange)="alterarAnoCalendario($event)"
+                aria-label="Selecionar ano"
+              >
+                @for (ano of anosCalendario; track ano) {
+                  <option [ngValue]="ano">{{ ano }}</option>
+                }
+              </select>
+              <button class="botao-calendario" type="button" (click)="proximoMes()">
+                ›
               </button>
             </div>
           </div>
+          <div class="calendario">
+            @for (diaSemana of diasSemana; track diaSemana) {
+              <div class="dia-semana">{{ diaSemana }}</div>
+            }
+            @for (dia of diasCalendario(); track dia.data) {
+              <div
+                class="dia"
+                [class.fora-do-mes]="!dia.pertenceAoMes"
+                [class.hoje]="dia.ehHoje"
+              >
+                <strong>{{ dia.dia | number: '2.0-0' }}</strong>
+                @for (evento of eventosDoDia(dia); track evento.id) {
+                  <button type="button" (click)="abrirEventoCalendario(evento)">
+                    {{ evento.colaborador.split(' ')[0] }}
+                  </button>
+                }
+              </div>
+            }
+          </div>
         </article>
-
         <article class="cartao">
           <div class="cabecalho-cartao">
             <div>
               <h2>Atualmente de férias</h2>
-              <p>Colaboradores em período ativo.</p>
             </div>
           </div>
-
           <div class="lista-cartoes">
-            <div class="cartao-pessoa" *ngFor="let pessoa of colaboradoresEmFerias()">
-              <strong>{{ pessoa.colaborador }}</strong>
-              <span>{{ pessoa.departamento }}</span>
-              <span>{{ formatarData(pessoa.inicio) }}</span>
-              <span>Retorna em {{ formatarData(pessoa.fim) }}</span>
-              <small>{{ diasRestantesFerias(pessoa) }} dias restantes</small>
-            </div>
+            @for (pessoa of colaboradoresEmFerias(); track pessoa) {
+              <div class="cartao-pessoa">
+                <strong>{{ pessoa.colaborador }}</strong>
+                <span>{{ pessoa.departamento }}</span>
+                <span>{{ formatarData(pessoa.inicio) }}</span>
+                <span>Retorna em {{ formatarData(pessoa.fim) }}</span>
+                <small>{{ diasRestantesFerias(pessoa) }} dias restantes</small>
+              </div>
+            }
           </div>
         </article>
       </section>
-
       <section class="duas-colunas">
         <article class="cartao">
           <h2>Próximas férias</h2>
-
-          <div class="cartao-pessoa" *ngFor="let pessoa of proximasFerias()">
-            <strong>{{ pessoa.colaborador }}</strong>
-            <span>Começa em {{ diasParaInicio(pessoa) }} dias</span>
-            <span>{{ pessoa.departamento }}</span>
-            <small>{{ pessoa.dias }} dias</small>
-          </div>
+          @for (pessoa of proximasFerias(); track pessoa) {
+            <div class="cartao-pessoa">
+              <strong>{{ pessoa.colaborador }}</strong>
+              <span>Começa em {{ diasParaInicio(pessoa) }} dias</span>
+              <span>{{ pessoa.departamento }}</span>
+              <small>{{ pessoa.dias }} dias</small>
+            </div>
+          }
         </article>
-
         <article class="cartao">
           <h2>Histórico</h2>
-
           <div class="tabela simples">
             <table>
               <thead>
@@ -213,44 +270,42 @@
                 </tr>
               </thead>
               <tbody>
-                <tr *ngFor="let item of historico()">
-                  <td>{{ item.colaborador }}</td>
-                  <td>{{ item.dias }} dias</td>
-                  <td>{{ item.situacao }}</td>
-                  <td>{{ item.aprovador || '-' }}</td>
-                  <td>{{ formatarData(item.dataAprovacao) }}</td>
-                </tr>
+                @for (item of historico(); track item) {
+                  <tr>
+                    <td>{{ item.colaborador }}</td>
+                    <td>{{ item.dias }} dias</td>
+                    <td>{{ item.situacao }}</td>
+                    <td>{{ item.aprovador || '-' }}</td>
+                    <td>{{ formatarData(item.dataAprovacao) }}</td>
+                  </tr>
+                }
               </tbody>
             </table>
           </div>
         </article>
       </section>
-    </ng-container>
+    }
 
-    <ng-container *ngIf="perfil === 'colaborador'">
+    @if (perfil === 'colaborador') {
       <section class="grade-painel">
         <article class="metrica">
           <span>Meu saldo</span>
           <strong>{{ saldoFerias() }} dias</strong>
         </article>
-
         <article class="metrica">
           <span>Período aquisitivo</span>
           <strong>-</strong>
           <small>até -</small>
         </article>
-
         <article class="metrica">
           <span>Dias vendidos</span>
           <strong>{{ diasVendidos() }}</strong>
         </article>
-
         <article class="metrica">
           <span>Solicitações</span>
           <strong>{{ solicitacoesPendentesColaborador() }} pendente(s)</strong>
         </article>
       </section>
-
       <section class="duas-colunas">
         <article class="cartao">
           <h2>Minhas férias</h2>
@@ -258,19 +313,22 @@
             <span>Últimas férias</span>
             <strong>{{ ultimaFeriasTexto() }}</strong>
           </div>
-
           <h2>Nova solicitação</h2>
           <form class="formulario" (ngSubmit)="enviarSolicitacao()">
             <label>
               Data início
-              <input type="date" [(ngModel)]="novaSolicitacao.inicio" name="inicio">
+              <input type="date" [(ngModel)]="novaSolicitacao.inicio" name="inicio" />
             </label>
-
             <label>
               Quantidade de dias
-              <input type="number" min="0" [max]="saldoFerias()" [(ngModel)]="novaSolicitacao.dias" name="dias">
+              <input
+                type="number"
+                min="0"
+                [max]="saldoFerias()"
+                [(ngModel)]="novaSolicitacao.dias"
+                name="dias"
+              />
             </label>
-
             <label>
               Abono pecuniário
               <select [(ngModel)]="novaSolicitacao.abono" name="abono">
@@ -278,24 +336,26 @@
                 <option>Não</option>
               </select>
             </label>
-
             <label>
               Substituto
               <select [(ngModel)]="novaSolicitacao.substituto" name="substituto">
                 <option value="">Selecione</option>
-                <option *ngFor="let colaborador of colaboradores">{{ colaborador.nome }}</option>
+                @for (colaborador of colaboradores; track colaborador) {
+                  <option>{{ colaborador.nome }}</option>
+                }
               </select>
             </label>
-
             <label class="campo-inteiro">
               Observações
-              <textarea rows="4" [(ngModel)]="novaSolicitacao.observacoes" name="observacoes"></textarea>
+              <textarea
+                rows="4"
+                [(ngModel)]="novaSolicitacao.observacoes"
+                name="observacoes"
+              ></textarea>
             </label>
-
             <button class="botao principal" type="submit">Enviar solicitação</button>
           </form>
         </article>
-
         <article class="cartao">
           <h2>Simulação</h2>
           <div class="resumo-simulacao">
@@ -306,18 +366,21 @@
             <span>{{ novaSolicitacao.dias }} dias</span>
             <strong>Saldo restante: {{ saldoRestante() }} dias</strong>
           </div>
-
           <h2>Andamento</h2>
           <div class="linha-tempo">
-            <div class="etapa" *ngFor="let etapa of etapas" [class.feito]="etapa.situacao === 'feito'"
-              [class.atual]="etapa.situacao === 'atual'">
-              <span></span>
-              <strong>{{ etapa.nome }}</strong>
-            </div>
+            @for (etapa of etapas; track etapa) {
+              <div
+                class="etapa"
+                [class.feito]="etapa.situacao === 'feito'"
+                [class.atual]="etapa.situacao === 'atual'"
+              >
+                <span></span>
+                <strong>{{ etapa.nome }}</strong>
+              </div>
+            }
           </div>
         </article>
       </section>
-
       <section class="duas-colunas">
         <article class="cartao">
           <h2>Histórico</h2>
@@ -331,27 +394,31 @@
                 </tr>
               </thead>
               <tbody>
-                <tr *ngFor="let item of historico()">
-                  <td>{{ periodoCurto(item) }}</td>
-                  <td>{{ item.dias }}</td>
-                  <td>{{ item.situacao }}</td>
-                </tr>
-                <tr *ngIf="historico().length === 0">
-                  <td>-</td>
-                  <td>0</td>
-                  <td>Sem histórico</td>
-                </tr>
+                @for (item of historico(); track item) {
+                  <tr>
+                    <td>{{ periodoCurto(item) }}</td>
+                    <td>{{ item.dias }}</td>
+                    <td>{{ item.situacao }}</td>
+                  </tr>
+                }
+                @if (historico().length === 0) {
+                  <tr>
+                    <td>-</td>
+                    <td>0</td>
+                    <td>Sem histórico</td>
+                  </tr>
+                }
               </tbody>
             </table>
           </div>
         </article>
-
         <article class="cartao avisos">
           <h2>Avisos</h2>
           <p>Prazo de resposta não cadastrado.</p>
-          <p>Você possui <strong>{{ saldoFerias() }} dias disponíveis</strong>.</p>
+          <p>
+            Você possui <strong>{{ saldoFerias() }} dias disponíveis</strong>.
+          </p>
           <p>Período aquisitivo não cadastrado.</p>
-
           <div class="fluxo">
             <span>Colaborador</span>
             <span>Solicita férias</span>
@@ -361,72 +428,88 @@
           </div>
         </article>
       </section>
-    </ng-container>
-
+    }
   </main>
 
-  <div class="sobreposicao" *ngIf="mostrarEscolhaPerfil">
-    <section class="janela escolha">
-      <h2>Como deseja acessar férias?</h2>
-      <p>Escolha a visão para {{ empresaSelecionada.nome }}.</p>
-
-      <div class="opcoes-perfil">
-        <button class="botao principal" type="button" (click)="escolherPerfil('gestor')">Gestor</button>
-        <button class="botao" type="button" (click)="escolherPerfil('colaborador')">Colaborador</button>
-      </div>
-    </section>
-  </div>
-
-  <div class="sobreposicao" *ngIf="solicitacaoSelecionada">
-    <section class="janela">
-      <div class="cabecalho-cartao">
-        <div>
-          <h2>Solicitação de férias</h2>
-          <p>{{ solicitacaoSelecionada.colaborador }} · {{ solicitacaoSelecionada.departamento }}</p>
+  @if (mostrarEscolhaPerfil) {
+    <div class="sobreposicao">
+      <section class="janela escolha">
+        <h2>Como deseja acessar férias?</h2>
+        <p>Escolha a visão para {{ empresaSelecionada.nome }}.</p>
+        <div class="opcoes-perfil">
+          <button class="botao principal" type="button" (click)="escolherPerfil('gestor')">
+            Gestor
+          </button>
+          <button class="botao" type="button" (click)="escolherPerfil('colaborador')">
+            Colaborador
+          </button>
         </div>
-        <button class="botao" type="button" (click)="fecharSolicitacao()">Fechar</button>
-      </div>
+      </section>
+    </div>
+  }
 
-      <div class="detalhes-solicitacao">
-        <span>Saldo disponível</span>
-        <strong>{{ solicitacaoSelecionada.saldoDisponivel }} dias</strong>
-        <span>Período solicitado</span>
-        <strong>{{ formatarData(solicitacaoSelecionada.inicio) }} até {{ formatarData(solicitacaoSelecionada.fim) }} ·
-          {{ solicitacaoSelecionada.dias }} dias</strong>
-        <span>Substituto</span>
-        <strong>{{ solicitacaoSelecionada.substituto }}</strong>
-        <span>Observação do colaborador</span>
-        <textarea rows="3" [(ngModel)]="solicitacaoSelecionada.observacaoColaborador"></textarea>
-        <span>Parecer do gestor</span>
-        <textarea rows="3" [(ngModel)]="solicitacaoSelecionada.parecerGestor"></textarea>
-      </div>
+  @if (solicitacaoSelecionada) {
+    <div class="sobreposicao">
+      <section class="janela">
+        <div class="cabecalho-cartao">
+          <div>
+            <h2>Solicitação de férias</h2>
+            <p>
+              {{ solicitacaoSelecionada.colaborador }} · {{ solicitacaoSelecionada.departamento }}
+            </p>
+          </div>
+          <button class="botao" type="button" (click)="fecharSolicitacao()">Fechar</button>
+        </div>
+        <div class="detalhes-solicitacao">
+          <span>Saldo disponível</span>
+          <strong>{{ solicitacaoSelecionada.saldoDisponivel }} dias</strong>
+          <span>Período solicitado</span>
+          <strong
+            >{{ formatarData(solicitacaoSelecionada.inicio) }} até
+            {{ formatarData(solicitacaoSelecionada.fim) }} ·
+            {{ solicitacaoSelecionada.dias }} dias</strong
+          >
+          <span>Substituto</span>
+          <strong>{{ solicitacaoSelecionada.substituto }}</strong>
+          <span>Observação do colaborador</span>
+          <textarea rows="3" [(ngModel)]="solicitacaoSelecionada.observacaoColaborador"></textarea>
+          <span>Parecer do gestor</span>
+          <textarea rows="3" [(ngModel)]="solicitacaoSelecionada.parecerGestor"></textarea>
+        </div>
+        <div class="acoes">
+          <button class="botao principal" type="button" (click)="aprovarSolicitacao()">
+            Aprovar
+          </button>
+          <button class="botao perigo" type="button" (click)="reprovarSolicitacao()">
+            Reprovar
+          </button>
+        </div>
+      </section>
+    </div>
+  }
 
-      <div class="acoes">
-        <button class="botao principal" type="button" (click)="aprovarSolicitacao()">Aprovar</button>
-        <button class="botao perigo" type="button" (click)="reprovarSolicitacao()">Reprovar</button>
-      </div>
-    </section>
-  </div>
-
-  <div class="sobreposicao" *ngIf="eventoCalendarioSelecionado">
-    <section class="janela pequena">
-      <h2>{{ eventoCalendarioSelecionado.colaborador }}</h2>
-      <div class="detalhes-solicitacao">
-        <span>Início</span>
-        <strong>{{ formatarData(eventoCalendarioSelecionado.inicio) }}</strong>
-        <span>Fim</span>
-        <strong>{{ formatarData(eventoCalendarioSelecionado.fim) }}</strong>
-        <span>Quantidade de dias</span>
-        <strong>{{ eventoCalendarioSelecionado.dias }}</strong>
-        <span>Substituto</span>
-        <strong>{{ eventoCalendarioSelecionado.substituto }}</strong>
-        <span>Contato</span>
-        <strong>{{ eventoCalendarioSelecionado.contato }}</strong>
-        <span>Observações</span>
-        <strong>{{ eventoCalendarioSelecionado.observacaoColaborador || '-' }}</strong>
-      </div>
-      <button class="botao principal" type="button" (click)="eventoCalendarioSelecionado = null">OK</button>
-    </section>
-  </div>
-
+  @if (eventoCalendarioSelecionado) {
+    <div class="sobreposicao">
+      <section class="janela pequena">
+        <h2>{{ eventoCalendarioSelecionado.colaborador }}</h2>
+        <div class="detalhes-solicitacao">
+          <span>Início</span>
+          <strong>{{ formatarData(eventoCalendarioSelecionado.inicio) }}</strong>
+          <span>Fim</span>
+          <strong>{{ formatarData(eventoCalendarioSelecionado.fim) }}</strong>
+          <span>Quantidade de dias</span>
+          <strong>{{ eventoCalendarioSelecionado.dias }}</strong>
+          <span>Substituto</span>
+          <strong>{{ eventoCalendarioSelecionado.substituto }}</strong>
+          <span>Contato</span>
+          <strong>{{ eventoCalendarioSelecionado.contato }}</strong>
+          <span>Observações</span>
+          <strong>{{ eventoCalendarioSelecionado.observacaoColaborador || '-' }}</strong>
+        </div>
+        <button class="botao principal" type="button" (click)="eventoCalendarioSelecionado = null">
+          OK
+        </button>
+      </section>
+    </div>
+  }
 </div>

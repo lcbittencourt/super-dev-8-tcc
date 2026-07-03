@@ -11,6 +11,7 @@ import { NovaEmpresaComponent } from './admin/nova-empresa/nova-empresa';
 import { AprovacoesComponent } from './aprovacoes/aprovacoes';
 import { TreinamentosEquipeComponent } from './treinamentos-equipe/treinamentos-equipe';
 import { ColaboradorComponent } from './colaborador/colaborador';
+import { LoginComponent } from './login/login';
 
 export const routes: Routes = [
     { path: '', redirectTo: 'admin', pathMatch: 'full' },
@@ -22,6 +23,7 @@ export const routes: Routes = [
     { path: 'treinamentos-equipe', component: TreinamentosEquipeComponent },
     { path: 'colaboradores', component: ColaboradoresComponent },
     { path: 'colaborador', component: ColaboradorComponent },
+    { path: 'login/:perfil', component: LoginComponent },
     { path: 'controle-ponto', component: ControlePontoComponent },
     { path: 'ferias', component: FeriasComponent },
     { path: 'treinamentos', component: TreinamentosComponent },

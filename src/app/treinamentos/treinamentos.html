@@ -1,5 +1,4 @@
 <div class="sistema">
-
   <header class="barra-superior">
     <div class="marca">
       <div class="simbolo-marca">P</div>
@@ -21,7 +20,6 @@
   </header>
 
   <main class="pagina">
-
     <section class="cabecalho-pagina">
       <div>
         <h1>Treinamentos</h1>
@@ -29,329 +27,359 @@
       </div>
     </section>
 
-    <ng-container *ngIf="perfil === 'gestor'">
+    @if (perfil === 'gestor') {
       <section class="grade-painel seis-colunas">
         <article class="metrica">
           <span>Cursos cadastrados</span>
           <strong>{{ cursos.length }}</strong>
         </article>
-
         <article class="metrica">
           <span>Cursos obrigatórios</span>
           <strong>{{ cursosObrigatorios() }}</strong>
         </article>
-
         <article class="metrica">
           <span>Colaboradores em treinamento</span>
           <strong>{{ colaboradoresEmTreinamento() }}</strong>
         </article>
-
         <article class="metrica">
           <span>Certificados emitidos</span>
           <strong>{{ certificadosEmitidos() }}</strong>
         </article>
-
         <article class="metrica">
           <span>Vencendo em 30 dias</span>
           <strong>{{ certificadosVencendo() }}</strong>
         </article>
-
         <article class="metrica">
           <span>Média geral de conclusão</span>
           <strong>{{ mediaConclusao() }}%</strong>
         </article>
       </section>
-
-      <section class="cartao" *ngIf="telaGestor === 'painel'">
-        <div class="cabecalho-cartao">
-          <div>
-            <h2>Colaboradores cadastrados</h2>
-            <p>Participantes puxados diretamente do módulo Colaboradores desta empresa.</p>
+      @if (telaGestor === 'painel') {
+        <section class="cartao">
+          <div class="cabecalho-cartao">
+            <div>
+              <h2>Colaboradores cadastrados</h2>
+            </div>
           </div>
-        </div>
-
-        <div class="tabela simples">
-          <table>
-            <thead>
-              <tr>
-                <th>Colaborador</th>
-                <th>Departamento</th>
-                <th>Cargo</th>
-                <th>Situação</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr *ngFor="let colaborador of colaboradoresCadastrados()">
-                <td>{{ colaborador.nome }}</td>
-                <td>{{ colaborador.departamento }}</td>
-                <td>{{ colaborador.cargo || '-' }}</td>
-                <td><span class="selo">{{ colaborador.situacao || 'Ativo' }}</span></td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </section>
-
-      <section class="cartao" *ngIf="telaGestor === 'painel'">
-        <div class="cabecalho-cartao">
-          <div>
-            <h2>Catálogo de cursos</h2>
-            <p>Cadastre, filtre e acompanhe cursos da empresa selecionada.</p>
-          </div>
-
-          <button class="botao principal" type="button" (click)="abrirNovoCurso()">Novo curso</button>
-        </div>
-
-        <div class="filtros">
-          <input type="search" placeholder="Pesquisar por nome" [(ngModel)]="pesquisaCurso">
-
-          <select [(ngModel)]="filtroObrigatorio">
-            <option>Todos</option>
-            <option>Obrigatórios</option>
-            <option>Opcionais</option>
-          </select>
-
-          <select [(ngModel)]="filtroSituacao">
-            <option>Todos</option>
-            <option>Ativo</option>
-            <option>Inativo</option>
-          </select>
-
-          <select [(ngModel)]="filtroCategoria">
-            <option>Todas</option>
-            <option *ngFor="let categoria of categorias()">{{ categoria }}</option>
-          </select>
-        </div>
-
-        <div class="tabela">
-          <table>
-            <thead>
-              <tr>
-                <th>Curso</th>
-                <th>Categoria</th>
-                <th>Carga Horária</th>
-                <th>Obrigatório</th>
-                <th>Situação</th>
-                <th>Ações</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr *ngFor="let curso of cursosFiltrados()">
-                <td>{{ curso.nome }}</td>
-                <td>{{ curso.categoria }}</td>
-                <td>{{ curso.cargaHoraria }}</td>
-                <td>{{ curso.obrigatorio ? 'Sim' : 'Não' }}</td>
-                <td><span class="selo">{{ curso.situacao }}</span></td>
-                <td>
-                  <button class="acao-texto" type="button" (click)="editarCurso(curso)">
-                    {{ curso.objetivo }}
-                  </button>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </section>
-
-      <section class="cartao" *ngIf="telaGestor === 'cadastro'">
-        <div class="cabecalho-cartao">
-          <div>
-            <h2>Cadastro de curso</h2>
-            <p>Dados gerais, conteúdo, avaliação e participantes.</p>
-          </div>
-
-          <button class="botao" type="button" (click)="telaGestor = 'painel'">Voltar ao catálogo</button>
-        </div>
-
-        <form class="formulario" (ngSubmit)="salvarCurso()">
-          <label>
-            Nome
-            <input type="text" [(ngModel)]="cursoEmCadastro.nome" name="nome" required>
-          </label>
-
-          <label>
-            Categoria
-            <input type="text" [(ngModel)]="cursoEmCadastro.categoria" name="categoria" required>
-          </label>
-
-          <label class="campo-inteiro">
-            Descrição
-            <textarea rows="3" [(ngModel)]="cursoEmCadastro.descricao" name="descricao"></textarea>
-          </label>
-
-          <label>
-            Objetivo
-            <input type="text" [(ngModel)]="cursoEmCadastro.objetivo" name="objetivo">
-          </label>
-
-          <label>
-            Público-alvo
-            <input type="text" [(ngModel)]="cursoEmCadastro.publicoAlvo" name="publicoAlvo">
-          </label>
-
-          <label>
-            Carga horária
-            <input type="text" [(ngModel)]="cursoEmCadastro.cargaHoraria" name="cargaHoraria">
-          </label>
-
-          <label>
-            Prazo de conclusão
-            <input type="text" [(ngModel)]="cursoEmCadastro.prazoConclusao" name="prazoConclusao">
-          </label>
-
-          <label>
-            Validade do certificado
-            <input type="text" [(ngModel)]="cursoEmCadastro.validadeCertificado" name="validadeCertificado">
-          </label>
-
-          <label>
-            Curso obrigatório?
-            <select [(ngModel)]="cursoEmCadastro.obrigatorio" name="obrigatorio">
-              <option [ngValue]="true">Sim</option>
-              <option [ngValue]="false">Não</option>
-            </select>
-          </label>
-
-          <section class="campo-inteiro bloco-interno">
-            <div class="cabecalho-cartao">
-              <h2>Conteúdo</h2>
-              <button class="botao" type="button" (click)="adicionarModulo()">Adicionar módulo</button>
-            </div>
-
-            <div class="grade-modulos">
-              <div class="item-modulo" *ngFor="let modulo of cursoEmCadastro.modulos; let indice = index">
-                <label>
-                  Módulo {{ indice + 1 }}
-                  <input type="text" [(ngModel)]="modulo.titulo" [name]="'modulo' + indice">
-                </label>
-
-                <label>
-                  Tipo
-                  <select [(ngModel)]="modulo.formato" [name]="'formato' + indice">
-                    <option>Vídeo</option>
-                    <option>PDF</option>
-                    <option>Imagem</option>
-                    <option>Apresentação</option>
-                    <option>Texto</option>
-                    <option>Link externo</option>
-                    <option>Questionário</option>
-                    <option>Avaliação Final</option>
-                  </select>
-                </label>
-              </div>
-            </div>
-          </section>
-
-          <section class="campo-inteiro bloco-interno">
-            <div class="cabecalho-cartao">
-              <h2>Avaliação</h2>
-              <button class="botao" type="button" (click)="adicionarPergunta()">Criar pergunta</button>
-            </div>
-
-            <div class="grade-modulos">
-              <div class="item-modulo" *ngFor="let pergunta of cursoEmCadastro.perguntas; let indice = index">
-                <label>
-                  Pergunta
-                  <input type="text" [(ngModel)]="pergunta.pergunta" [name]="'pergunta' + indice">
-                </label>
-                <label>
-                  Alternativas
-                  <input type="text" [(ngModel)]="pergunta.alternativas" [name]="'alternativas' + indice">
-                </label>
-                <label>
-                  Resposta correta
-                  <input type="text" [(ngModel)]="pergunta.respostaCorreta" [name]="'resposta' + indice">
-                </label>
-                <label>
-                  Peso
-                  <input type="number" [(ngModel)]="pergunta.peso" [name]="'peso' + indice">
-                </label>
-              </div>
-            </div>
-
-            <div class="configuracao-avaliacao">
-              <span>Quantas tentativas? <strong>0</strong></span>
-              <span>Nota mínima <strong>0%</strong></span>
-              <span>Embaralhar perguntas <strong>Não</strong></span>
-            </div>
-          </section>
-
-          <section class="campo-inteiro bloco-interno">
-            <h2>Participantes</h2>
-            <div class="grade-participantes">
-              <span>Empresa: {{ empresaSelecionada.nome }}</span>
-              <span>Departamento</span>
-              <span>Cargo</span>
-              <label class="opcao-marcada">
-                <input type="checkbox" checked>
-                Atribuir para todos
-              </label>
-              <span *ngFor="let colaborador of colaboradoresCadastrados()">
-                {{ colaborador.nome }} · {{ colaborador.departamento }}
-              </span>
-            </div>
-          </section>
-
-          <button class="botao principal campo-inteiro" type="submit">Salvar curso</button>
-        </form>
-      </section>
-
-      <section class="duas-colunas" *ngIf="telaGestor === 'painel'">
-        <article class="cartao">
-          <h2>Acompanhamento</h2>
           <div class="tabela simples">
             <table>
               <thead>
                 <tr>
                   <th>Colaborador</th>
-                  <th>Curso</th>
-                  <th>Progresso</th>
-                  <th>Nota</th>
+                  <th>Departamento</th>
+                  <th>Cargo</th>
                   <th>Situação</th>
                 </tr>
               </thead>
               <tbody>
-                <tr *ngFor="let item of acompanhamentos">
-                  <td>{{ item.colaborador }}</td>
-                  <td>{{ item.curso }}</td>
-                  <td>{{ item.progresso }}%</td>
-                  <td>{{ item.nota }}</td>
-                  <td>{{ item.situacao }}</td>
-                </tr>
+                @for (colaborador of colaboradoresCadastrados(); track colaborador) {
+                  <tr>
+                    <td>{{ colaborador.nome }}</td>
+                    <td>{{ colaborador.departamento }}</td>
+                    <td>{{ colaborador.cargo || '-' }}</td>
+                    <td>
+                      <span class="selo">{{ colaborador.situacao || 'Ativo' }}</span>
+                    </td>
+                  </tr>
+                }
               </tbody>
             </table>
           </div>
-        </article>
-
-        <article class="cartao">
-          <h2>Certificados</h2>
-          <div class="grade-certificados">
-            <span>Emitidos <strong>{{ certificadosEmitidos() }}</strong></span>
-            <span>Pendentes <strong>{{ certificadosPendentes() }}</strong></span>
-            <span>Vencidos <strong>{{ certificadosVencidos() }}</strong></span>
+        </section>
+      }
+      @if (telaGestor === 'painel') {
+        <section class="cartao">
+          <div class="cabecalho-cartao">
+            <div>
+              <h2>Catálogo de cursos</h2>
+            </div>
+            <button class="botao principal" type="button" (click)="abrirNovoCurso()">
+              Novo curso
+            </button>
           </div>
-
-          <h2>Feedback recebido</h2>
-          <div class="linha-info"><span>Nenhum feedback real cadastrado</span><strong>0</strong></div>
-          <button class="botao" type="button">Comentários, sugestões e avaliações</button>
-        </article>
-      </section>
-
-      <section class="cartao" *ngIf="telaGestor === 'painel'">
-        <div class="cabecalho-cartao">
-          <div>
-            <h2>Relatórios</h2>
-            <p>Conclusão por curso, departamento, notas, horas treinadas e certificados.</p>
+          <div class="filtros">
+            <input type="search" placeholder="Pesquisar por nome" [(ngModel)]="pesquisaCurso" />
+            <select [(ngModel)]="filtroObrigatorio">
+              <option>Todos</option>
+              <option>Obrigatórios</option>
+              <option>Opcionais</option>
+            </select>
+            <select [(ngModel)]="filtroSituacao">
+              <option>Todos</option>
+              <option>Ativo</option>
+              <option>Inativo</option>
+            </select>
+            <select [(ngModel)]="filtroCategoria">
+              <option>Todas</option>
+              @for (categoria of categorias(); track categoria) {
+                <option>{{ categoria }}</option>
+              }
+            </select>
           </div>
-          <div class="acoes">
-            <button class="botao" type="button">Exportar Excel</button>
-            <button class="botao" type="button">Exportar PDF</button>
+          <div class="tabela">
+            <table>
+              <thead>
+                <tr>
+                  <th>Curso</th>
+                  <th>Categoria</th>
+                  <th>Carga Horária</th>
+                  <th>Obrigatório</th>
+                  <th>Situação</th>
+                  <th>Ações</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (curso of cursosFiltrados(); track curso) {
+                  <tr>
+                    <td>{{ curso.nome }}</td>
+                    <td>{{ curso.categoria }}</td>
+                    <td>{{ curso.cargaHoraria }}</td>
+                    <td>{{ curso.obrigatorio ? 'Sim' : 'Não' }}</td>
+                    <td>
+                      <span class="selo">{{ curso.situacao }}</span>
+                    </td>
+                    <td>
+                      <button class="acao-texto" type="button" (click)="editarCurso(curso)">
+                        {{ curso.objetivo }}
+                      </button>
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
           </div>
-        </div>
-      </section>
-    </ng-container>
+        </section>
+      }
+      @if (telaGestor === 'cadastro') {
+        <section class="cartao">
+          <div class="cabecalho-cartao">
+            <div>
+              <h2>Cadastro de curso</h2>
+            </div>
+            <button class="botao" type="button" (click)="telaGestor = 'painel'">
+              Voltar ao catálogo
+            </button>
+          </div>
+          <form class="formulario" (ngSubmit)="salvarCurso()">
+            <label>
+              Nome
+              <input type="text" [(ngModel)]="cursoEmCadastro.nome" name="nome" required />
+            </label>
+            <label>
+              Categoria
+              <input
+                type="text"
+                [(ngModel)]="cursoEmCadastro.categoria"
+                name="categoria"
+                required
+              />
+            </label>
+            <label class="campo-inteiro">
+              Descrição
+              <textarea
+                rows="3"
+                [(ngModel)]="cursoEmCadastro.descricao"
+                name="descricao"
+              ></textarea>
+            </label>
+            <label>
+              Objetivo
+              <input type="text" [(ngModel)]="cursoEmCadastro.objetivo" name="objetivo" />
+            </label>
+            <label>
+              Público-alvo
+              <input type="text" [(ngModel)]="cursoEmCadastro.publicoAlvo" name="publicoAlvo" />
+            </label>
+            <label>
+              Carga horária
+              <input type="text" [(ngModel)]="cursoEmCadastro.cargaHoraria" name="cargaHoraria" />
+            </label>
+            <label>
+              Prazo de conclusão
+              <input
+                type="text"
+                [(ngModel)]="cursoEmCadastro.prazoConclusao"
+                name="prazoConclusao"
+              />
+            </label>
+            <label>
+              Validade do certificado
+              <input
+                type="text"
+                [(ngModel)]="cursoEmCadastro.validadeCertificado"
+                name="validadeCertificado"
+              />
+            </label>
+            <label>
+              Curso obrigatório?
+              <select [(ngModel)]="cursoEmCadastro.obrigatorio" name="obrigatorio">
+                <option [ngValue]="true">Sim</option>
+                <option [ngValue]="false">Não</option>
+              </select>
+            </label>
+            <section class="campo-inteiro bloco-interno">
+              <div class="cabecalho-cartao">
+                <h2>Conteúdo</h2>
+                <button class="botao" type="button" (click)="adicionarModulo()">
+                  Adicionar módulo
+                </button>
+              </div>
+              <div class="grade-modulos">
+                @for (modulo of cursoEmCadastro.modulos; track modulo; let indice = $index) {
+                  <div class="item-modulo">
+                    <label>
+                      Módulo {{ indice + 1 }}
+                      <input type="text" [(ngModel)]="modulo.titulo" [name]="'modulo' + indice" />
+                    </label>
+                    <label>
+                      Tipo
+                      <select [(ngModel)]="modulo.formato" [name]="'formato' + indice">
+                        <option>Vídeo</option>
+                        <option>PDF</option>
+                        <option>Imagem</option>
+                        <option>Apresentação</option>
+                        <option>Texto</option>
+                        <option>Link externo</option>
+                        <option>Questionário</option>
+                        <option>Avaliação Final</option>
+                      </select>
+                    </label>
+                  </div>
+                }
+              </div>
+            </section>
+            <section class="campo-inteiro bloco-interno">
+              <div class="cabecalho-cartao">
+                <h2>Avaliação</h2>
+                <button class="botao" type="button" (click)="adicionarPergunta()">
+                  Criar pergunta
+                </button>
+              </div>
+              <div class="grade-modulos">
+                @for (pergunta of cursoEmCadastro.perguntas; track pergunta; let indice = $index) {
+                  <div class="item-modulo">
+                    <label>
+                      Pergunta
+                      <input
+                        type="text"
+                        [(ngModel)]="pergunta.pergunta"
+                        [name]="'pergunta' + indice"
+                      />
+                    </label>
+                    <label>
+                      Alternativas
+                      <input
+                        type="text"
+                        [(ngModel)]="pergunta.alternativas"
+                        [name]="'alternativas' + indice"
+                      />
+                    </label>
+                    <label>
+                      Resposta correta
+                      <input
+                        type="text"
+                        [(ngModel)]="pergunta.respostaCorreta"
+                        [name]="'resposta' + indice"
+                      />
+                    </label>
+                    <label>
+                      Peso
+                      <input type="number" [(ngModel)]="pergunta.peso" [name]="'peso' + indice" />
+                    </label>
+                  </div>
+                }
+              </div>
+              <div class="configuracao-avaliacao">
+                <span>Quantas tentativas? <strong>0</strong></span>
+                <span>Nota mínima <strong>0%</strong></span>
+                <span>Embaralhar perguntas <strong>Não</strong></span>
+              </div>
+            </section>
+            <section class="campo-inteiro bloco-interno">
+              <h2>Participantes</h2>
+              <div class="grade-participantes">
+                <span>Empresa: {{ empresaSelecionada.nome }}</span>
+                <span>Departamento</span>
+                <span>Cargo</span>
+                <label class="opcao-marcada">
+                  <input type="checkbox" checked />
+                  Atribuir para todos
+                </label>
+                @for (colaborador of colaboradoresCadastrados(); track colaborador) {
+                  <span> {{ colaborador.nome }} · {{ colaborador.departamento }} </span>
+                }
+              </div>
+            </section>
+            <button class="botao principal campo-inteiro" type="submit">Salvar curso</button>
+          </form>
+        </section>
+      }
+      @if (telaGestor === 'painel') {
+        <section class="duas-colunas">
+          <article class="cartao">
+            <h2>Acompanhamento</h2>
+            <div class="tabela simples">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Colaborador</th>
+                    <th>Curso</th>
+                    <th>Progresso</th>
+                    <th>Nota</th>
+                    <th>Situação</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (item of acompanhamentos; track item) {
+                    <tr>
+                      <td>{{ item.colaborador }}</td>
+                      <td>{{ item.curso }}</td>
+                      <td>{{ item.progresso }}%</td>
+                      <td>{{ item.nota }}</td>
+                      <td>{{ item.situacao }}</td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+          </article>
+          <article class="cartao">
+            <h2>Certificados</h2>
+            <div class="grade-certificados">
+              <span
+                >Emitidos <strong>{{ certificadosEmitidos() }}</strong></span
+              >
+              <span
+                >Pendentes <strong>{{ certificadosPendentes() }}</strong></span
+              >
+              <span
+                >Vencidos <strong>{{ certificadosVencidos() }}</strong></span
+              >
+            </div>
+            <h2>Feedback recebido</h2>
+            <div class="linha-info">
+              <span>Nenhum feedback real cadastrado</span><strong>0</strong>
+            </div>
+            <button class="botao" type="button">Comentários, sugestões e avaliações</button>
+          </article>
+        </section>
+      }
+      @if (telaGestor === 'painel') {
+        <section class="cartao">
+          <div class="cabecalho-cartao">
+            <div>
+              <h2>Relatórios</h2>
+            </div>
+            <div class="acoes">
+              <button class="botao" type="button">Exportar Excel</button>
+              <button class="botao" type="button">Exportar PDF</button>
+            </div>
+          </div>
+        </section>
+      }
+    }
 
-    <ng-container *ngIf="perfil === 'colaborador'">
+    @if (perfil === 'colaborador') {
       <section class="grade-painel">
         <article class="metrica">
           <span>Cursos obrigatórios</span>
@@ -374,150 +402,186 @@
           <strong>{{ certificadosColaborador() }}</strong>
         </article>
       </section>
-
-      <section class="cartao" *ngIf="telaColaborador === 'meus-cursos'">
-        <h2>Meus cursos</h2>
-        <div class="grade-cursos">
-          <article class="cartao-curso" *ngFor="let curso of cursosColaborador">
-            <strong>{{ curso.nome }}</strong>
-            <span>{{ curso.progresso }}%</span>
-            <div class="barra-progresso"><span [style.width.%]="curso.progresso"></span></div>
-            <small>{{ barraProgresso(curso.progresso) }}</small>
-            <button class="botao principal" type="button" (click)="abrirCurso(curso)" *ngIf="curso.progresso < 100">Continuar curso</button>
-            <button class="botao" type="button" (click)="baixarCertificado()" *ngIf="curso.progresso === 100">Baixar certificado</button>
-          </article>
-        </div>
-      </section>
-
-      <section class="cartao" *ngIf="telaColaborador === 'execucao' && cursoSelecionado">
-        <div class="cabecalho-cartao">
-          <div>
-            <h2>{{ cursoSelecionado.nome }}</h2>
-            <p>{{ cursoSelecionado.categoria }} · {{ cursoSelecionado.cargaHoraria }} · {{ cursoSelecionado.instrutor }} · Validade {{ cursoSelecionado.validade }}</p>
+      @if (telaColaborador === 'meus-cursos') {
+        <section class="cartao">
+          <h2>Meus cursos</h2>
+          <div class="grade-cursos">
+            @for (curso of cursosColaborador; track curso) {
+              <article class="cartao-curso">
+                <strong>{{ curso.nome }}</strong>
+                <span>{{ curso.progresso }}%</span>
+                <div class="barra-progresso"><span [style.width.%]="curso.progresso"></span></div>
+                <small>{{ barraProgresso(curso.progresso) }}</small>
+                @if (curso.progresso < 100) {
+                  <button class="botao principal" type="button" (click)="abrirCurso(curso)">
+                    Continuar curso
+                  </button>
+                }
+                @if (curso.progresso === 100) {
+                  <button class="botao" type="button" (click)="baixarCertificado()">
+                    Baixar certificado
+                  </button>
+                }
+              </article>
+            }
           </div>
-          <button class="botao" type="button" (click)="voltarMeusCursos()">Voltar aos cursos</button>
-        </div>
-
-        <div class="execucao-curso">
-          <aside class="barra-conteudo">
-            <h2>Conteúdo</h2>
-            <button type="button" *ngFor="let modulo of cursoSelecionado.modulos" [class.concluido]="modulo.concluido">
-              {{ modulo.titulo }} {{ modulo.concluido ? '✓' : '' }}
-            </button>
-          </aside>
-
-          <article class="aula-atual">
-            <span>Vídeo, PDF ou texto</span>
-            <strong>{{ cursoSelecionado.nome }}</strong>
-            <p>Material central do treinamento para estudo do colaborador.</p>
-            <div class="barra-progresso grande"><span [style.width.%]="cursoSelecionado.progresso"></span></div>
-            <p>Progresso {{ cursoSelecionado.progresso }}% · {{ modulosConcluidos(cursoSelecionado) }} de {{ totalModulos(cursoSelecionado) }} módulos</p>
-          </article>
-        </div>
-
-        <section class="duas-colunas internas">
-          <article class="cartao-interno">
-            <h2>Avaliação</h2>
-            <p>{{ totalQuestoes(cursoSelecionado) }} questões · Tempo restante {{ tempoRestanteAvaliacao() }} min · Nota mínima {{ notaMinimaAvaliacao() }}%</p>
-            <strong>Resultado: {{ resultadoAvaliacao(cursoSelecionado) }}</strong>
-            <span>{{ cursoSelecionado.nota }}%</span>
-          </article>
-
-          <article class="cartao-interno">
-            <h2>Certificado</h2>
-            <button class="botao principal" type="button" (click)="baixarCertificado()">Baixar certificado</button>
-            <button class="botao" type="button">Visualizar certificado</button>
-          </article>
         </section>
-
-        <section class="cartao-interno">
+      }
+      @if (telaColaborador === 'execucao' && cursoSelecionado) {
+        <section class="cartao">
           <div class="cabecalho-cartao">
-            <h2>Feedback</h2>
-            <button class="botao" type="button" (click)="feedbackAberto = !feedbackAberto">Avaliar treinamento</button>
+            <div>
+              <h2>{{ cursoSelecionado.nome }}</h2>
+              <p>
+                {{ cursoSelecionado.categoria }} · {{ cursoSelecionado.cargaHoraria }} ·
+                {{ cursoSelecionado.instrutor }} · Validade {{ cursoSelecionado.validade }}
+              </p>
+            </div>
+            <button class="botao" type="button" (click)="voltarMeusCursos()">
+              Voltar aos cursos
+            </button>
           </div>
-          <form class="formulario" *ngIf="feedbackAberto" (ngSubmit)="enviarFeedback()">
-            <label>
-              Avalie este treinamento
-              <select name="avaliacao">
-                <option>★★★★★</option>
-                <option>★★★★</option>
-                <option>★★★</option>
-              </select>
-            </label>
-            <label>
-              O conteúdo foi útil?
-              <select name="util">
-                <option>Sim</option>
-                <option>Não</option>
-              </select>
-            </label>
-            <label class="campo-inteiro">
-              Comentário
-              <textarea rows="3" name="comentario"></textarea>
-            </label>
-            <button class="botao principal campo-inteiro" type="submit">Enviar</button>
-          </form>
+          <div class="execucao-curso">
+            <aside class="barra-conteudo">
+              <h2>Conteúdo</h2>
+              @for (modulo of cursoSelecionado.modulos; track modulo) {
+                <button type="button" [class.concluido]="modulo.concluido">
+                  {{ modulo.titulo }} {{ modulo.concluido ? '✓' : '' }}
+                </button>
+              }
+            </aside>
+            <article class="aula-atual">
+              <span>Vídeo, PDF ou texto</span>
+              <strong>{{ cursoSelecionado.nome }}</strong>
+              <p>Material central do treinamento para estudo do colaborador.</p>
+              <div class="barra-progresso grande">
+                <span [style.width.%]="cursoSelecionado.progresso"></span>
+              </div>
+              <p>
+                Progresso {{ cursoSelecionado.progresso }}% ·
+                {{ modulosConcluidos(cursoSelecionado) }} de
+                {{ totalModulos(cursoSelecionado) }} módulos
+              </p>
+            </article>
+          </div>
+          <section class="duas-colunas internas">
+            <article class="cartao-interno">
+              <h2>Avaliação</h2>
+              <p>
+                {{ totalQuestoes(cursoSelecionado) }} questões · Tempo restante
+                {{ tempoRestanteAvaliacao() }} min · Nota mínima {{ notaMinimaAvaliacao() }}%
+              </p>
+              <strong>Resultado: {{ resultadoAvaliacao(cursoSelecionado) }}</strong>
+              <span>{{ cursoSelecionado.nota }}%</span>
+            </article>
+            <article class="cartao-interno">
+              <h2>Certificado</h2>
+              <button class="botao principal" type="button" (click)="baixarCertificado()">
+                Baixar certificado
+              </button>
+              <button class="botao" type="button">Visualizar certificado</button>
+            </article>
+          </section>
+          <section class="cartao-interno">
+            <div class="cabecalho-cartao">
+              <h2>Feedback</h2>
+              <button class="botao" type="button" (click)="feedbackAberto = !feedbackAberto">
+                Avaliar treinamento
+              </button>
+            </div>
+            @if (feedbackAberto) {
+              <form class="formulario" (ngSubmit)="enviarFeedback()">
+                <label>
+                  Avalie este treinamento
+                  <select name="avaliacao">
+                    <option>★★★★★</option>
+                    <option>★★★★</option>
+                    <option>★★★</option>
+                  </select>
+                </label>
+                <label>
+                  O conteúdo foi útil?
+                  <select name="util">
+                    <option>Sim</option>
+                    <option>Não</option>
+                  </select>
+                </label>
+                <label class="campo-inteiro">
+                  Comentário
+                  <textarea rows="3" name="comentario"></textarea>
+                </label>
+                <button class="botao principal campo-inteiro" type="submit">Enviar</button>
+              </form>
+            }
+          </section>
         </section>
-      </section>
-
-      <section class="duas-colunas" *ngIf="telaColaborador === 'meus-cursos'">
-        <article class="cartao">
-          <h2>Histórico</h2>
-          <div class="tabela simples">
-            <table>
-              <thead>
-                <tr>
-                  <th>Curso</th>
-                  <th>Conclusão</th>
-                  <th>Nota</th>
-                  <th>Certificado</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr *ngFor="let curso of historicoColaborador()">
-                  <td>{{ curso.nome }}</td>
-                  <td>-</td>
-                  <td>{{ curso.nota }}</td>
-                  <td>{{ curso.certificado ? 'PDF' : '-' }}</td>
-                </tr>
-                <tr *ngIf="historicoColaborador().length === 0">
-                  <td>-</td>
-                  <td>-</td>
-                  <td>0</td>
-                  <td>-</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </article>
-
-        <article class="cartao">
-          <h2>Notificações</h2>
-          <div class="notificacao">Nenhuma notificação real cadastrada.</div>
-
-          <h2>Fluxo do módulo</h2>
-          <div class="fluxo">
-            <span>Gestor cria curso</span>
-            <span>Define participantes</span>
-            <span>Colaborador inicia treinamento</span>
-            <span>Sistema calcula nota</span>
-            <span>Certificado emitido</span>
-          </div>
-        </article>
-      </section>
-    </ng-container>
-
+      }
+      @if (telaColaborador === 'meus-cursos') {
+        <section class="duas-colunas">
+          <article class="cartao">
+            <h2>Histórico</h2>
+            <div class="tabela simples">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Curso</th>
+                    <th>Conclusão</th>
+                    <th>Nota</th>
+                    <th>Certificado</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (curso of historicoColaborador(); track curso) {
+                    <tr>
+                      <td>{{ curso.nome }}</td>
+                      <td>-</td>
+                      <td>{{ curso.nota }}</td>
+                      <td>{{ curso.certificado ? 'PDF' : '-' }}</td>
+                    </tr>
+                  }
+                  @if (historicoColaborador().length === 0) {
+                    <tr>
+                      <td>-</td>
+                      <td>-</td>
+                      <td>0</td>
+                      <td>-</td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+          </article>
+          <article class="cartao">
+            <h2>Notificações</h2>
+            <div class="notificacao">Nenhuma notificação real cadastrada.</div>
+            <h2>Fluxo do módulo</h2>
+            <div class="fluxo">
+              <span>Gestor cria curso</span>
+              <span>Define participantes</span>
+              <span>Colaborador inicia treinamento</span>
+              <span>Sistema calcula nota</span>
+              <span>Certificado emitido</span>
+            </div>
+          </article>
+        </section>
+      }
+    }
   </main>
 
-  <div class="sobreposicao" *ngIf="mostrarEscolhaPerfil">
-    <section class="janela escolha">
-      <h2>Como deseja acessar treinamentos?</h2>
-      <p>Escolha a visão para {{ empresaSelecionada.nome }}.</p>
-      <div class="opcoes-perfil">
-        <button class="botao principal" type="button" (click)="escolherPerfil('gestor')">Gestor</button>
-        <button class="botao" type="button" (click)="escolherPerfil('colaborador')">Colaborador</button>
-      </div>
-    </section>
-  </div>
-
+  @if (mostrarEscolhaPerfil) {
+    <div class="sobreposicao">
+      <section class="janela escolha">
+        <h2>Como deseja acessar treinamentos?</h2>
+        <p>Escolha a visão para {{ empresaSelecionada.nome }}.</p>
+        <div class="opcoes-perfil">
+          <button class="botao principal" type="button" (click)="escolherPerfil('gestor')">
+            Gestor
+          </button>
+          <button class="botao" type="button" (click)="escolherPerfil('colaborador')">
+            Colaborador
+          </button>
+        </div>
+      </section>
+    </div>
+  }
 </div>

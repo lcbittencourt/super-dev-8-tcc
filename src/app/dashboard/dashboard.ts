@@ -1,4 +1,4 @@
-import { CommonModule, isPlatformBrowser } from '@angular/common';
+import { isPlatformBrowser } from '@angular/common';
 import { Component, Inject, OnInit, PLATFORM_ID } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
@@ -22,12 +22,11 @@ interface ColaboradorPainel {
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [RouterLink],
   templateUrl: './dashboard.html',
-  styleUrl: './dashboard.css'
+  styleUrl: './dashboard.css',
 })
 export class DashboardComponent implements OnInit {
-
   empresa: EmpresaPainel = {
     id: 'tx001',
     nome: 'Têxtil Vale Norte',
@@ -36,7 +35,7 @@ export class DashboardComponent implements OnInit {
     usuarios: 0,
     modulos: 8,
     situacao: 'Ativa',
-    logo: 'TV'
+    logo: 'TV',
   };
 
   colaboradores: ColaboradorPainel[] = [];
@@ -72,10 +71,7 @@ export class DashboardComponent implements OnInit {
   }
 
   presentesHoje(): number {
-    return Math.max(
-      this.funcionarios() - this.ferias() - this.licencaMedica(),
-      0
-    );
+    return Math.max(this.funcionarios() - this.ferias() - this.licencaMedica(), 0);
   }
 
   aniversariantes(): number {
@@ -88,20 +84,24 @@ export class DashboardComponent implements OnInit {
     }
 
     const dadosTreinamentos = JSON.parse(
-      localStorage.getItem(`treinamentos:${this.empresa.id}`) || 'null'
+      localStorage.getItem(`treinamentos:${this.empresa.id}`) || 'null',
     );
 
     if (!dadosTreinamentos) {
       return 0;
     }
 
-    const cursosColaborador = (dadosTreinamentos.cursosColaborador || [])
-      .filter((curso: any) => !['integracao', 'lgpd'].includes(curso.id));
-    const acompanhamentos = (dadosTreinamentos.acompanhamentos || [])
-      .filter((item: any) => item.colaboradorId);
+    const cursosColaborador = (dadosTreinamentos.cursosColaborador || []).filter(
+      (curso: any) => !['integracao', 'lgpd'].includes(curso.id),
+    );
+    const acompanhamentos = (dadosTreinamentos.acompanhamentos || []).filter(
+      (item: any) => item.colaboradorId,
+    );
 
-    return cursosColaborador.filter((curso: any) => Number(curso.progresso || 0) < 100).length
-      + acompanhamentos.filter((item: any) => item.situacao === 'Pendente').length;
+    return (
+      cursosColaborador.filter((curso: any) => Number(curso.progresso || 0) < 100).length +
+      acompanhamentos.filter((item: any) => item.situacao === 'Pendente').length
+    );
   }
 
   chamadosAbertos(): number {
@@ -109,25 +109,24 @@ export class DashboardComponent implements OnInit {
       return 0;
     }
 
-    const chamados = JSON.parse(
-      localStorage.getItem('chamados:' + this.empresa.id) || '[]'
-    );
+    const chamados = JSON.parse(localStorage.getItem('chamados:' + this.empresa.id) || '[]');
 
     return Array.isArray(chamados)
-      ? chamados.filter((chamado: any) => !['Resolvido', 'Cancelado'].includes(chamado.situacao || chamado.status)).length
+      ? chamados.filter(
+          (chamado: any) =>
+            !['Resolvido', 'Cancelado'].includes(chamado.situacao || chamado.status),
+        ).length
       : 0;
   }
 
   totalDiasLicenca(): number {
     return this.colaboradores
-      .filter(colaborador => colaborador.situacao === 'Licença Médica/Atestado')
+      .filter((colaborador) => colaborador.situacao === 'Licença Médica/Atestado')
       .reduce((total, colaborador) => total + Number(colaborador.diasLicencaMedica || 0), 0);
   }
 
   private contarSituacao(situacao: string): number {
-    return this.colaboradores.filter(
-      colaborador => colaborador.situacao === situacao
-    ).length;
+    return this.colaboradores.filter((colaborador) => colaborador.situacao === situacao).length;
   }
 
   private normalizarEmpresa(empresa: any): EmpresaPainel {
@@ -137,7 +136,7 @@ export class DashboardComponent implements OnInit {
       ...this.empresa,
       ...dadosEmpresa,
       usuarios: empresa.usuarios ?? users ?? this.empresa.usuarios,
-      situacao: empresa.situacao ?? status ?? this.empresa.situacao
+      situacao: empresa.situacao ?? status ?? this.empresa.situacao,
     };
   }
 
@@ -148,5 +147,4 @@ export class DashboardComponent implements OnInit {
   private chaveColaboradores(): string {
     return `colaboradores:${this.empresa.id}`;
   }
-
 }
