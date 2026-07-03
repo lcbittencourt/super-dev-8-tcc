@@ -25,60 +25,10 @@ export class AdminComponent implements OnInit {
       nome: 'Têxtil Vale Norte',
       cidade: 'Blumenau, SC',
       plano: 'Empresarial',
-      usuarios: 148,
+      usuarios: 0,
       modulos: 8,
       situacao: 'Ativa',
       logo: 'TV'
-    },
-    {
-      id: 'ml002',
-      nome: 'Metalúrgica Müller',
-      cidade: 'Brusque, SC',
-      plano: 'Profissional',
-      usuarios: 62,
-      modulos: 6,
-      situacao: 'Ativa',
-      logo: 'MM'
-    },
-    {
-      id: 'cf003',
-      nome: 'Confecções Schmitt',
-      cidade: 'Pomerode, SC',
-      plano: 'Empresarial',
-      usuarios: 230,
-      modulos: 9,
-      situacao: 'Ativa',
-      logo: 'CS'
-    },
-    {
-      id: 'tc004',
-      nome: 'TecnoCampo Soluções',
-      cidade: 'Joinville, SC',
-      plano: 'Inicial',
-      usuarios: 18,
-      modulos: 4,
-      situacao: 'Trial',
-      logo: 'TC'
-    },
-    {
-      id: 'al005',
-      nome: 'Alimentos Beira-Rio',
-      cidade: 'Itajaí, SC',
-      plano: 'Profissional',
-      usuarios: 95,
-      modulos: 7,
-      situacao: 'Ativa',
-      logo: 'AB'
-    },
-    {
-      id: 'pl006',
-      nome: 'Plásticos Riedel',
-      cidade: 'Indaial, SC',
-      plano: 'Inicial',
-      usuarios: 24,
-      modulos: 5,
-      situacao: 'Inadimplente',
-      logo: 'PR'
     }
   ];
 
@@ -86,6 +36,28 @@ export class AdminComponent implements OnInit {
   pesquisaEmpresa = '';
   paginaEmpresas = 0;
   empresasPorPagina = 3;
+
+  private empresasRemovidas = [
+    'ml002',
+    'cf003',
+    'tc004',
+    'al005',
+    'pl006'
+  ];
+
+  private nomesEmpresasRemovidas = [
+    'metalurgica muller',
+    'metalúrgica müller',
+    'confeccoes schmitt',
+    'confecções schmitt',
+    'tecnocampo solucoes',
+    'tecnocampo soluções',
+    'alimentos beira-rio',
+    'plastico riedel',
+    'plástico riedel',
+    'plasticos riedel',
+    'plásticos riedel'
+  ];
 
   private modulosBase: ModuloSistema[] = [
     {
@@ -152,11 +124,14 @@ export class AdminComponent implements OnInit {
       return;
     }
 
+    this.limparDadosEmpresasRemovidas();
+
     const empresasSalvas = JSON.parse(
       localStorage.getItem('empresas') || '[]'
     );
 
     this.empresas = this.mesclarEmpresasSalvas(empresasSalvas);
+    this.atualizarUsuariosEmpresas();
 
     this.empresaSelecionada = this.recuperarEmpresaSelecionada() || this.empresas[0];
     this.posicionarPaginaEmpresaSelecionada();
@@ -349,6 +324,19 @@ export class AdminComponent implements OnInit {
     );
   }
 
+  mrrEstimado(): string {
+    return new Intl.NumberFormat('pt-BR', {
+      style: 'currency',
+      currency: 'BRL'
+    }).format(0);
+  }
+
+  totalInadimplentes(): number {
+    return this.empresas.filter(
+      empresa => empresa.situacao === 'Inadimplente'
+    ).length;
+  }
+
   totalAtivas() {
     return this.empresas.filter(
       empresa => empresa.situacao === 'Ativa'
@@ -357,6 +345,25 @@ export class AdminComponent implements OnInit {
 
   private estaNoNavegador(): boolean {
     return isPlatformBrowser(this.platformId);
+  }
+
+  private atualizarUsuariosEmpresas() {
+    this.empresas = this.empresas.map(empresa => ({
+      ...empresa,
+      usuarios: this.contarColaboradoresEmpresa(empresa.id)
+    }));
+  }
+
+  private contarColaboradoresEmpresa(empresaId: string): number {
+    if (!this.estaNoNavegador()) {
+      return 0;
+    }
+
+    const colaboradores = JSON.parse(
+      localStorage.getItem(`colaboradores:${empresaId}`) || '[]'
+    );
+
+    return Array.isArray(colaboradores) ? colaboradores.length : 0;
   }
 
   private atualizarEmpresaSelecionada() {
@@ -470,9 +477,9 @@ export class AdminComponent implements OnInit {
   }
 
   private mesclarEmpresasSalvas(empresasSalvas: any[]) {
-    const empresasSalvasNormalizadas = empresasSalvas.map(
-      empresa => this.normalizarEmpresa(empresa)
-    );
+    const empresasSalvasNormalizadas = empresasSalvas
+      .map(empresa => this.normalizarEmpresa(empresa))
+      .filter(empresa => !this.empresaFoiRemovida(empresa));
 
     const empresasBaseAtualizadas = this.empresas.map(empresa => {
       const empresaSalva = empresasSalvasNormalizadas.find(
@@ -503,6 +510,55 @@ export class AdminComponent implements OnInit {
       usuarios: empresa.usuarios ?? users ?? 0,
       situacao: empresa.situacao ?? status ?? 'Ativa'
     };
+  }
+
+  private limparDadosEmpresasRemovidas() {
+    const empresasSalvas = JSON.parse(localStorage.getItem('empresas') || '[]')
+      .filter((empresa: any) => !this.empresaFoiRemovida(empresa));
+
+    localStorage.setItem('empresas', JSON.stringify(empresasSalvas));
+
+    this.empresasRemovidas.forEach(id => {
+      [
+        'modulos',
+        'colaboradores',
+        'controlePonto',
+        'ferias',
+        'treinamentos',
+        'chamados',
+        'usuariosSistema'
+      ].forEach(prefixo => localStorage.removeItem(`${prefixo}:${id}`));
+    });
+
+    ['empresaSelecionadaDashboard', 'empresaEmEdicao'].forEach(chave => {
+      const valor = localStorage.getItem(chave);
+
+      if (!valor) {
+        return;
+      }
+
+      const empresa = JSON.parse(valor);
+
+      if (this.empresaFoiRemovida(empresa)) {
+        localStorage.removeItem(chave);
+      }
+    });
+  }
+
+  private empresaFoiRemovida(empresa: any): boolean {
+    const id = empresa?.id;
+    const nome = this.normalizarTexto(empresa?.nome || empresa?.nomeFantasia || empresa?.razaoSocial || '');
+
+    return this.empresasRemovidas.includes(id)
+      || this.nomesEmpresasRemovidas.includes(nome);
+  }
+
+  private normalizarTexto(texto: string): string {
+    return texto
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .toLowerCase()
+      .trim();
   }
 
 }
