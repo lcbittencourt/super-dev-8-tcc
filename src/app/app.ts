@@ -17,17 +17,17 @@ export class App implements OnInit {
       return;
     }
 
-    this.prepararDemonstracaoTextilValeNorte();
+    this.prepararTextilValeNorte();
   }
 
-  private prepararDemonstracaoTextilValeNorte() {
+  private prepararTextilValeNorte() {
     const chaveChamados = 'chamados:tx001';
     const chamadosSalvos = this.lerJson(chaveChamados, null);
 
     if (!Array.isArray(chamadosSalvos) || chamadosSalvos.length === 0) {
       localStorage.setItem(
         chaveChamados,
-        JSON.stringify(this.chamadosDemonstracaoTextilValeNorte()),
+        JSON.stringify(this.chamadosTextilValeNorte()),
       );
     }
 
@@ -42,7 +42,7 @@ export class App implements OnInit {
     }
   }
 
-  private chamadosDemonstracaoTextilValeNorte() {
+  private chamadosTextilValeNorte() {
     const ano = new Date().getFullYear();
     const colaboradores = this.lerJson('colaboradores:tx001', []);
     const solicitante = (indice: number, nome: string, setor: string) => {

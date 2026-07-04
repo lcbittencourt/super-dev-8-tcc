@@ -1,6 +1,6 @@
 import { isPlatformBrowser } from '@angular/common';
 import { Component, Inject, OnInit, PLATFORM_ID } from '@angular/core';
-import { Router, RouterLink } from '@angular/router';
+import { RouterLink } from '@angular/router';
 
 interface EmpresaGestor {
   id: string;
@@ -139,10 +139,7 @@ export class GestorComponent implements OnInit {
   chamadosPorCategoria: BarraGrafico[] = [];
   aprovacoes: Aprovacao[] = [];
 
-  constructor(
-    @Inject(PLATFORM_ID) private platformId: object,
-    private router: Router,
-  ) {}
+  constructor(@Inject(PLATFORM_ID) private platformId: object) {}
 
   ngOnInit() {
     this.mesAtual = this.nomeMesAtual();
@@ -153,11 +150,6 @@ export class GestorComponent implements OnInit {
     }
 
     this.carregarEmpresaSelecionada();
-
-    if (!this.validarAcessoGestor()) {
-      return;
-    }
-
     this.carregarDadosDaEmpresa();
     this.atualizarPainel();
   }
@@ -187,19 +179,6 @@ export class GestorComponent implements OnInit {
       cidade: empresaSalva.cidade || this.empresa.cidade,
       logo: empresaSalva.logo || this.iniciais(empresaSalva.nome || this.empresa.nome),
     };
-  }
-
-  private validarAcessoGestor(): boolean {
-    const acesso = this.lerJson('acessoGestorPulso', null);
-
-    if (!acesso || acesso.empresaId !== this.empresa.id) {
-      alert('Faça login como gestor para acessar as informações desta empresa.');
-      this.router.navigate(['/admin']);
-      return false;
-    }
-
-    this.gestor = acesso.nome || 'Gestor';
-    return true;
   }
 
   private carregarDadosDaEmpresa() {
