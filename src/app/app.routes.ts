@@ -9,7 +9,6 @@ import { TreinamentosComponent } from './treinamentos/treinamentos';
 import { ChamadosComponent } from './chamados/chamados';
 import { NovaEmpresaComponent } from './admin/nova-empresa/nova-empresa';
 import { AprovacoesComponent } from './aprovacoes/aprovacoes';
-import { TreinamentosEquipeComponent } from './treinamentos-equipe/treinamentos-equipe';
 import { ColaboradorComponent } from './colaborador/colaborador';
 import { LoginComponent } from './login/login';
 
@@ -20,7 +19,6 @@ export const routes: Routes = [
   { path: 'gestor', component: GestorComponent },
   { path: 'aprovacoes', component: AprovacoesComponent },
   { path: 'chamados', component: ChamadosComponent },
-  { path: 'treinamentos-equipe', component: TreinamentosEquipeComponent },
   { path: 'colaboradores', component: ColaboradoresComponent },
   { path: 'colaborador', component: ColaboradorComponent },
   { path: 'login/:perfil', component: LoginComponent },

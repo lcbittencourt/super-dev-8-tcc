@@ -10,54 +10,14 @@ import { RouterOutlet } from '@angular/router';
   styleUrl: './app.css',
 })
 export class App implements OnInit {
-  private empresasRemovidas = ['ml002', 'cf003', 'tc004', 'al005', 'pl006'];
-
-  private nomesEmpresasRemovidas = [
-    'metalurgica muller',
-    'confeccoes schmitt',
-    'tecnocampo solucoes',
-    'alimentos beira-rio',
-    'plastico riedel',
-    'plasticos riedel',
-  ];
-
-  constructor(@Inject(PLATFORM_ID) private platformId: object) {}
+  constructor(@Inject(PLATFORM_ID) private platformId: object) { }
 
   ngOnInit() {
     if (!isPlatformBrowser(this.platformId)) {
       return;
     }
 
-    this.limparDadosEmpresasRemovidas();
     this.prepararDemonstracaoTextilValeNorte();
-  }
-
-  private limparDadosEmpresasRemovidas() {
-    const empresasSalvas = this.lerJson('empresas', []).filter(
-      (empresa: any) => !this.empresaFoiRemovida(empresa),
-    );
-
-    localStorage.setItem('empresas', JSON.stringify(empresasSalvas));
-
-    this.empresasRemovidas.forEach((id) => {
-      [
-        'modulos',
-        'colaboradores',
-        'controlePonto',
-        'ferias',
-        'treinamentos',
-        'chamados',
-        'usuariosSistema',
-      ].forEach((prefixo) => localStorage.removeItem(`${prefixo}:${id}`));
-    });
-
-    ['empresaSelecionadaDashboard', 'empresaEmEdicao'].forEach((chave) => {
-      const empresa = this.lerJson(chave, null);
-
-      if (empresa && this.empresaFoiRemovida(empresa)) {
-        localStorage.removeItem(chave);
-      }
-    });
   }
 
   private prepararDemonstracaoTextilValeNorte() {
@@ -378,22 +338,6 @@ export class App implements OnInit {
     return data.toISOString();
   }
 
-  private empresaFoiRemovida(empresa: any): boolean {
-    const id = empresa?.id;
-    const nome = this.normalizarTexto(
-      empresa?.nome || empresa?.nomeFantasia || empresa?.razaoSocial || '',
-    );
-
-    return this.empresasRemovidas.includes(id) || this.nomesEmpresasRemovidas.includes(nome);
-  }
-
-  private normalizarTexto(texto: string): string {
-    return texto
-      .normalize('NFD')
-      .replace(/[\u0300-\u036f]/g, '')
-      .toLowerCase()
-      .trim();
-  }
 
   private lerJson(chave: string, retornoPadrao: any) {
     const valor = localStorage.getItem(chave);

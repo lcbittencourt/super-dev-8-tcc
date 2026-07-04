@@ -40,7 +40,7 @@
             <div class="lista-menu">
               <a routerLink="/aprovacoes">Aprovações</a>
               <a routerLink="/chamados">Chamados</a>
-              <a routerLink="/treinamentos-equipe">Treinamentos</a>
+              <a routerLink="/treinamentos" [queryParams]="{ perfil: 'gestor' }">Treinamentos</a>
             </div>
           }
         </div>

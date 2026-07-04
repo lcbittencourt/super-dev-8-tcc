@@ -36,22 +36,6 @@ export class AdminComponent implements OnInit {
   paginaEmpresas = 0;
   empresasPorPagina = 3;
 
-  private empresasRemovidas = ['ml002', 'cf003', 'tc004', 'al005', 'pl006'];
-
-  private nomesEmpresasRemovidas = [
-    'metalurgica muller',
-    'metalúrgica müller',
-    'confeccoes schmitt',
-    'confecções schmitt',
-    'tecnocampo solucoes',
-    'tecnocampo soluções',
-    'alimentos beira-rio',
-    'plastico riedel',
-    'plástico riedel',
-    'plasticos riedel',
-    'plásticos riedel',
-  ];
-
   private modulosBase: ModuloSistema[] = [
     {
       nome: 'Dashboard',
@@ -116,8 +100,6 @@ export class AdminComponent implements OnInit {
     if (!this.estaNoNavegador()) {
       return;
     }
-
-    this.limparDadosEmpresasRemovidas();
 
     const empresasSalvas = JSON.parse(localStorage.getItem('empresas') || '[]');
 
@@ -435,9 +417,9 @@ export class AdminComponent implements OnInit {
   }
 
   private mesclarEmpresasSalvas(empresasSalvas: any[]) {
-    const empresasSalvasNormalizadas = empresasSalvas
-      .map((empresa) => this.normalizarEmpresa(empresa))
-      .filter((empresa) => !this.empresaFoiRemovida(empresa));
+    const empresasSalvasNormalizadas = empresasSalvas.map((empresa) =>
+      this.normalizarEmpresa(empresa),
+    );
 
     const empresasBaseAtualizadas = this.empresas.map((empresa) => {
       const empresaSalva = empresasSalvasNormalizadas.find((salva: any) => salva.id === empresa.id);
@@ -463,54 +445,4 @@ export class AdminComponent implements OnInit {
     };
   }
 
-  private limparDadosEmpresasRemovidas() {
-    const empresasSalvas = JSON.parse(localStorage.getItem('empresas') || '[]').filter(
-      (empresa: any) => !this.empresaFoiRemovida(empresa),
-    );
-
-    localStorage.setItem('empresas', JSON.stringify(empresasSalvas));
-
-    this.empresasRemovidas.forEach((id) => {
-      [
-        'modulos',
-        'colaboradores',
-        'controlePonto',
-        'ferias',
-        'treinamentos',
-        'chamados',
-        'usuariosSistema',
-      ].forEach((prefixo) => localStorage.removeItem(`${prefixo}:${id}`));
-    });
-
-    ['empresaSelecionadaDashboard', 'empresaEmEdicao'].forEach((chave) => {
-      const valor = localStorage.getItem(chave);
-
-      if (!valor) {
-        return;
-      }
-
-      const empresa = JSON.parse(valor);
-
-      if (this.empresaFoiRemovida(empresa)) {
-        localStorage.removeItem(chave);
-      }
-    });
-  }
-
-  private empresaFoiRemovida(empresa: any): boolean {
-    const id = empresa?.id;
-    const nome = this.normalizarTexto(
-      empresa?.nome || empresa?.nomeFantasia || empresa?.razaoSocial || '',
-    );
-
-    return this.empresasRemovidas.includes(id) || this.nomesEmpresasRemovidas.includes(nome);
-  }
-
-  private normalizarTexto(texto: string): string {
-    return texto
-      .normalize('NFD')
-      .replace(/[\u0300-\u036f]/g, '')
-      .toLowerCase()
-      .trim();
-  }
 }
