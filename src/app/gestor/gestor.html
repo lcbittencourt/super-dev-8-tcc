@@ -10,13 +10,16 @@
 
     <span class="etiqueta-perfil">Gestor</span>
 
-    <nav class="navegacao">
-      <a routerLink="/admin">Admin</a>
-      <a class="ativo" routerLink="/gestor">Gestor</a>
-      <a routerLink="/colaborador">Colaborador</a>
-    </nav>
+    <details class="menu-perfil">
+      <summary class="identificacao" aria-label="Abrir menu do usuário">{{ iniciaisEmpresa() }}</summary>
 
-    <div class="identificacao">{{ iniciaisEmpresa() }}</div>
+      <nav class="opcoes-perfil" aria-label="Menu do usuário">
+        <a routerLink="/admin">Admin</a>
+        <a routerLink="/gestor">Gestor</a>
+        <a routerLink="/colaborador">Colaborador</a>
+        <a class="sair" routerLink="/">Sair</a>
+      </nav>
+    </details>
   </header>
 
   <main class="pagina">
@@ -71,7 +74,7 @@
       <a class="acesso-modulo" routerLink="/chamados">Chamados</a>
       <span class="acesso-modulo acesso-modulo-inativo" aria-disabled="true">Comunicados</span>
       <span class="acesso-modulo acesso-modulo-inativo" aria-disabled="true">Eventos</span>
-      <span class="acesso-modulo acesso-modulo-inativo" aria-disabled="true">Fornecedores</span>
+      <a class="acesso-modulo" routerLink="/fornecedores">Fornecedores</a>
       <span class="acesso-modulo acesso-modulo-inativo" aria-disabled="true">Relatórios</span>
     </section>
 

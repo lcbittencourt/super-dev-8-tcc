@@ -1,0 +1,440 @@
+<main class="pagina-fornecedores">
+  <header class="cabecalho-pagina">
+    <div>
+      <h1>Fornecedores</h1>
+      <p>Cadastro, contratos e aprovações da {{ empresaSelecionada.nome }}</p>
+    </div>
+  </header>
+
+  <section class="indicadores">
+    <article class="indicador">
+      <span>Fornecedores ativos</span>
+      <strong>{{ fornecedoresAtivos }}</strong>
+    </article>
+
+    <article class="indicador">
+      <span>Pendentes aprovação</span>
+      <strong>{{ solicitacoesPendentes }}</strong>
+    </article>
+
+    <article class="indicador">
+      <span>Contratos vencendo</span>
+      <strong>{{ contratosVencendo }}</strong>
+    </article>
+
+    <article class="indicador">
+      <span>Docs pendentes</span>
+      <strong>{{ documentosPendentes }}</strong>
+    </article>
+  </section>
+
+  <nav class="abas" aria-label="Navegação de fornecedores">
+    <button
+      class="aba"
+      type="button"
+      [class.aba-ativa]="abaAtiva === 'fornecedores'"
+      (click)="abrirAba('fornecedores')"
+    >
+      Fornecedores
+    </button>
+
+    <button
+      class="aba"
+      type="button"
+      [class.aba-ativa]="abaAtiva === 'solicitacoes'"
+      (click)="abrirAba('solicitacoes')"
+    >
+      Solicitações
+    </button>
+
+    <button
+      class="aba"
+      type="button"
+      [class.aba-ativa]="abaAtiva === 'contratos'"
+      (click)="abrirAba('contratos')"
+    >
+      Contratos
+    </button>
+  </nav>
+
+  @if (abaAtiva === 'fornecedores') {
+    <section class="cartao">
+      <div class="cabecalho-cartao">
+        <div>
+          <h2>Fornecedores cadastrados</h2>
+        </div>
+
+        <button class="botao principal" type="button" (click)="abrirCadastro()">
+          Cadastrar fornecedor
+        </button>
+      </div>
+
+      <div class="filtros">
+        <input
+          type="text"
+          placeholder="Buscar fornecedor..."
+          [(ngModel)]="termoPesquisa"
+        >
+
+        <select [(ngModel)]="filtroCategoria">
+          @for (categoria of categorias; track categoria) {
+            <option [value]="categoria">{{ categoria }}</option>
+          }
+        </select>
+
+        <select [(ngModel)]="filtroStatus">
+          @for (status of statusDisponiveis; track status) {
+            <option [value]="status">{{ status }}</option>
+          }
+        </select>
+      </div>
+
+      <div class="area-tabela">
+        <table>
+          <thead>
+            <tr>
+              <th>Fornecedor</th>
+              <th>Categoria</th>
+              <th>CNPJ</th>
+              <th>Cidade</th>
+              <th>Telefone</th>
+              <th>E-mail</th>
+              <th>Status</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            @for (fornecedor of fornecedoresFiltrados; track fornecedor.cnpj) {
+              <tr>
+                <td>{{ fornecedor.nome }}</td>
+                <td>{{ fornecedor.categoria }}</td>
+                <td>{{ fornecedor.cnpj }}</td>
+                <td>{{ fornecedor.cidade }}</td>
+                <td>{{ fornecedor.telefone }}</td>
+                <td>{{ fornecedor.email }}</td>
+                <td>
+                  <span class="etiqueta" [class]="classeStatus(fornecedor.status)">
+                    {{ fornecedor.status }}
+                  </span>
+                </td>
+                <td>
+                  <div class="acoes">
+                    <button class="botao" type="button" (click)="abrirDetalhes(fornecedor)">Ver</button>
+                    <button class="botao" type="button">Editar</button>
+                    <button class="botao perigo" type="button">Inativar</button>
+                  </div>
+                </td>
+              </tr>
+            } @empty {
+              <tr>
+                <td colspan="8">Nenhum fornecedor encontrado.</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </section>
+  }
+
+  @if (abaAtiva === 'solicitacoes') {
+    <section class="cartao">
+      <div class="cabecalho-cartao">
+        <div>
+          <h2>Solicitações pendentes</h2>
+        </div>
+      </div>
+
+      <div class="area-tabela">
+        <table>
+          <thead>
+            <tr>
+              <th>Data</th>
+              <th>Solicitante</th>
+              <th>Fornecedor</th>
+              <th>Categoria</th>
+              <th>Motivo</th>
+              <th>Status</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            @for (solicitacao of solicitacoes; track solicitacao.fornecedor) {
+              <tr>
+                <td>{{ solicitacao.data }}</td>
+                <td>{{ solicitacao.solicitante }}</td>
+                <td>{{ solicitacao.fornecedor }}</td>
+                <td>{{ solicitacao.categoria }}</td>
+                <td>{{ solicitacao.motivo }}</td>
+                <td>
+                  <span class="etiqueta" [class]="classeStatus(solicitacao.status)">
+                    {{ solicitacao.status }}
+                  </span>
+                </td>
+                <td>
+                  @if (solicitacao.status === 'Pendente') {
+                    <div class="acoes">
+                      <button class="botao principal" type="button" (click)="aprovar(solicitacao)">Aprovar</button>
+                      <button class="botao perigo" type="button" (click)="reprovar(solicitacao)">Reprovar</button>
+                    </div>
+                  } @else {
+                    {{ solicitacao.retorno }}
+                  }
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </section>
+  }
+
+  @if (abaAtiva === 'contratos') {
+    <section class="cartao">
+      <div class="cabecalho-cartao">
+        <div>
+          <h2>Contratos</h2>
+        </div>
+
+        <button class="botao principal" type="button" (click)="abrirContrato()">
+          Cadastrar contrato
+        </button>
+      </div>
+
+      <div class="area-tabela">
+        <table>
+          <thead>
+            <tr>
+              <th>Fornecedor</th>
+              <th>Categoria</th>
+              <th>Início</th>
+              <th>Término</th>
+              <th>Valor mensal</th>
+              <th>Status</th>
+              <th>Anexo</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            @for (contrato of contratos; track contrato.fornecedor) {
+              <tr>
+                <td>{{ contrato.fornecedor }}</td>
+                <td>{{ contrato.categoria }}</td>
+                <td>{{ contrato.inicio }}</td>
+                <td>{{ contrato.termino }}</td>
+                <td>{{ contrato.valorMensal }}</td>
+                <td>
+                  <span class="etiqueta" [class]="classeStatus(contrato.status)">
+                    {{ contrato.status }}
+                  </span>
+                </td>
+                <td><button class="botao" type="button">Ver contrato</button></td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </section>
+  }
+
+  @if (modalAberto === 'cadastro') {
+    <div class="fundo-modal">
+      <section class="modal">
+        <div class="cabecalho-modal">
+          <div>
+            <h2>Cadastrar fornecedor</h2>
+          </div>
+
+          <button class="botao" type="button" (click)="fecharModal()">Fechar</button>
+        </div>
+
+        <div class="grade-formulario">
+          <div>
+            <label>Razão social</label>
+            <input type="text" placeholder="Ex.: ABC Informática Ltda">
+
+            <label>Nome fantasia</label>
+            <input type="text" placeholder="Ex.: ABC Informática">
+
+            <label>CNPJ</label>
+            <input type="text" placeholder="00.000.000/0000-00">
+
+            <label>Categoria</label>
+            <select>
+              <option>TI</option>
+              <option>Marketing</option>
+              <option>Jurídico</option>
+              <option>Manutenção</option>
+              <option>Limpeza</option>
+              <option>RH</option>
+              <option>Contabilidade</option>
+              <option>Alimentação</option>
+            </select>
+
+            <label>Representante</label>
+            <input type="text" placeholder="Nome do representante">
+          </div>
+
+          <div>
+            <label>E-mail</label>
+            <input type="email" placeholder="contato@fornecedor.com.br">
+
+            <label>Telefone</label>
+            <input type="text" placeholder="(00) 00000-0000">
+
+            <label>Endereço</label>
+            <input type="text" placeholder="Rua, número, bairro">
+
+            <label>Cidade / UF</label>
+            <input type="text" placeholder="Blumenau/SC">
+
+            <label>Observações</label>
+            <textarea rows="4" placeholder="Informações adicionais sobre o fornecedor"></textarea>
+          </div>
+        </div>
+
+        <div class="grade-anexos">
+          <div class="caixa">
+            <strong>Anexar Contrato Social</strong>
+            <input type="file">
+          </div>
+
+          <div class="caixa">
+            <strong>Anexar Cartão CNPJ</strong>
+            <input type="file">
+          </div>
+        </div>
+
+        <button class="botao principal" type="button">
+          Enviar para aprovação
+        </button>
+      </section>
+    </div>
+  }
+
+  @if (modalAberto === 'detalhes' && fornecedorSelecionado) {
+    <div class="fundo-modal">
+      <section class="modal">
+        <div class="cabecalho-modal">
+          <div>
+            <h2>Dados completos do fornecedor</h2>
+          </div>
+
+          <button class="botao" type="button" (click)="fecharModal()">Fechar</button>
+        </div>
+
+        <div class="grade-formulario">
+          <div class="caixa">
+            <h3>Dados cadastrais</h3>
+            <p><strong>Razão social:</strong> {{ fornecedorSelecionado.razaoSocial }}</p>
+            <p><strong>Nome fantasia:</strong> {{ fornecedorSelecionado.nome }}</p>
+            <p><strong>CNPJ:</strong> {{ fornecedorSelecionado.cnpj }}</p>
+            <p><strong>Categoria:</strong> {{ fornecedorSelecionado.categoria }}</p>
+            <p>
+              <strong>Status:</strong>
+              <span class="etiqueta" [class]="classeStatus(fornecedorSelecionado.status)">
+                {{ fornecedorSelecionado.status }}
+              </span>
+            </p>
+          </div>
+
+          <div class="caixa">
+            <h3>Contato</h3>
+            <p><strong>E-mail:</strong> {{ fornecedorSelecionado.email }}</p>
+            <p><strong>Telefone:</strong> {{ fornecedorSelecionado.telefone }}</p>
+            <p><strong>Representante:</strong> {{ fornecedorSelecionado.representante }}</p>
+            <p><strong>Cidade:</strong> {{ fornecedorSelecionado.cidade }}</p>
+          </div>
+
+          <div class="caixa">
+            <h3>Documentos anexados</h3>
+            <p>Contrato social <span class="etiqueta aprovado">Aprovado</span></p>
+            <p>Cartão CNPJ <span class="etiqueta aprovado">Aprovado</span></p>
+          </div>
+
+          <div class="caixa">
+            <h3>Contratos vinculados</h3>
+            <p><strong>Contrato:</strong> TI-2026-001</p>
+            <p><strong>Vigência:</strong> 01/01/2026 até 31/12/2026</p>
+            <p><strong>Valor mensal:</strong> R$ 4.500,00</p>
+          </div>
+        </div>
+
+        <div class="caixa">
+          <h3>Histórico</h3>
+
+          <div class="linha-tempo">
+            <div class="item-linha-tempo">
+              <strong>03/07/2026 - Contrato cadastrado</strong>
+              <p>Contrato com {{ fornecedorSelecionado.nome }} registrado no módulo.</p>
+            </div>
+
+            <div class="item-linha-tempo">
+              <strong>28/06/2026 - Fornecedor aprovado</strong>
+              <p>Fornecedor liberado para aquisição de equipamentos.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  }
+
+  @if (modalAberto === 'contrato') {
+    <div class="fundo-modal">
+      <section class="modal">
+        <div class="cabecalho-modal">
+          <div>
+            <h2>Cadastrar contrato</h2>
+          </div>
+
+          <button class="botao" type="button" (click)="fecharModal()">Fechar</button>
+        </div>
+
+        <div class="grade-formulario">
+          <div>
+            <label>Fornecedor</label>
+            <select>
+              @for (fornecedor of fornecedores; track fornecedor.cnpj) {
+                <option>{{ fornecedor.nome }}</option>
+              }
+            </select>
+          </div>
+
+          <div>
+            <label>Categoria</label>
+            <select>
+              <option>TI</option>
+              <option>Limpeza</option>
+              <option>Jurídico</option>
+            </select>
+          </div>
+
+          <div>
+            <label>Data início</label>
+            <input type="date">
+          </div>
+
+          <div>
+            <label>Data término</label>
+            <input type="date">
+          </div>
+
+          <div>
+            <label>Valor mensal</label>
+            <input type="text" placeholder="R$ 0,00">
+          </div>
+
+          <div>
+            <label>Anexar documento</label>
+            <input type="file">
+          </div>
+        </div>
+
+        <button class="botao principal" type="button">
+          Salvar contrato
+        </button>
+      </section>
+    </div>
+  }
+</main>

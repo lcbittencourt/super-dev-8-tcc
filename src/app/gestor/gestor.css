@@ -73,6 +73,19 @@
   color: #fff;
 }
 
+.menu-perfil {
+  margin-left: auto;
+  position: relative;
+}
+
+.menu-perfil summary {
+  list-style: none;
+}
+
+.menu-perfil summary::-webkit-details-marker {
+  display: none;
+}
+
 .identificacao,
 .foto {
   display: flex;
@@ -86,7 +99,49 @@
   height: 32px;
   border-radius: 50%;
   background: #fbe5d8;
+  border: 0;
   color: #7a3a1e;
+  cursor: pointer;
+}
+
+.menu-perfil[open] .identificacao {
+  outline: 2px solid #b51a2b;
+  outline-offset: 2px;
+}
+
+.opcoes-perfil {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 8px);
+  z-index: 30;
+  min-width: 160px;
+  padding: 6px;
+  background: #fff;
+  border: 1px solid #d9cdb8;
+  border-radius: 8px;
+  box-shadow: 0 12px 30px rgba(22, 30, 47, 0.12);
+  display: grid;
+  gap: 2px;
+}
+
+.opcoes-perfil a {
+  border-radius: 6px;
+  color: #384358;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 9px 10px;
+  text-decoration: none;
+}
+
+.opcoes-perfil a:hover {
+  background: #f5efe6;
+  color: #b51a2b;
+}
+
+.opcoes-perfil .sair {
+  border-top: 1px solid #eee2cf;
+  color: #b51a2b;
+  margin-top: 4px;
 }
 
 .pagina {

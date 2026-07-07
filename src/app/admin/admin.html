@@ -10,13 +10,16 @@
 
     <span class="etiqueta-perfil">Administrador</span>
 
-    <nav class="navegacao">
-      <a routerLink="/admin" class="ativo">Admin</a>
-      <a routerLink="/gestor">Gestor</a>
-      <a routerLink="/colaborador">Colaborador</a>
-    </nav>
+    <details class="menu-perfil">
+      <summary class="identificacao" aria-label="Abrir menu do usuário">AD</summary>
 
-    <div class="identificacao">AD</div>
+      <nav class="opcoes-perfil" aria-label="Menu do usuário">
+        <a routerLink="/admin">Admin</a>
+        <a routerLink="/gestor">Gestor</a>
+        <a routerLink="/colaborador">Colaborador</a>
+        <a class="sair" routerLink="/">Sair</a>
+      </nav>
+    </details>
   </header>
 
   <main class="pagina">
@@ -203,13 +206,19 @@
                   {{ modulo.nome }}
                 </a>
               }
+              @if (modulo.nome === 'Fornecedores' && modulo.liberado) {
+                <a class="atalho-modulo" routerLink="/fornecedores">
+                  {{ modulo.nome }}
+                </a>
+              }
               @if (
                 (modulo.nome !== 'Dashboard' &&
                   modulo.nome !== 'Colaboradores' &&
                   modulo.nome !== 'Controle de ponto' &&
                   modulo.nome !== 'Férias e afastamentos' &&
                   modulo.nome !== 'Treinamentos' &&
-                  modulo.nome !== 'Chamados') ||
+                  modulo.nome !== 'Chamados' &&
+                  modulo.nome !== 'Fornecedores') ||
                 !modulo.liberado
               ) {
                 <strong>{{ modulo.nome }}</strong>

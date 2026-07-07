@@ -1,0 +1,57 @@
+<main class="pagina-login">
+  <section class="painel-login">
+    <div class="marca-login">
+      <div class="simbolo-marca">P</div>
+      <strong>Pulso<span>.</span></strong>
+    </div>
+
+    <div class="cabecalho-login">
+      <h1>Acesso ao sistema</h1>
+      <p>Entre com seu usuário para continuar</p>
+    </div>
+
+    <form class="formulario-login" (ngSubmit)="entrar()">
+      <label>
+        Login
+        <input
+          type="text"
+          name="login"
+          autocomplete="username"
+          [(ngModel)]="login"
+        >
+      </label>
+
+      <label>
+        Senha
+        <div class="campo-senha">
+          <input
+            [type]="mostrarSenha ? 'text' : 'password'"
+            name="senha"
+            autocomplete="current-password"
+            [(ngModel)]="senha"
+          >
+
+          <button
+            class="botao-visualizar-senha"
+            type="button"
+            (click)="mostrarSenha = !mostrarSenha"
+            [attr.aria-label]="mostrarSenha ? 'Ocultar senha' : 'Visualizar senha'"
+            [title]="mostrarSenha ? 'Ocultar senha' : 'Visualizar senha'"
+          >
+            <span class="material-symbols-outlined" aria-hidden="true">
+              {{ mostrarSenha ? 'visibility_off' : 'visibility' }}
+            </span>
+          </button>
+        </div>
+      </label>
+
+      @if (mensagem) {
+        <div class="mensagem-erro">
+          {{ mensagem }}
+        </div>
+      }
+
+      <button class="botao principal" type="submit">Entrar</button>
+    </form>
+  </section>
+</main>
