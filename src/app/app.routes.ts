@@ -10,24 +10,22 @@ import { ChamadosComponent } from './chamados/chamados';
 import { NovaEmpresaComponent } from './admin/nova-empresa/nova-empresa';
 import { AprovacoesComponent } from './aprovacoes/aprovacoes';
 import { ColaboradorComponent } from './colaborador/colaborador';
-import { LoginComponent } from './login/login';
-import { FornecedoresComponent } from './fornecedores/fornecedores';
-import { LoginInicialComponent } from './login-inicial/login-inicial';
+import { NovoChamado } from './colaborador/novo-chamado/novo-chamado';
 
 export const routes: Routes = [
-  { path: '', component: LoginInicialComponent },
-  { path: 'admin', component: AdminComponent },
-  { path: 'dashboard', component: DashboardComponent },
-  { path: 'gestor', component: GestorComponent },
-  { path: 'aprovacoes', component: AprovacoesComponent },
-  { path: 'chamados', component: ChamadosComponent },
-  { path: 'colaboradores', component: ColaboradoresComponent },
-  { path: 'colaborador', component: ColaboradorComponent },
-  { path: 'login/:perfil', component: LoginComponent },
-  { path: 'controle-ponto', component: ControlePontoComponent },
-  { path: 'ferias', component: FeriasComponent },
-  { path: 'treinamentos', component: TreinamentosComponent },
-  { path: 'fornecedores', component: FornecedoresComponent },
-  { path: 'nova-empresa', component: NovaEmpresaComponent },
-  { path: 'nova-empresa/:id', component: NovaEmpresaComponent },
+    { path: '', redirectTo: 'admin', pathMatch: 'full' },
+    { path: 'admin', component: AdminComponent },
+    { path: 'dashboard', component: DashboardComponent },
+    { path: 'gestor', component: GestorComponent },
+    { path: 'aprovacoes', component: AprovacoesComponent },
+    { path: 'chamados', component: ChamadosComponent },
+    { path: 'treinamentos-equipe', component: TreinamentosEquipeComponent },
+    { path: 'colaboradores', component: ColaboradoresComponent },
+    { path: 'colaborador', component: ColaboradorComponent },
+    { path: 'novo-chamado', component: NovoChamado },
+    { path: 'controle-ponto', component: ControlePontoComponent },
+    { path: 'ferias', component: FeriasComponent },
+    { path: 'treinamentos', component: TreinamentosComponent },
+    { path: 'nova-empresa', component: NovaEmpresaComponent},
+    { path: 'nova-empresa/:id', component: NovaEmpresaComponent },
 ];
