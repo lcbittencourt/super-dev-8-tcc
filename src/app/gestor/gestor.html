@@ -1,5 +1,4 @@
 <div class="sistema">
-
   <header class="barra-superior">
     <div class="marca">
       <div class="simbolo-marca">P</div>
@@ -11,21 +10,23 @@
 
     <span class="etiqueta-perfil">Gestor</span>
 
-    <nav class="navegacao">
-      <a routerLink="/admin">Admin</a>
-      <a class="ativo" routerLink="/gestor">Gestor</a>
-      <a routerLink="/colaborador">Colaborador</a>
-    </nav>
+    <details class="menu-perfil">
+      <summary class="identificacao" aria-label="Abrir menu do usuário">{{ iniciaisEmpresa() }}</summary>
 
-    <div class="identificacao">GE</div>
+      <nav class="opcoes-perfil" aria-label="Menu do usuário">
+        <a routerLink="/admin">Admin</a>
+        <a routerLink="/gestor">Gestor</a>
+        <a routerLink="/colaborador">Colaborador</a>
+        <a class="sair" routerLink="/">Sair</a>
+      </nav>
+    </details>
   </header>
 
   <main class="pagina">
-
     <section class="cabecalho-pagina">
       <div>
         <h1>Bom dia, {{ gestor }}.</h1>
-        <p>Aqui está o resumo da {{ empresa }} hoje</p>
+        <p>Aqui está o resumo da {{ empresa.nome }} hoje</p>
       </div>
 
       <div class="acoes">
@@ -34,26 +35,47 @@
         <div class="menu-registros">
           <button class="botao principal" (click)="alternarMenu()">Gerenciar Registros</button>
 
-          <div class="fundo-menu" *ngIf="menuAberto" (click)="fecharMenu()"></div>
+          @if (menuAberto) {
+            <div class="fundo-menu" (click)="fecharMenu()"></div>
+          }
 
-          <div class="lista-menu" *ngIf="menuAberto">
-            <a routerLink="/aprovacoes">Aprovações</a>
-            <a routerLink="/chamados">Chamados</a>
-            <a routerLink="/treinamentos-equipe">Treinamentos</a>
-          </div>
+          @if (menuAberto) {
+            <div class="lista-menu">
+              <a routerLink="/aprovacoes">Aprovações</a>
+              <a routerLink="/chamados">Chamados</a>
+              <a routerLink="/treinamentos" [queryParams]="{ perfil: 'gestor' }">Treinamentos</a>
+            </div>
+          }
         </div>
       </div>
     </section>
 
     <section class="indicadores">
-      <article class="indicador" *ngFor="let indicador of indicadores">
-        <span>{{ indicador.titulo }}</span>
-        <strong>{{ indicador.valor }}</strong>
-        <small [class.positivo]="indicador.tendencia === 'positiva'"
-          [class.negativo]="indicador.tendencia === 'negativa'">
-          {{ indicador.nota }}
-        </small>
-      </article>
+      @for (indicador of indicadores; track indicador) {
+        <article class="indicador">
+          <span>{{ indicador.titulo }}</span>
+          <strong>{{ indicador.valor }}</strong>
+          <small
+            [class.positivo]="indicador.tendencia === 'positiva'"
+            [class.negativo]="indicador.tendencia === 'negativa'"
+          >
+            {{ indicador.nota }}
+          </small>
+        </article>
+      }
+    </section>
+
+    <section class="acessos-modulos" aria-label="Acessos aos módulos">
+      <a class="acesso-modulo" routerLink="/dashboard">Dashboard</a>
+      <a class="acesso-modulo" routerLink="/colaboradores">Colaboradores</a>
+      <a class="acesso-modulo" routerLink="/controle-ponto">Controle de ponto</a>
+      <a class="acesso-modulo" routerLink="/ferias" [queryParams]="{ perfil: 'gestor' }">Férias</a>
+      <a class="acesso-modulo" routerLink="/treinamentos" [queryParams]="{ perfil: 'gestor' }">Treinamentos</a>
+      <a class="acesso-modulo" routerLink="/chamados">Chamados</a>
+      <span class="acesso-modulo acesso-modulo-inativo" aria-disabled="true">Comunicados</span>
+      <span class="acesso-modulo acesso-modulo-inativo" aria-disabled="true">Eventos</span>
+      <a class="acesso-modulo" routerLink="/fornecedores">Fornecedores</a>
+      <span class="acesso-modulo acesso-modulo-inativo" aria-disabled="true">Relatórios</span>
     </section>
 
     <section class="graficos">
@@ -61,20 +83,22 @@
         <div class="cabecalho-cartao">
           <div>
             <h2>Presença ao longo do mês</h2>
-            <p>Maio de 2025</p>
+            <p>{{ mesAtual }}</p>
           </div>
 
-          <span class="selo sucesso">+2,1%</span>
+          <span class="selo informativo">{{ textoRegistrosPonto }}</span>
         </div>
 
         <div class="grafico-barras">
-          <div class="linha-barra" *ngFor="let barra of presencaMensal">
-            <span class="rotulo-barra">{{ barra.rotulo }}</span>
-            <div class="trilha-barra">
-              <div class="nivel-barra" [style.width.%]="barra.percentual"></div>
+          @for (barra of presencaMensal; track barra) {
+            <div class="linha-barra">
+              <span class="rotulo-barra">{{ barra.rotulo }}</span>
+              <div class="trilha-barra">
+                <div class="nivel-barra" [style.width.%]="barra.percentual"></div>
+              </div>
+              <span class="valor-barra">{{ barra.valor }}</span>
             </div>
-            <span class="valor-barra">{{ barra.valor }}</span>
-          </div>
+          }
         </div>
       </article>
 
@@ -82,35 +106,39 @@
         <div class="cabecalho-cartao">
           <div>
             <h2>Chamados por categoria</h2>
-            <p>Últimos 30 dias</p>
+            <p>Dados da empresa selecionada</p>
           </div>
         </div>
 
         <div class="grafico-barras">
-          <div class="linha-barra" *ngFor="let barra of chamadosPorCategoria">
-            <span class="rotulo-barra">{{ barra.rotulo }}</span>
-            <div class="trilha-barra">
-              <div class="nivel-barra" [style.width.%]="barra.percentual"></div>
+          @for (barra of chamadosPorCategoria; track barra) {
+            <div class="linha-barra">
+              <span class="rotulo-barra">{{ barra.rotulo }}</span>
+              <div class="trilha-barra">
+                <div class="nivel-barra" [style.width.%]="barra.percentual"></div>
+              </div>
+              <span class="valor-barra">{{ barra.valor }}</span>
             </div>
-            <span class="valor-barra">{{ barra.valor }}</span>
-          </div>
+          }
         </div>
       </article>
     </section>
 
     <section class="grade-painel">
-      <article class="metrica" *ngFor="let resumo of resumos">
-        <span>{{ resumo.titulo }}</span>
-        <strong>{{ resumo.valor }}</strong>
-        <small>{{ resumo.nota }}</small>
-      </article>
+      @for (resumo of resumos; track resumo) {
+        <article class="metrica">
+          <span>{{ resumo.titulo }}</span>
+          <strong>{{ resumo.valor }}</strong>
+          <small>{{ resumo.nota }}</small>
+        </article>
+      }
     </section>
 
     <section class="cartao">
       <div class="cabecalho-cartao">
         <div>
-          <h2>Aprovações pendentes</h2>
-          <p>Solicitações aguardando sua análise</p>
+          <h2>Pendências da empresa</h2>
+          <p>Itens gerados pelos módulos da {{ empresa.nome }}</p>
         </div>
       </div>
 
@@ -128,30 +156,33 @@
           </thead>
 
           <tbody>
-            <tr *ngFor="let aprovacao of aprovacoes">
-              <td>{{ aprovacao.id }}</td>
-              <td>{{ aprovacao.categoria }}</td>
-              <td>{{ aprovacao.data }}</td>
-              <td>
-                <div class="pessoa">
-                  <div class="foto">{{ aprovacao.iniciais }}</div>
-                  <strong>{{ aprovacao.solicitante }}</strong>
-                </div>
-              </td>
-              <td>{{ aprovacao.detalhe }}</td>
-              <td>
-                <span class="selo" [class.alerta]="aprovacao.situacao === 'pendente'"
-                  [class.erro]="aprovacao.situacao === 'urgente'"
-                  [class.informativo]="aprovacao.situacao === 'analise'">
-                  {{ aprovacao.status }}
-                </span>
-              </td>
-            </tr>
+            @for (aprovacao of aprovacoes; track aprovacao) {
+              <tr>
+                <td>{{ aprovacao.id }}</td>
+                <td>{{ aprovacao.categoria }}</td>
+                <td>{{ aprovacao.data }}</td>
+                <td>
+                  <div class="pessoa">
+                    <div class="foto">{{ aprovacao.iniciais }}</div>
+                    <strong>{{ aprovacao.solicitante }}</strong>
+                  </div>
+                </td>
+                <td>{{ aprovacao.detalhe }}</td>
+                <td>
+                  <span
+                    class="selo"
+                    [class.alerta]="aprovacao.situacao === 'pendente'"
+                    [class.erro]="aprovacao.situacao === 'urgente'"
+                    [class.informativo]="aprovacao.situacao === 'analise'"
+                  >
+                    {{ aprovacao.status }}
+                  </span>
+                </td>
+              </tr>
+            }
           </tbody>
         </table>
       </div>
     </section>
-
   </main>
-
 </div>

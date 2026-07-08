@@ -1,0 +1,268 @@
+* {
+  box-sizing: border-box;
+}
+
+:host {
+  background: #f5efe6;
+  color: #161e2f;
+  display: block;
+  font-family: Arial, Helvetica, sans-serif;
+  min-height: 100vh;
+}
+
+.sistema {
+  min-height: 100vh;
+}
+
+.pagina-login {
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 22px;
+}
+
+.painel-login {
+  background: #fff;
+  border: 1px solid #d9cdb8;
+  border-radius: 12px;
+  max-width: 430px;
+  padding: 22px;
+  width: 100%;
+}
+
+.marca-login,
+.empresa {
+  align-items: center;
+  display: flex;
+  gap: 10px;
+}
+
+.marca-login {
+  margin-bottom: 24px;
+}
+
+.marca-login span {
+  color: #b51a2b;
+}
+
+.simbolo-marca {
+  align-items: center;
+  background: #161e2f;
+  border-radius: 8px;
+  color: #ffa586;
+  display: flex;
+  font-weight: 700;
+  height: 32px;
+  justify-content: center;
+  width: 32px;
+}
+
+.identificacao {
+  align-items: center;
+  background: #fbe5d8;
+  border-radius: 50%;
+  color: #7a3a1e;
+  display: flex;
+  font-weight: 700;
+  height: 42px;
+  justify-content: center;
+  width: 42px;
+}
+
+h1,
+p {
+  margin-top: 0;
+}
+
+h1 {
+  font-size: 24px;
+  margin-bottom: 4px;
+}
+
+p {
+  color: #6b7280;
+  font-size: 13px;
+  margin-bottom: 0;
+}
+
+.formulario {
+  display: grid;
+  gap: 14px;
+  margin-top: 22px;
+}
+
+label {
+  color: #384358;
+  display: grid;
+  font-size: 13px;
+  gap: 8px;
+}
+
+input {
+  background: #fbf6ee;
+  border: 1px solid #c9b28f;
+  border-radius: 8px;
+  color: #161e2f;
+  font: inherit;
+  min-height: 42px;
+  padding: 10px 12px;
+  width: 100%;
+}
+
+.entrada-senha {
+  align-items: center;
+  display: flex;
+  gap: 8px;
+}
+
+.entrada-senha input {
+  flex: 1;
+  min-width: 0;
+}
+
+.botao {
+  align-items: center;
+  background: #fff;
+  border: 1px solid #c4b59a;
+  border-radius: 8px;
+  color: #161e2f;
+  cursor: pointer;
+  display: inline-flex;
+  font-weight: 500;
+  justify-content: center;
+  min-height: 40px;
+  padding: 10px 14px;
+}
+
+.botao.principal {
+  background: #b51a2b;
+  border-color: #b51a2b;
+  color: #fff;
+}
+
+.mensagem {
+  background: #fcebeb;
+  border: 1px solid #f0b9b9;
+  border-radius: 8px;
+  color: #791f1f;
+  font-size: 13px;
+  padding: 10px;
+}
+
+.botao-visualizar-senha {
+  align-items: center;
+  background: #fff;
+  border: 1px solid #c4b59a;
+  border-radius: 8px;
+  color: #161e2f;
+  cursor: pointer;
+  display: flex;
+  height: 42px;
+  justify-content: center;
+  padding: 0;
+  width: 42px;
+}
+
+.botao-visualizar-senha:hover {
+  background: #fbf6ee;
+}
+
+.material-symbols-outlined {
+  font-family: 'Material Symbols Outlined';
+  font-size: 22px;
+  font-variation-settings:
+    'FILL' 0,
+    'wght' 400,
+    'GRAD' 0,
+    'opsz' 24;
+  line-height: 1;
+}
+
+/* Ajustes de espacamento entre textos, campos e botoes. */
+.cabecalho-pagina,
+.cabecalho-cartao {
+  gap: 16px;
+}
+
+.cabecalho-cartao {
+  margin-bottom: 18px;
+}
+
+.acoes,
+.acoes-cartao,
+.acoes-linha,
+.acoes-rodape {
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.filtros,
+.formulario,
+.campos,
+.grade-formulario,
+.grade-participantes,
+.grade-certificados,
+.lista-compacta,
+.lista-cartoes {
+  gap: 14px;
+}
+
+.formulario,
+.filtros {
+  row-gap: 14px;
+}
+
+label,
+.formulario label,
+.avaliacao label,
+.grade-participantes label {
+  line-height: 1.35;
+}
+
+.formulario label,
+.avaliacao label,
+.grade-participantes label {
+  gap: 8px;
+}
+
+input,
+select,
+textarea {
+  line-height: 1.35;
+  min-height: 42px;
+  padding: 10px 12px;
+}
+
+textarea {
+  min-height: 96px;
+  resize: vertical;
+}
+
+.botao:not(.pequeno),
+.botao-envio {
+  align-items: center;
+  display: inline-flex;
+  gap: 8px;
+  justify-content: center;
+  min-height: 40px;
+}
+
+.acao-texto {
+  line-height: 1.35;
+  padding-bottom: 4px;
+  padding-top: 4px;
+}
+
+.cartao,
+.indicador,
+.metrica {
+  min-width: 0;
+}
+
+th,
+td {
+  line-height: 1.35;
+}
+

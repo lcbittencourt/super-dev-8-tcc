@@ -1,7 +1,7 @@
-import { CommonModule, isPlatformBrowser } from '@angular/common';
+import { isPlatformBrowser } from '@angular/common';
 import { Component, Inject, OnInit, PLATFORM_ID } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { RouterLink } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 
 type PerfilTreinamento = 'gestor' | 'colaborador' | '';
 type SituacaoCurso = 'Ativo' | 'Inativo';
@@ -79,17 +79,16 @@ interface CursoColaborador {
 @Component({
   selector: 'app-treinamentos',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink],
+  imports: [FormsModule, RouterLink],
   templateUrl: './treinamentos.html',
-  styleUrl: './treinamentos.css'
+  styleUrl: './treinamentos.css',
 })
 export class TreinamentosComponent implements OnInit {
-
   empresaSelecionada: EmpresaSelecionada = {
     id: 'tx001',
     nome: 'Têxtil Vale Norte',
     cidade: 'Blumenau, SC',
-    logo: 'TV'
+    logo: 'TV',
   };
 
   perfil: PerfilTreinamento = '';
@@ -110,9 +109,14 @@ export class TreinamentosComponent implements OnInit {
 
   cursoEmCadastro: CursoTreinamento = this.criarCursoVazio();
 
-  constructor(@Inject(PLATFORM_ID) private platformId: object) {}
+  constructor(
+    private route: ActivatedRoute,
+    @Inject(PLATFORM_ID) private platformId: object,
+  ) {}
 
   ngOnInit() {
+    this.aplicarPerfilDaRota();
+
     if (!this.estaNoNavegador()) {
       this.carregarDadosPadrao();
       return;
@@ -128,6 +132,14 @@ export class TreinamentosComponent implements OnInit {
     this.mostrarEscolhaPerfil = false;
   }
 
+  private aplicarPerfilDaRota() {
+    const perfil = this.route.snapshot.queryParamMap.get('perfil');
+
+    if (perfil === 'gestor' || perfil === 'colaborador') {
+      this.escolherPerfil(perfil);
+    }
+  }
+
   abrirNovoCurso() {
     this.cursoEmCadastro = this.criarCursoVazio();
     this.telaGestor = 'cadastro';
@@ -141,12 +153,12 @@ export class TreinamentosComponent implements OnInit {
   salvarCurso() {
     const curso = {
       ...this.cursoEmCadastro,
-      id: this.cursoEmCadastro.id || Date.now().toString()
+      id: this.cursoEmCadastro.id || Date.now().toString(),
     };
 
-    const existeCurso = this.cursos.some(item => item.id === curso.id);
+    const existeCurso = this.cursos.some((item) => item.id === curso.id);
     this.cursos = existeCurso
-      ? this.cursos.map(item => item.id === curso.id ? curso : item)
+      ? this.cursos.map((item) => (item.id === curso.id ? curso : item))
       : [curso, ...this.cursos];
 
     this.salvarDados();
@@ -158,7 +170,7 @@ export class TreinamentosComponent implements OnInit {
     this.cursoEmCadastro.modulos.push({
       titulo: `Módulo ${this.cursoEmCadastro.modulos.length + 1}`,
       formato: 'Vídeo',
-      concluido: false
+      concluido: false,
     });
   }
 
@@ -167,35 +179,38 @@ export class TreinamentosComponent implements OnInit {
       pergunta: '',
       alternativas: '',
       respostaCorreta: '',
-      peso: 0
+      peso: 0,
     });
   }
 
   cursosFiltrados(): CursoTreinamento[] {
     const pesquisa = this.pesquisaCurso.trim().toLowerCase();
 
-    return this.cursos.filter(curso => {
+    return this.cursos.filter((curso) => {
       const combinaPesquisa = !pesquisa || curso.nome.toLowerCase().includes(pesquisa);
-      const combinaObrigatorio = this.filtroObrigatorio === 'Todos'
-        || (this.filtroObrigatorio === 'Obrigatórios' && curso.obrigatorio)
-        || (this.filtroObrigatorio === 'Opcionais' && !curso.obrigatorio);
-      const combinaSituacao = this.filtroSituacao === 'Todos' || curso.situacao === this.filtroSituacao;
-      const combinaCategoria = this.filtroCategoria === 'Todas' || curso.categoria === this.filtroCategoria;
+      const combinaObrigatorio =
+        this.filtroObrigatorio === 'Todos' ||
+        (this.filtroObrigatorio === 'Obrigatórios' && curso.obrigatorio) ||
+        (this.filtroObrigatorio === 'Opcionais' && !curso.obrigatorio);
+      const combinaSituacao =
+        this.filtroSituacao === 'Todos' || curso.situacao === this.filtroSituacao;
+      const combinaCategoria =
+        this.filtroCategoria === 'Todas' || curso.categoria === this.filtroCategoria;
 
       return combinaPesquisa && combinaObrigatorio && combinaSituacao && combinaCategoria;
     });
   }
 
   categorias(): string[] {
-    return [...new Set(this.cursos.map(curso => curso.categoria))].sort();
+    return [...new Set(this.cursos.map((curso) => curso.categoria))].sort();
   }
 
   cursosObrigatorios(): number {
-    return this.cursos.filter(curso => curso.obrigatorio).length;
+    return this.cursos.filter((curso) => curso.obrigatorio).length;
   }
 
   colaboradoresEmTreinamento(): number {
-    return this.acompanhamentos.filter(item => item.situacao === 'Em andamento').length;
+    return this.acompanhamentos.filter((item) => item.situacao === 'Em andamento').length;
   }
 
   colaboradoresCadastrados(): ColaboradorTreinamento[] {
@@ -212,19 +227,20 @@ export class TreinamentosComponent implements OnInit {
   }
 
   cursosObrigatoriosColaborador(): number {
-    return this.cursosColaborador.filter(curso => curso.obrigatorio).length;
+    return this.cursosColaborador.filter((curso) => curso.obrigatorio).length;
   }
 
   cursosConcluidosColaborador(): number {
-    return this.cursosColaborador.filter(curso => curso.progresso === 100).length;
+    return this.cursosColaborador.filter((curso) => curso.progresso === 100).length;
   }
 
   cursosEmAndamentoColaborador(): number {
-    return this.cursosColaborador.filter(curso => curso.progresso > 0 && curso.progresso < 100).length;
+    return this.cursosColaborador.filter((curso) => curso.progresso > 0 && curso.progresso < 100)
+      .length;
   }
 
   certificadosColaborador(): number {
-    return this.cursosColaborador.filter(curso => curso.certificado).length;
+    return this.cursosColaborador.filter((curso) => curso.certificado).length;
   }
 
   certificadosEmitidos(): number {
@@ -232,7 +248,7 @@ export class TreinamentosComponent implements OnInit {
   }
 
   certificadosPendentes(): number {
-    return this.cursosColaborador.filter(curso => !curso.certificado).length;
+    return this.cursosColaborador.filter((curso) => !curso.certificado).length;
   }
 
   certificadosVencidos(): number {
@@ -245,16 +261,16 @@ export class TreinamentosComponent implements OnInit {
 
   horasTreinadas(): number {
     return this.cursosColaborador
-      .filter(curso => curso.progresso === 100)
+      .filter((curso) => curso.progresso === 100)
       .reduce((total, curso) => total + this.extrairHoras(curso.cargaHoraria), 0);
   }
 
   historicoColaborador(): CursoColaborador[] {
-    return this.cursosColaborador.filter(curso => curso.progresso === 100 || curso.certificado);
+    return this.cursosColaborador.filter((curso) => curso.progresso === 100 || curso.certificado);
   }
 
   modulosConcluidos(curso: CursoColaborador): number {
-    return curso.modulos.filter(modulo => modulo.concluido).length;
+    return curso.modulos.filter((modulo) => modulo.concluido).length;
   }
 
   totalModulos(curso: CursoColaborador): number {
@@ -262,7 +278,7 @@ export class TreinamentosComponent implements OnInit {
   }
 
   totalQuestoes(curso: CursoColaborador): number {
-    const cursoCompleto = this.cursos.find(item => item.id === curso.id);
+    const cursoCompleto = this.cursos.find((item) => item.id === curso.id);
     return cursoCompleto?.perguntas.length || 0;
   }
 
@@ -330,9 +346,13 @@ export class TreinamentosComponent implements OnInit {
 
     if (dadosSalvos) {
       const dados = JSON.parse(dadosSalvos);
-      this.cursos = (dados.cursos || []).filter((curso: CursoTreinamento) => !this.cursoDemonstracao(curso));
+      this.cursos = (dados.cursos || []).filter(
+        (curso: CursoTreinamento) => !this.cursoDemonstracao(curso),
+      );
       this.acompanhamentos = this.sincronizarAcompanhamentos(dados.acompanhamentos || []);
-      this.cursosColaborador = (dados.cursosColaborador || []).filter((curso: CursoColaborador) => !this.cursoColaboradorDemonstracao(curso));
+      this.cursosColaborador = (dados.cursosColaborador || []).filter(
+        (curso: CursoColaborador) => !this.cursoColaboradorDemonstracao(curso),
+      );
       this.salvarDados();
       return;
     }
@@ -347,13 +367,15 @@ export class TreinamentosComponent implements OnInit {
     this.cursosColaborador = this.cursosColaboradorPadrao();
   }
 
-  private sincronizarAcompanhamentos(acompanhamentos: AcompanhamentoTreinamento[]): AcompanhamentoTreinamento[] {
+  private sincronizarAcompanhamentos(
+    acompanhamentos: AcompanhamentoTreinamento[],
+  ): AcompanhamentoTreinamento[] {
     return acompanhamentos
-      .filter(item => !this.acompanhamentoDemonstracao(item))
-      .filter(item => this.cursos.some(curso => curso.nome === item.curso))
-      .map(item => {
-        const colaborador = this.colaboradores.find(pessoa =>
-          pessoa.id === item.colaboradorId || pessoa.nome === item.colaborador
+      .filter((item) => !this.acompanhamentoDemonstracao(item))
+      .filter((item) => this.cursos.some((curso) => curso.nome === item.curso))
+      .map((item) => {
+        const colaborador = this.colaboradores.find(
+          (pessoa) => pessoa.id === item.colaboradorId || pessoa.nome === item.colaborador,
         );
 
         return colaborador
@@ -361,7 +383,7 @@ export class TreinamentosComponent implements OnInit {
               ...item,
               colaboradorId: colaborador.id,
               colaborador: colaborador.nome,
-              departamento: colaborador.departamento
+              departamento: colaborador.departamento,
             }
           : item;
       });
@@ -372,11 +394,14 @@ export class TreinamentosComponent implements OnInit {
       return;
     }
 
-    localStorage.setItem(this.chaveTreinamentos(), JSON.stringify({
-      cursos: this.cursos,
-      acompanhamentos: this.acompanhamentos,
-      cursosColaborador: this.cursosColaborador
-    }));
+    localStorage.setItem(
+      this.chaveTreinamentos(),
+      JSON.stringify({
+        cursos: this.cursos,
+        acompanhamentos: this.acompanhamentos,
+        cursosColaborador: this.cursosColaborador,
+      }),
+    );
   }
 
   private criarCursoVazio(): CursoTreinamento {
@@ -394,7 +419,7 @@ export class TreinamentosComponent implements OnInit {
       situacao: 'Ativo',
       instrutor: '',
       modulos: [],
-      perguntas: []
+      perguntas: [],
     };
   }
 
@@ -402,7 +427,14 @@ export class TreinamentosComponent implements OnInit {
     return [];
   }
 
-  private criarCurso(id: string, nome: string, categoria: string, cargaHoraria: string, obrigatorio: boolean, objetivo: string): CursoTreinamento {
+  private criarCurso(
+    id: string,
+    nome: string,
+    categoria: string,
+    cargaHoraria: string,
+    obrigatorio: boolean,
+    objetivo: string,
+  ): CursoTreinamento {
     return {
       id,
       nome,
@@ -422,16 +454,16 @@ export class TreinamentosComponent implements OnInit {
         { titulo: 'PDF', formato: 'PDF', concluido: true },
         { titulo: 'Questionário', formato: 'Questionário', concluido: true },
         { titulo: 'Vídeo 2', formato: 'Vídeo', concluido: false },
-        { titulo: 'Avaliação Final', formato: 'Avaliação Final', concluido: false }
+        { titulo: 'Avaliação Final', formato: 'Avaliação Final', concluido: false },
       ],
       perguntas: [
         {
           pergunta: 'Qual é o principal objetivo deste treinamento?',
           alternativas: 'Prevenir riscos;Cumprir rotina;Ignorar normas',
           respostaCorreta: 'Prevenir riscos',
-          peso: 0
-        }
-      ]
+          peso: 0,
+        },
+      ],
     };
   }
 
@@ -452,9 +484,11 @@ export class TreinamentosComponent implements OnInit {
   }
 
   private acompanhamentoDemonstracao(item: AcompanhamentoTreinamento): boolean {
-    return !item.colaboradorId
-      && ['João', 'Maria', 'Carlos'].includes(item.colaborador)
-      && ['LGPD', 'Integração', 'Segurança da Informação'].includes(item.curso);
+    return (
+      !item.colaboradorId &&
+      ['João', 'Maria', 'Carlos'].includes(item.colaborador) &&
+      ['LGPD', 'Integração', 'Segurança da Informação'].includes(item.curso)
+    );
   }
 
   private extrairHoras(cargaHoraria: string): number {
@@ -468,7 +502,7 @@ export class TreinamentosComponent implements OnInit {
       nome: colaborador.nome,
       departamento: colaborador.departamento || '-',
       cargo: colaborador.cargo || '-',
-      situacao: colaborador.situacao || 'Ativo'
+      situacao: colaborador.situacao || 'Ativo',
     };
   }
 
@@ -487,5 +521,4 @@ export class TreinamentosComponent implements OnInit {
   private estaNoNavegador(): boolean {
     return isPlatformBrowser(this.platformId);
   }
-
 }

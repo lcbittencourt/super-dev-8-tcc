@@ -9,7 +9,6 @@ import { TreinamentosComponent } from './treinamentos/treinamentos';
 import { ChamadosComponent } from './chamados/chamados';
 import { NovaEmpresaComponent } from './admin/nova-empresa/nova-empresa';
 import { AprovacoesComponent } from './aprovacoes/aprovacoes';
-import { TreinamentosEquipeComponent } from './treinamentos-equipe/treinamentos-equipe';
 import { ColaboradorComponent } from './colaborador/colaborador';
 import { NovoChamado } from './colaborador/novo-chamado/novo-chamado';
 

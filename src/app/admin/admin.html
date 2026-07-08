@@ -1,213 +1,253 @@
 <div class="sistema">
+  <header class="barra-superior">
+    <div class="marca">
+      <div class="simbolo-marca">P</div>
 
-    <header class="barra-superior">
-        <div class="marca">
-            <div class="simbolo-marca">P</div>
+      <div>
+        <strong>Pulso<span>.</span></strong>
+      </div>
+    </div>
 
-            <div>
-                <strong>Pulso<span>.</span></strong>
-            </div>
+    <span class="etiqueta-perfil">Administrador</span>
+
+    <details class="menu-perfil">
+      <summary class="identificacao" aria-label="Abrir menu do usuário">AD</summary>
+
+      <nav class="opcoes-perfil" aria-label="Menu do usuário">
+        <a routerLink="/admin">Admin</a>
+        <a routerLink="/gestor">Gestor</a>
+        <a routerLink="/colaborador">Colaborador</a>
+        <a class="sair" routerLink="/">Sair</a>
+      </nav>
+    </details>
+  </header>
+
+  <main class="pagina">
+    <section class="cabecalho-pagina apenas-acoes">
+      <div class="acoes">
+        <button class="botao">Exportar</button>
+        <button class="botao principal" routerLink="/nova-empresa">Nova empresa</button>
+      </div>
+    </section>
+
+    <section class="indicadores">
+      <div class="indicador">
+        <span>Total de empresas</span>
+        <strong>{{ empresas.length }}</strong>
+        <small class="positivo">{{ totalAtivas() }} ativa(s)</small>
+      </div>
+
+      <div class="indicador">
+        <span>Usuários ativos</span>
+        <strong>{{ totalUsuarios() }}</strong>
+        <small class="positivo">Base de colaboradores</small>
+      </div>
+
+      <div class="indicador">
+        <span>MRR estimado</span>
+        <strong>{{ mrrEstimado() }}</strong>
+        <small class="positivo">0%</small>
+      </div>
+
+      <div class="indicador">
+        <span>Inadimplência</span>
+        <strong>{{ totalInadimplentes() }}</strong>
+        <small class="negativo">{{ totalInadimplentes() }} pendente(s)</small>
+      </div>
+    </section>
+
+    <section class="cartao">
+      <div class="cabecalho-cartao">
+        <div>
+          <h2>Empresas Cadastradas</h2>
         </div>
 
-        <span class="etiqueta-perfil">Administrador</span>
+        <div class="acoes-cartao">
+          <button
+            class="botao"
+            type="button"
+            (click)="editarEmpresa()"
+            [disabled]="!empresaSelecionada"
+          >
+            Editar empresa
+          </button>
 
-        <nav class="navegacao">
-            <a routerLink="/admin" class="ativo">Admin</a>
-            <a routerLink="/gestor">Gestor</a>
-            <a routerLink="/colaborador">Colaborador</a>
-        </nav>
+          <button
+            class="botao perigo"
+            type="button"
+            (click)="excluirEmpresa()"
+            [disabled]="!empresaSelecionada"
+          >
+            Excluir empresa
+          </button>
 
-        <div class="identificacao">AD</div>
-    </header>
+          <label class="busca-empresa">
+            <input
+              type="search"
+              placeholder="Pesquisar empresa"
+              [(ngModel)]="pesquisaEmpresa"
+              (input)="pesquisarEmpresa()"
+            />
+          </label>
+        </div>
+      </div>
 
-    <main class="pagina">
-
-        <section class="cabecalho-pagina apenas-acoes">
-            <div class="acoes">
-                <button class="botao">
-                    Exportar
-                </button>
-
-                <button class="botao principal" routerLink="/nova-empresa">
-                    Nova empresa
-                </button>
+      <div class="grade-empresas">
+        @for (empresa of empresasVisiveis(); track empresa) {
+          <div
+            class="cartao-empresa"
+            [class.selecionado]="empresaSelecionada && empresaSelecionada.id === empresa.id"
+            (click)="selecionarEmpresa(empresa)"
+          >
+            <div class="topo-empresa">
+              <div class="logo-empresa">
+                {{ empresa.logo }}
+              </div>
+              <div class="dados-empresa">
+                <strong>{{ empresa.nome }}</strong>
+                <small>{{ empresa.cidade }}</small>
+              </div>
+              <span
+                class="selo"
+                [class.sucesso]="empresa.situacao === 'Ativa'"
+                [class.informativo]="empresa.situacao === 'Trial'"
+                [class.erro]="empresa.situacao === 'Inadimplente'"
+              >
+                {{ empresa.situacao }}
+              </span>
             </div>
-        </section>
+            <div class="estatisticas-empresa">
+              <span>
+                <strong>{{ empresa.usuarios }}</strong> usuários
+              </span>
+              <span>
+                <strong>{{ empresa.modulos }}/10</strong> módulos
+              </span>
+              <span>{{ empresa.plano }}</span>
+            </div>
+          </div>
+        }
+      </div>
 
-        <section class="indicadores">
-            <div class="indicador">
-                <span>Total de empresas</span>
-                <strong>{{ empresas.length }}</strong>
-                <small class="positivo">{{ totalAtivas() }} ativa(s)</small>
+      @if (empresasFiltradas().length === 0) {
+        <div class="sem-empresas">Nenhuma empresa encontrada.</div>
+      }
+
+      <div class="paginador-empresas">
+        <button
+          class="botao"
+          type="button"
+          (click)="voltarEmpresas()"
+          [disabled]="paginaEmpresas === 0"
+        >
+          Anteriores
+        </button>
+
+        <span> Página {{ paginaEmpresas + 1 }} de {{ totalPaginasEmpresas() }} </span>
+
+        <button
+          class="botao"
+          type="button"
+          (click)="avancarEmpresas()"
+          [disabled]="paginaEmpresas >= totalPaginasEmpresas() - 1"
+        >
+          Próximas
+        </button>
+      </div>
+    </section>
+
+    @if (empresaSelecionada) {
+      <section class="cartao">
+        <div class="cabecalho-cartao">
+          <div>
+            <h2>Configurar módulos · {{ empresaSelecionada.nome }}</h2>
+            <p>
+              Plano {{ empresaSelecionada.plano }} · {{ modulosLiberados() }}/{{
+                limiteModulosEmpresa()
+              }}
+              módulos liberados
+            </p>
+          </div>
+          <button class="botao principal" type="button" (click)="salvarModulosEmpresa()">
+            Salvar alterações
+          </button>
+        </div>
+
+        @for (modulo of modulosSistema; track modulo.nome) {
+          <div class="modulo" [class.bloqueado-limite]="moduloBloqueadoPorLimite(modulo)">
+            <div>
+              @if (modulo.nome === 'Dashboard' && modulo.liberado) {
+                <a class="atalho-modulo" routerLink="/dashboard">
+                  {{ modulo.nome }}
+                </a>
+              }
+              @if (modulo.nome === 'Colaboradores' && modulo.liberado) {
+                <a class="atalho-modulo" routerLink="/colaboradores">
+                  {{ modulo.nome }}
+                </a>
+              }
+              @if (modulo.nome === 'Controle de ponto' && modulo.liberado) {
+                <a class="atalho-modulo" routerLink="/controle-ponto">
+                  {{ modulo.nome }}
+                </a>
+              }
+              @if (modulo.nome === 'Férias e afastamentos' && modulo.liberado) {
+                <a class="atalho-modulo" routerLink="/ferias" [queryParams]="{ perfil: 'gestor' }">
+                  {{ modulo.nome }}
+                </a>
+              }
+              @if (modulo.nome === 'Treinamentos' && modulo.liberado) {
+                <a class="atalho-modulo" routerLink="/treinamentos" [queryParams]="{ perfil: 'gestor' }">
+                  {{ modulo.nome }}
+                </a>
+              }
+              @if (modulo.nome === 'Chamados' && modulo.liberado) {
+                <a class="atalho-modulo" routerLink="/chamados">
+                  {{ modulo.nome }}
+                </a>
+              }
+              @if (modulo.nome === 'Fornecedores' && modulo.liberado) {
+                <a class="atalho-modulo" routerLink="/fornecedores">
+                  {{ modulo.nome }}
+                </a>
+              }
+              @if (
+                (modulo.nome !== 'Dashboard' &&
+                  modulo.nome !== 'Colaboradores' &&
+                  modulo.nome !== 'Controle de ponto' &&
+                  modulo.nome !== 'Férias e afastamentos' &&
+                  modulo.nome !== 'Treinamentos' &&
+                  modulo.nome !== 'Chamados' &&
+                  modulo.nome !== 'Fornecedores') ||
+                !modulo.liberado
+              ) {
+                <strong>{{ modulo.nome }}</strong>
+              }
+              <p>{{ modulo.descricao }}</p>
             </div>
 
-            <div class="indicador">
-                <span>Usuários ativos</span>
-                <strong>{{ totalUsuarios() }}</strong>
-                <small class="positivo">Base de colaboradores</small>
+            <div class="acao-modulo">
+              <span
+                class="selo"
+                [class.sucesso]="modulo.liberado"
+                [class.neutro]="!modulo.liberado"
+              >
+                {{ modulo.liberado ? 'Liberado' : 'Bloqueado' }}
+              </span>
+
+              <button
+                class="alternador"
+                type="button"
+                [class.ligado]="modulo.liberado"
+                [disabled]="moduloBloqueadoPorLimite(modulo)"
+                (click)="alternarModulo(modulo)"
+              >
+                <span></span>
+              </button>
             </div>
-
-            <div class="indicador">
-                <span>MRR estimado</span>
-                <strong>{{ mrrEstimado() }}</strong>
-                <small class="positivo">0%</small>
-            </div>
-
-            <div class="indicador">
-                <span>Inadimplência</span>
-                <strong>{{ totalInadimplentes() }}</strong>
-                <small class="negativo">{{ totalInadimplentes() }} pendente(s)</small>
-            </div>
-        </section>
-
-        <section class="cartao">
-
-            <div class="cabecalho-cartao">
-                <div>
-                    <h2>Empresas Cadastradas</h2>
-                </div>
-
-                <div class="acoes-cartao">
-                    <button class="botao" type="button" (click)="editarEmpresa()" [disabled]="!empresaSelecionada">
-                        Editar empresa
-                    </button>
-
-                    <button class="botao perigo" type="button" (click)="excluirEmpresa()"
-                        [disabled]="!empresaSelecionada">
-                        Excluir empresa
-                    </button>
-
-                    <label class="busca-empresa">
-                        <input type="search" placeholder="Pesquisar empresa" [(ngModel)]="pesquisaEmpresa"
-                            (input)="pesquisarEmpresa()">
-                    </label>
-                </div>
-            </div>
-
-            <div class="grade-empresas">
-                <div class="cartao-empresa" *ngFor="let empresa of empresasVisiveis()"
-                    [class.selecionado]="empresaSelecionada && empresaSelecionada.id === empresa.id"
-                    (click)="selecionarEmpresa(empresa)">
-                    <div class="topo-empresa">
-                        <div class="logo-empresa">
-                            {{ empresa.logo }}
-                        </div>
-
-                        <div class="dados-empresa">
-                            <strong>{{ empresa.nome }}</strong>
-                            <small>{{ empresa.cidade }}</small>
-                        </div>
-
-                        <span class="selo" [class.sucesso]="empresa.situacao === 'Ativa'"
-                            [class.informativo]="empresa.situacao === 'Trial'" [class.erro]="empresa.situacao === 'Inadimplente'">
-                            {{ empresa.situacao }}
-                        </span>
-                    </div>
-
-                    <div class="estatisticas-empresa">
-                        <span>
-                            <strong>{{ empresa.usuarios }}</strong> usuários
-                        </span>
-
-                        <span>
-                            <strong>{{ empresa.modulos }}/10</strong> módulos
-                        </span>
-
-                        <span>{{ empresa.plano }}</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="sem-empresas" *ngIf="empresasFiltradas().length === 0">
-                Nenhuma empresa encontrada.
-            </div>
-
-            <div class="paginador-empresas">
-                <button class="botao" type="button" (click)="voltarEmpresas()" [disabled]="paginaEmpresas === 0">
-                    Anteriores
-                </button>
-
-                <span>
-                    Página {{ paginaEmpresas + 1 }} de {{ totalPaginasEmpresas() }}
-                </span>
-
-                <button class="botao" type="button" (click)="avancarEmpresas()"
-                    [disabled]="paginaEmpresas >= totalPaginasEmpresas() - 1">
-                    Próximas
-                </button>
-            </div>
-
-        </section>
-
-        <section class="cartao" *ngIf="empresaSelecionada">
-            <div class="cabecalho-cartao">
-                <div>
-                    <h2>Configurar módulos · {{ empresaSelecionada.nome }}</h2>
-                    <p>
-                        Plano {{ empresaSelecionada.plano }} · {{ modulosLiberados() }}/{{ limiteModulosEmpresa() }}
-                        módulos liberados
-                    </p>
-                </div>
-
-                <button class="botao principal" type="button" (click)="salvarModulosEmpresa()">
-                    Salvar alterações
-                </button>
-            </div>
-
-            <div class="modulo" *ngFor="let modulo of modulosSistema"
-                [class.bloqueado-limite]="moduloBloqueadoPorLimite(modulo)">
-                <div>
-                    <a *ngIf="modulo.nome === 'Dashboard' && modulo.liberado" class="atalho-modulo"
-                        routerLink="/dashboard">
-                        {{ modulo.nome }}
-                    </a>
-
-                    <a *ngIf="modulo.nome === 'Colaboradores' && modulo.liberado" class="atalho-modulo"
-                        routerLink="/colaboradores">
-                        {{ modulo.nome }}
-                    </a>
-
-                    <a *ngIf="modulo.nome === 'Controle de ponto' && modulo.liberado" class="atalho-modulo"
-                        routerLink="/controle-ponto">
-                        {{ modulo.nome }}
-                    </a>
-
-                    <a *ngIf="modulo.nome === 'Férias e afastamentos' && modulo.liberado" class="atalho-modulo"
-                        routerLink="/ferias">
-                        {{ modulo.nome }}
-                    </a>
-
-                    <a *ngIf="modulo.nome === 'Treinamentos' && modulo.liberado" class="atalho-modulo"
-                        routerLink="/treinamentos">
-                        {{ modulo.nome }}
-                    </a>
-
-                    <a *ngIf="modulo.nome === 'Chamados' && modulo.liberado" class="atalho-modulo"
-                        routerLink="/chamados">
-                        {{ modulo.nome }}
-                    </a>
-
-                    <ng-container
-                        *ngIf="(modulo.nome !== 'Dashboard' && modulo.nome !== 'Colaboradores' && modulo.nome !== 'Controle de ponto' && modulo.nome !== 'Férias e afastamentos' && modulo.nome !== 'Treinamentos' && modulo.nome !== 'Chamados') || !modulo.liberado">
-                        <strong>{{ modulo.nome }}</strong>
-                    </ng-container>
-
-                    <p>{{ modulo.descricao }}</p>
-                </div>
-
-                <div class="acao-modulo">
-                    <span class="selo" [class.sucesso]="modulo.liberado" [class.neutro]="!modulo.liberado">
-                        {{ modulo.liberado ? 'Liberado' : 'Bloqueado' }}
-                    </span>
-
-                    <button class="alternador" type="button" [class.ligado]="modulo.liberado"
-                        [disabled]="moduloBloqueadoPorLimite(modulo)" (click)="alternarModulo(modulo)">
-                        <span></span>
-                    </button>
-                </div>
-            </div>
-        </section>
-
-    </main>
-
+          </div>
+        }
+      </section>
+    }
+  </main>
 </div>

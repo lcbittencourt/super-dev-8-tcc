@@ -74,16 +74,71 @@
     color: #fff;
 }
 
+.menu-perfil {
+    margin-left: auto;
+    position: relative;
+}
+
+.menu-perfil summary {
+    list-style: none;
+}
+
+.menu-perfil summary::-webkit-details-marker {
+    display: none;
+}
+
 .identificacao {
     width: 32px;
     height: 32px;
     border-radius: 50%;
     background: #fbe5d8;
+    border: 0;
     color: #7a3a1e;
+    cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
     font-weight: 700;
+}
+
+.menu-perfil[open] .identificacao {
+    outline: 2px solid #b51a2b;
+    outline-offset: 2px;
+}
+
+.opcoes-perfil {
+    position: absolute;
+    right: 0;
+    top: calc(100% + 8px);
+    z-index: 30;
+    min-width: 160px;
+    padding: 6px;
+    background: #fff;
+    border: 1px solid #d9cdb8;
+    border-radius: 8px;
+    box-shadow: 0 12px 30px rgba(22, 30, 47, 0.12);
+    display: grid;
+    gap: 2px;
+}
+
+.opcoes-perfil a {
+    border-radius: 6px;
+    color: #384358;
+    font-size: 13px;
+    font-weight: 600;
+    padding: 9px 10px;
+    text-decoration: none;
+}
+
+.opcoes-perfil a:hover {
+    background: #f5efe6;
+    color: #b51a2b;
+}
+
+.opcoes-perfil .sair {
+    border-top: 1px solid #eee2cf;
+    color: #b51a2b;
+    margin-top: 4px;
 }
 
 .pagina {
@@ -414,3 +469,91 @@
   opacity: 0.5;
   cursor: not-allowed;
 }
+
+/* Ajustes de espacamento entre textos, campos e botoes. */
+.cabecalho-pagina,
+.cabecalho-cartao {
+  gap: 16px;
+}
+
+.cabecalho-cartao {
+  margin-bottom: 18px;
+}
+
+.acoes,
+.acoes-cartao,
+.acoes-linha,
+.acoes-rodape {
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.filtros,
+.formulario,
+.campos,
+.grade-formulario,
+.grade-participantes,
+.grade-certificados,
+.lista-compacta,
+.lista-cartoes {
+  gap: 14px;
+}
+
+.formulario,
+.filtros {
+  row-gap: 14px;
+}
+
+label,
+.formulario label,
+.avaliacao label,
+.grade-participantes label {
+  line-height: 1.35;
+}
+
+.formulario label,
+.avaliacao label,
+.grade-participantes label {
+  gap: 8px;
+}
+
+input,
+select,
+textarea {
+  line-height: 1.35;
+  min-height: 42px;
+  padding: 10px 12px;
+}
+
+textarea {
+  min-height: 96px;
+  resize: vertical;
+}
+
+.botao:not(.pequeno),
+.botao-envio {
+  align-items: center;
+  display: inline-flex;
+  gap: 8px;
+  justify-content: center;
+  min-height: 40px;
+}
+
+.acao-texto {
+  line-height: 1.35;
+  padding-bottom: 4px;
+  padding-top: 4px;
+}
+
+.cartao,
+.indicador,
+.metrica {
+  min-width: 0;
+}
+
+th,
+td {
+  line-height: 1.35;
+}
+

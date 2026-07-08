@@ -1,0 +1,58 @@
+<div class="sistema">
+  <main class="pagina-login">
+    <section class="painel-login">
+      <div class="marca-login">
+        <div class="simbolo-marca">P</div>
+        <strong>Pulso<span>.</span></strong>
+      </div>
+
+      <div class="empresa">
+        <div class="identificacao">{{ empresaSelecionada.logo }}</div>
+        <div>
+          <h1>Login {{ tituloPerfil() }}</h1>
+          <p>{{ empresaSelecionada.nome }} · {{ empresaSelecionada.cidade }}</p>
+        </div>
+      </div>
+
+      <form class="formulario" (ngSubmit)="entrar()">
+        <label>
+          Login
+          <input type="text" [(ngModel)]="login" name="login" autocomplete="username" />
+        </label>
+
+        <label>
+          Senha
+          <div class="entrada-senha">
+            <input
+              [type]="mostrarSenha ? 'text' : 'password'"
+              [(ngModel)]="senha"
+              name="senha"
+              autocomplete="current-password"
+            />
+
+            <button
+              class="botao-visualizar-senha"
+              type="button"
+              (click)="mostrarSenha = !mostrarSenha"
+              [attr.aria-label]="mostrarSenha ? 'Ocultar senha' : 'Visualizar senha'"
+              [title]="mostrarSenha ? 'Ocultar senha' : 'Visualizar senha'"
+            >
+              <span class="material-symbols-outlined" aria-hidden="true">
+                {{ mostrarSenha ? 'visibility_off' : 'visibility' }}
+              </span>
+            </button>
+          </div>
+        </label>
+
+        @if (mensagem) {
+          <div class="mensagem">
+            {{ mensagem }}
+          </div>
+        }
+
+        <button class="botao principal" type="submit">Entrar</button>
+        <button class="botao" type="button" routerLink="/admin">Voltar ao admin</button>
+      </form>
+    </section>
+  </main>
+</div>

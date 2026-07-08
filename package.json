@@ -22,6 +22,8 @@
     "@angular/ssr": "^21.2.8",
     "express": "^5.1.0",
     "lsof": "^0.0.4",
+    "lucide": "^1.23.0",
+    "lucide-angular": "^1.0.0",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0"
   },

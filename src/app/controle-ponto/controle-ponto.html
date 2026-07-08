@@ -1,5 +1,4 @@
 <div class="sistema">
-
   <header class="barra-superior">
     <div class="marca">
       <div class="simbolo-marca">P</div>
@@ -21,19 +20,14 @@
   </header>
 
   <main class="pagina">
-
     <section class="cabecalho-pagina">
       <div>
         <h1>Controle de Ponto</h1>
-        <p>{{ empresaSelecionada.nome }} · registros informados pelos colaboradores</p>
+        <p>{{ empresaSelecionada.nome }}</p>
       </div>
 
       <div class="acoes">
-        <button
-          class="botao principal"
-          type="button"
-          (click)="salvarAjustes()"
-        >
+        <button class="botao principal" type="button" (click)="salvarAjustes()">
           Salvar ajustes
         </button>
       </div>
@@ -42,11 +36,7 @@
     <section class="barra-ferramentas cartao">
       <label>
         Data
-        <input
-          type="date"
-          [(ngModel)]="dataSelecionada"
-          (change)="alterarData()"
-        >
+        <input type="date" [(ngModel)]="dataSelecionada" (change)="alterarData()" />
       </label>
 
       <div class="resumo">
@@ -64,7 +54,6 @@
       <div class="cabecalho-cartao">
         <div>
           <h2>Pontos do dia</h2>
-          <p>O gestor pode ajustar os horários quando houver necessidade.</p>
         </div>
       </div>
 
@@ -83,62 +72,64 @@
           </thead>
 
           <tbody>
-            <tr *ngFor="let registro of registrosDoDia()">
-              <td>
-                <strong>{{ registro.nome }}</strong>
-              </td>
-              <td>
-                <input
-                  type="time"
-                  [(ngModel)]="registro.entrada"
-                  (change)="atualizarSituacao(registro)"
-                >
-              </td>
-              <td>
-                <input
-                  type="time"
-                  [(ngModel)]="registro.saidaAlmoco"
-                  (change)="atualizarSituacao(registro)"
-                >
-              </td>
-              <td>
-                <input
-                  type="time"
-                  [(ngModel)]="registro.retorno"
-                  (change)="atualizarSituacao(registro)"
-                >
-              </td>
-              <td>
-                <input
-                  type="time"
-                  [(ngModel)]="registro.saida"
-                  (change)="atualizarSituacao(registro)"
-                >
-              </td>
-              <td>
-                <span
-                  class="selo"
-                  [class.sucesso]="registro.situacao === 'Completo'"
-                  [class.informativo]="registro.situacao === 'Pendente'"
-                  [class.neutro]="registro.situacao === 'Sem registro'"
-                >
-                  {{ registro.situacao }}
-                </span>
-              </td>
-              <td>
-                <input
-                  type="text"
-                  placeholder="Ajuste, atestado, esquecimento..."
-                  [(ngModel)]="registro.observacoes"
-                >
-              </td>
-            </tr>
+            @for (registro of registrosDoDia(); track registro) {
+              <tr>
+                <td>
+                  <strong>{{ registro.nome }}</strong>
+                </td>
+                <td>
+                  <input
+                    type="time"
+                    [(ngModel)]="registro.entrada"
+                    (change)="atualizarSituacao(registro)"
+                  />
+                </td>
+                <td>
+                  <input
+                    type="time"
+                    [(ngModel)]="registro.saidaAlmoco"
+                    (change)="atualizarSituacao(registro)"
+                  />
+                </td>
+                <td>
+                  <input
+                    type="time"
+                    [(ngModel)]="registro.retorno"
+                    (change)="atualizarSituacao(registro)"
+                  />
+                </td>
+                <td>
+                  <input
+                    type="time"
+                    [(ngModel)]="registro.saida"
+                    (change)="atualizarSituacao(registro)"
+                  />
+                </td>
+                <td>
+                  <span
+                    class="selo"
+                    [class.sucesso]="registro.situacao === 'Completo'"
+                    [class.informativo]="registro.situacao === 'Pendente'"
+                    [class.neutro]="registro.situacao === 'Sem registro'"
+                  >
+                    {{ registro.situacao }}
+                  </span>
+                </td>
+                <td>
+                  <input
+                    type="text"
+                    placeholder="Ajuste, atestado, esquecimento..."
+                    [(ngModel)]="registro.observacoes"
+                  />
+                </td>
+              </tr>
+            }
           </tbody>
         </table>
 
-        <div class="vazio" *ngIf="colaboradores.length === 0">
-          Nenhum colaborador cadastrado para esta empresa.
-        </div>
+        @if (colaboradores.length === 0) {
+          <div class="vazio">Nenhum colaborador cadastrado para esta empresa.</div>
+        }
       </div>
     </section>
 
@@ -158,7 +149,5 @@
         <strong>Em preparação</strong>
       </article>
     </section>
-
   </main>
-
 </div>

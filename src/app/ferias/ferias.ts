@@ -1,7 +1,7 @@
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { Component, Inject, OnInit, PLATFORM_ID } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { RouterLink } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 
 type PerfilFerias = 'gestor' | 'colaborador' | '';
 type SituacaoFerias = 'Pendente' | 'Aprovada' | 'Reprovada' | 'Cancelada' | 'Concluída';
@@ -38,6 +38,13 @@ interface SolicitacaoFerias {
   aprovador: string;
   dataAprovacao: string;
   saldoDisponivel: number;
+}
+
+interface DiaCalendario {
+  data: string;
+  dia: number;
+  pertenceAoMes: boolean;
+  ehHoje: boolean;
 }
 
 @Component({
@@ -83,11 +90,33 @@ export class FeriasComponent implements OnInit {
     { nome: 'Retorno', situacao: 'vazio' }
   ];
 
-  diasCalendario = this.criarDiasCalendario();
+  mesesCalendario = [
+    { valor: 0, nome: 'Janeiro' },
+    { valor: 1, nome: 'Fevereiro' },
+    { valor: 2, nome: 'Março' },
+    { valor: 3, nome: 'Abril' },
+    { valor: 4, nome: 'Maio' },
+    { valor: 5, nome: 'Junho' },
+    { valor: 6, nome: 'Julho' },
+    { valor: 7, nome: 'Agosto' },
+    { valor: 8, nome: 'Setembro' },
+    { valor: 9, nome: 'Outubro' },
+    { valor: 10, nome: 'Novembro' },
+    { valor: 11, nome: 'Dezembro' }
+  ];
+  anosCalendario = this.criarAnosCalendario();
+  diasSemana = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
+  mesSelecionado = new Date().getMonth();
+  anoSelecionado = new Date().getFullYear();
 
-  constructor(@Inject(PLATFORM_ID) private platformId: object) {}
+  constructor(
+    private route: ActivatedRoute,
+    @Inject(PLATFORM_ID) private platformId: object,
+  ) {}
 
   ngOnInit() {
+    this.aplicarPerfilDaRota();
+
     if (!this.estaNoNavegador()) {
       return;
     }
@@ -100,6 +129,14 @@ export class FeriasComponent implements OnInit {
   escolherPerfil(perfil: PerfilFerias) {
     this.perfil = perfil;
     this.mostrarEscolhaPerfil = false;
+  }
+
+  private aplicarPerfilDaRota() {
+    const perfil = this.route.snapshot.queryParamMap.get('perfil');
+
+    if (perfil === 'gestor' || perfil === 'colaborador') {
+      this.escolherPerfil(perfil);
+    }
   }
 
   trocarPerfil() {
@@ -133,9 +170,8 @@ export class FeriasComponent implements OnInit {
     return this.solicitacoes.filter(solicitacao => solicitacao.situacao === 'Aprovada' && solicitacao.inicio > this.dataHoje());
   }
 
-  eventosDoDia(dia: number): SolicitacaoFerias[] {
-    const hoje = new Date();
-    const dataDia = new Date(hoje.getFullYear(), hoje.getMonth(), dia);
+  eventosDoDia(diaCalendario: DiaCalendario): SolicitacaoFerias[] {
+    const dataDia = new Date(`${diaCalendario.data}T00:00:00`);
 
     return this.solicitacoes.filter(solicitacao => {
       const inicio = new Date(`${solicitacao.inicio}T00:00:00`);
@@ -278,9 +314,11 @@ export class FeriasComponent implements OnInit {
   }
 
   mesCalendario(): string {
-    const mes = new Intl.DateTimeFormat('pt-BR', { month: 'long' }).format(new Date());
+    const data = new Date(this.anoSelecionado, this.mesSelecionado, 1);
+    const mes = new Intl.DateTimeFormat('pt-BR', { month: 'long' }).format(data);
+    const nomeMes = mes.charAt(0).toUpperCase() + mes.slice(1);
 
-    return mes.charAt(0).toUpperCase() + mes.slice(1);
+    return `${nomeMes} de ${this.anoSelecionado}`;
   }
 
   private atualizarSolicitacaoSelecionada(situacao: SituacaoFerias) {
@@ -393,11 +431,61 @@ export class FeriasComponent implements OnInit {
     return this.dataParaCampo(data);
   }
 
-  private criarDiasCalendario(): number[] {
-    const hoje = new Date();
-    const totalDias = new Date(hoje.getFullYear(), hoje.getMonth() + 1, 0).getDate();
+  diasCalendario(): DiaCalendario[] {
+    const primeiroDiaMes = new Date(this.anoSelecionado, this.mesSelecionado, 1);
+    const ultimoDiaMes = new Date(this.anoSelecionado, this.mesSelecionado + 1, 0);
+    const primeiroDiaSemana = primeiroDiaMes.getDay();
+    const totalDiasMes = ultimoDiaMes.getDate();
+    const totalCelulas = Math.ceil((primeiroDiaSemana + totalDiasMes) / 7) * 7;
+    const dataInicial = new Date(this.anoSelecionado, this.mesSelecionado, 1 - primeiroDiaSemana);
+    const hoje = this.dataHoje();
 
-    return Array.from({ length: totalDias }, (_, indice) => indice + 1);
+    return Array.from({ length: totalCelulas }, (_, indice) => {
+      const data = new Date(dataInicial);
+      data.setDate(dataInicial.getDate() + indice);
+      const dataCampo = this.dataParaCampo(data);
+
+      return {
+        data: dataCampo,
+        dia: data.getDate(),
+        pertenceAoMes: data.getMonth() === this.mesSelecionado,
+        ehHoje: dataCampo === hoje
+      };
+    });
+  }
+
+  mesAnterior() {
+    if (this.mesSelecionado === 0) {
+      this.mesSelecionado = 11;
+      this.anoSelecionado -= 1;
+      return;
+    }
+
+    this.mesSelecionado -= 1;
+  }
+
+  proximoMes() {
+    if (this.mesSelecionado === 11) {
+      this.mesSelecionado = 0;
+      this.anoSelecionado += 1;
+      return;
+    }
+
+    this.mesSelecionado += 1;
+  }
+
+  alterarMesCalendario(mes: number | string) {
+    this.mesSelecionado = Number(mes);
+  }
+
+  alterarAnoCalendario(ano: number | string) {
+    this.anoSelecionado = Number(ano);
+  }
+
+  private criarAnosCalendario(): number[] {
+    const anoAtual = new Date().getFullYear();
+
+    return Array.from({ length: 11 }, (_, indice) => anoAtual - 5 + indice);
   }
 
   private dataParaCampo(data: Date): string {

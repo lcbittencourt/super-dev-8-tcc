@@ -1,4 +1,4 @@
-import { CommonModule, isPlatformBrowser } from '@angular/common';
+import { isPlatformBrowser } from '@angular/common';
 import { Component, Inject, OnInit, PLATFORM_ID } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
@@ -42,18 +42,17 @@ interface EmpresaSelecionada {
 @Component({
   selector: 'app-colaboradores',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink],
+  imports: [FormsModule, RouterLink],
   templateUrl: './colaboradores.html',
-  styleUrl: './colaboradores.css'
+  styleUrl: './colaboradores.css',
 })
 export class ColaboradoresComponent implements OnInit {
-
   colaboradores: Colaborador[] = [];
   empresaSelecionada: EmpresaSelecionada = {
     id: 'tx001',
     nome: 'Têxtil Vale Norte',
     cidade: 'Blumenau, SC',
-    logo: 'TV'
+    logo: 'TV',
   };
   tela: 'lista' | 'cadastro' = 'lista';
   termoPesquisa = '';
@@ -71,7 +70,7 @@ export class ColaboradoresComponent implements OnInit {
     'Pleno III',
     'Senior I',
     'Senior II',
-    'Senior III'
+    'Senior III',
   ];
 
   colaborador: Colaborador = this.criarColaboradorVazio();
@@ -93,33 +92,39 @@ export class ColaboradoresComponent implements OnInit {
     this.colaboradores = colaboradores.map((colaborador: Colaborador) => ({
       ...colaborador,
       nivel: colaborador.nivel || 'Não se aplica',
-      diasLicencaMedica: colaborador.diasLicencaMedica || 0
+      diasLicencaMedica: colaborador.diasLicencaMedica || 0,
     }));
   }
 
   get colaboradoresFiltrados(): Colaborador[] {
     const busca = this.termoPesquisa.trim().toLowerCase();
 
-    return this.colaboradores.filter(colaborador => {
+    return this.colaboradores.filter((colaborador) => {
       const texto = [
         colaborador.nome,
         colaborador.email,
         colaborador.cargo,
         colaborador.departamento,
         colaborador.nivel,
-        colaborador.gestor
-      ].join(' ').toLowerCase();
+        colaborador.gestor,
+      ]
+        .join(' ')
+        .toLowerCase();
 
       const combinaPesquisa = !busca || texto.includes(busca);
-      const combinaSituacao = this.filtroSituacao === 'Todos' || colaborador.situacao === this.filtroSituacao;
-      const combinaDepartamento = this.filtroDepartamento === 'Todos' || colaborador.departamento === this.filtroDepartamento;
+      const combinaSituacao =
+        this.filtroSituacao === 'Todos' || colaborador.situacao === this.filtroSituacao;
+      const combinaDepartamento =
+        this.filtroDepartamento === 'Todos' || colaborador.departamento === this.filtroDepartamento;
 
       return combinaPesquisa && combinaSituacao && combinaDepartamento;
     });
   }
 
   get departamentos(): string[] {
-    return [...new Set(this.colaboradores.map(colaborador => colaborador.departamento).filter(Boolean))].sort();
+    return [
+      ...new Set(this.colaboradores.map((colaborador) => colaborador.departamento).filter(Boolean)),
+    ].sort();
   }
 
   abrirCadastro() {
@@ -141,13 +146,13 @@ export class ColaboradoresComponent implements OnInit {
       return;
     }
 
-    this.colaboradores = this.colaboradores.filter(item => item.id !== colaborador.id);
+    this.colaboradores = this.colaboradores.filter((item) => item.id !== colaborador.id);
     this.salvarLocalmente();
   }
 
   salvarColaborador() {
     if (this.modoEdicao) {
-      this.colaboradores = this.colaboradores.map(item => {
+      this.colaboradores = this.colaboradores.map((item) => {
         if (item.id === this.colaborador.id) {
           return { ...this.colaborador };
         }
@@ -157,7 +162,7 @@ export class ColaboradoresComponent implements OnInit {
     } else {
       this.colaboradores = [
         { ...this.colaborador, id: Date.now().toString() },
-        ...this.colaboradores
+        ...this.colaboradores,
       ];
     }
 
@@ -170,7 +175,7 @@ export class ColaboradoresComponent implements OnInit {
   }
 
   contarPorSituacao(situacao: SituacaoColaborador): number {
-    return this.colaboradores.filter(colaborador => colaborador.situacao === situacao).length;
+    return this.colaboradores.filter((colaborador) => colaborador.situacao === situacao).length;
   }
 
   atualizarSituacao() {
@@ -182,7 +187,7 @@ export class ColaboradoresComponent implements OnInit {
   formatarSalario(valor: number): string {
     return new Intl.NumberFormat('pt-BR', {
       style: 'currency',
-      currency: 'BRL'
+      currency: 'BRL',
     }).format(valor || 0);
   }
 
@@ -203,7 +208,7 @@ export class ColaboradoresComponent implements OnInit {
       .split(' ')
       .filter(Boolean)
       .slice(0, 2)
-      .map(parte => parte[0])
+      .map((parte) => parte[0])
       .join('')
       .toUpperCase();
   }
@@ -239,7 +244,7 @@ export class ColaboradoresComponent implements OnInit {
       gestor: '',
       situacao: 'Ativo',
       diasLicencaMedica: 0,
-      foto: ''
+      foto: '',
     };
   }
 
@@ -282,5 +287,4 @@ export class ColaboradoresComponent implements OnInit {
     localStorage.setItem(chaveAtual, colaboradoresAntigos);
     localStorage.setItem('colaboradoresMigradosPorEmpresa', 'true');
   }
-
 }

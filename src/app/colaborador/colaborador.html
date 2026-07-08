@@ -11,13 +11,16 @@
 
     <span class="etiqueta-perfil">Colaborador</span>
 
-    <nav class="navegacao">
-      <a routerLink="/admin">Admin</a>
-      <a routerLink="/gestor">Gestor</a>
-      <a class="ativo" routerLink="/colaborador">Colaborador</a>
-    </nav>
+    <details class="menu-perfil">
+      <summary class="identificacao" aria-label="Abrir menu do usuário">AL</summary>
 
-    <div class="identificacao">AL</div>
+      <nav class="opcoes-perfil" aria-label="Menu do usuário">
+        <a routerLink="/admin">Admin</a>
+        <a routerLink="/gestor">Gestor</a>
+        <a routerLink="/colaborador">Colaborador</a>
+        <a class="sair" routerLink="/">Sair</a>
+      </nav>
+    </details>
   </header>
 
   <main class="pagina">

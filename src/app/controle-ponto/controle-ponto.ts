@@ -1,4 +1,4 @@
-import { CommonModule, isPlatformBrowser } from '@angular/common';
+import { isPlatformBrowser } from '@angular/common';
 import { Component, Inject, OnInit, PLATFORM_ID } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
@@ -35,17 +35,16 @@ interface RegistroPonto {
 @Component({
   selector: 'app-controle-ponto',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink],
+  imports: [FormsModule, RouterLink],
   templateUrl: './controle-ponto.html',
-  styleUrl: './controle-ponto.css'
+  styleUrl: './controle-ponto.css',
 })
 export class ControlePontoComponent implements OnInit {
-
   empresaSelecionada: EmpresaSelecionada = {
     id: 'tx001',
     nome: 'Têxtil Vale Norte',
     cidade: 'Blumenau, SC',
-    logo: 'TV'
+    logo: 'TV',
   };
 
   colaboradores: ColaboradorPonto[] = [];
@@ -65,7 +64,7 @@ export class ControlePontoComponent implements OnInit {
   }
 
   registrosDoDia(): RegistroPonto[] {
-    return this.registros.filter(registro => registro.data === this.dataSelecionada);
+    return this.registros.filter((registro) => registro.data === this.dataSelecionada);
   }
 
   salvarAjustes() {
@@ -122,9 +121,10 @@ export class ControlePontoComponent implements OnInit {
   private sincronizarRegistros(registros: RegistroPonto[]): RegistroPonto[] {
     const registrosAtualizados = [...registros];
 
-    this.colaboradores.forEach(colaborador => {
+    this.colaboradores.forEach((colaborador) => {
       const existeRegistro = registrosAtualizados.some(
-        registro => registro.colaboradorId === colaborador.id && registro.data === this.dataSelecionada
+        (registro) =>
+          registro.colaboradorId === colaborador.id && registro.data === this.dataSelecionada,
       );
 
       if (!existeRegistro) {
@@ -137,14 +137,16 @@ export class ControlePontoComponent implements OnInit {
           retorno: '',
           saida: '',
           situacao: 'Sem registro',
-          observacoes: ''
+          observacoes: '',
         });
       }
     });
 
-    return registrosAtualizados.map(registro => ({
+    return registrosAtualizados.map((registro) => ({
       ...registro,
-      nome: this.colaboradores.find(colaborador => colaborador.id === registro.colaboradorId)?.nome || registro.nome
+      nome:
+        this.colaboradores.find((colaborador) => colaborador.id === registro.colaboradorId)?.nome ||
+        registro.nome,
     }));
   }
 
@@ -153,7 +155,7 @@ export class ControlePontoComponent implements OnInit {
 
     return {
       ...dadosRegistro,
-      situacao: registro.situacao ?? status ?? 'Sem registro'
+      situacao: registro.situacao ?? status ?? 'Sem registro',
     };
   }
 
@@ -172,5 +174,4 @@ export class ControlePontoComponent implements OnInit {
   private estaNoNavegador(): boolean {
     return isPlatformBrowser(this.platformId);
   }
-
 }
