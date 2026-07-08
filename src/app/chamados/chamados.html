@@ -1,5 +1,4 @@
 <div class="sistema">
-
   <header class="barra-superior">
     <div class="marca">
       <div class="simbolo-marca">P</div>
@@ -17,35 +16,40 @@
       <a routerLink="/colaborador">Colaborador</a>
     </nav>
 
-    <div class="identificacao">GE</div>
+    <div class="identificacao">{{ empresaSelecionada.logo }}</div>
   </header>
 
   <main class="pagina">
-
     <section class="cabecalho-pagina">
       <div>
         <h1>Chamados</h1>
-        <p>Chamados abertos pela equipe da {{ empresa }}</p>
+        <p>Chamados abertos pela equipe da {{ empresaSelecionada.nome }}</p>
       </div>
 
       <div class="acoes">
-        <a class="botao" routerLink="/gestor">Voltar</a>
         <button class="botao">Exportar</button>
       </div>
     </section>
 
     <section class="filtros">
-      <button class="filtro ativo">Todos</button>
-      <button class="filtro">Abertos</button>
-      <button class="filtro">Em andamento</button>
-      <button class="filtro">Resolvidos</button>
+      @for (filtro of filtros; track filtro) {
+        <button
+          class="filtro"
+          type="button"
+          [class.ativo]="filtroSelecionado === filtro"
+          (click)="selecionarFiltro(filtro)"
+        >
+          {{ filtro }}
+          <span>{{ totalPorFiltro(filtro) }}</span>
+        </button>
+      }
     </section>
 
     <section class="cartao">
       <div class="cabecalho-cartao">
         <div>
           <h2>Chamados da equipe</h2>
-          <p>Acompanhe e intervenha nos chamados da sua equipe</p>
+          <p>{{ chamadosFiltrados().length }} chamado(s) da empresa selecionada.</p>
         </div>
       </div>
 
@@ -57,142 +61,65 @@
               <th>Assunto</th>
               <th>Categoria</th>
               <th>Solicitante</th>
+              <th>Setor</th>
               <th>Abertura</th>
               <th>Prioridade</th>
               <th>Status</th>
+              <th>Responsável</th>
+              <th>SLA</th>
               <th>Ações</th>
             </tr>
           </thead>
 
           <tbody>
-            <tr>
-              <td>#2051</td>
-              <td>Computador não liga</td>
-              <td>TI</td>
-              <td>
-                <div class="pessoa">
-                  <div class="foto">AL</div>
-                  <strong>Ana Lima</strong>
-                </div>
-              </td>
-              <td>20/05/2025</td>
-              <td><span class="selo erro">Alta</span></td>
-              <td><span class="selo alerta">Aberto</span></td>
-              <td>
-                <div class="acoes-linha">
-                  <button class="botao pequeno atender">Atender</button>
-                  <button class="botao pequeno">Encaminhar</button>
-                </div>
-              </td>
-            </tr>
+            @for (chamado of chamadosFiltrados(); track chamado.id) {
+              <tr>
+                <td>{{ chamado.numero }}</td>
+                <td>{{ chamado.titulo }}</td>
+                <td>{{ chamado.categoria }}</td>
+                <td>
+                  <div class="pessoa">
+                    <div class="foto">{{ iniciais(chamado.solicitante) }}</div>
+                    <strong>{{ chamado.solicitante }}</strong>
+                  </div>
+                </td>
+                <td>{{ chamado.setorSolicitante }}</td>
+                <td>{{ formatarData(chamado.dataAbertura) }}</td>
+                <td>
+                  <span class="selo {{ classePrioridade(chamado.prioridade) }}">
+                    {{ chamado.prioridade }}
+                  </span>
+                </td>
+                <td>
+                  <span class="selo {{ classeSituacao(chamado.situacao) }}">
+                    {{ chamado.situacao }}
+                  </span>
+                </td>
+                <td>{{ chamado.responsavel || '-' }}</td>
+                <td>{{ chamado.sla }}</td>
+                <td>
+                  <div class="acoes-linha">
+                    @if (chamado.situacao === 'Resolvido') {
+                      <button class="botao pequeno">Detalhes</button>
+                    } @else {
+                      <button class="botao pequeno atender">Atender</button>
+                      <button class="botao pequeno encerrar">Encerrar</button>
+                    }
+                  </div>
+                </td>
+              </tr>
+            }
 
-            <tr>
-              <td>#2050</td>
-              <td>Troca de cadeira</td>
-              <td>Predial</td>
-              <td>
-                <div class="pessoa">
-                  <div class="foto">CS</div>
-                  <strong>Carlos Souza</strong>
-                </div>
-              </td>
-              <td>20/05/2025</td>
-              <td><span class="selo informativo">Baixa</span></td>
-              <td><span class="selo alerta">Aberto</span></td>
-              <td>
-                <div class="acoes-linha">
-                  <button class="botao pequeno atender">Atender</button>
-                  <button class="botao pequeno">Encaminhar</button>
-                </div>
-              </td>
-            </tr>
-
-            <tr>
-              <td>#2049</td>
-              <td>Acesso ao sistema bloqueado</td>
-              <td>TI</td>
-              <td>
-                <div class="pessoa">
-                  <div class="foto">MS</div>
-                  <strong>Mariana Silva</strong>
-                </div>
-              </td>
-              <td>19/05/2025</td>
-              <td><span class="selo erro">Alta</span></td>
-              <td><span class="selo informativo">Em andamento</span></td>
-              <td>
-                <div class="acoes-linha">
-                  <button class="botao pequeno atender">Responder</button>
-                  <button class="botao pequeno encerrar">Encerrar</button>
-                </div>
-              </td>
-            </tr>
-
-            <tr>
-              <td>#2048</td>
-              <td>Ar-condicionado com defeito</td>
-              <td>Manutenção</td>
-              <td>
-                <div class="pessoa">
-                  <div class="foto">PR</div>
-                  <strong>Pedro Rocha</strong>
-                </div>
-              </td>
-              <td>18/05/2025</td>
-              <td><span class="selo alerta">Média</span></td>
-              <td><span class="selo informativo">Em andamento</span></td>
-              <td>
-                <div class="acoes-linha">
-                  <button class="botao pequeno atender">Responder</button>
-                  <button class="botao pequeno encerrar">Encerrar</button>
-                </div>
-              </td>
-            </tr>
-
-            <tr>
-              <td>#2047</td>
-              <td>Solicitação de crachá</td>
-              <td>RH</td>
-              <td>
-                <div class="pessoa">
-                  <div class="foto">FC</div>
-                  <strong>Fernanda Costa</strong>
-                </div>
-              </td>
-              <td>17/05/2025</td>
-              <td><span class="selo informativo">Baixa</span></td>
-              <td><span class="selo sucesso">Resolvido</span></td>
-              <td>
-                <div class="acoes-linha">
-                  <button class="botao pequeno">Detalhes</button>
-                </div>
-              </td>
-            </tr>
-
-            <tr>
-              <td>#2046</td>
-              <td>Instalação de software</td>
-              <td>TI</td>
-              <td>
-                <div class="pessoa">
-                  <div class="foto">RD</div>
-                  <strong>Rafael Dias</strong>
-                </div>
-              </td>
-              <td>16/05/2025</td>
-              <td><span class="selo alerta">Média</span></td>
-              <td><span class="selo sucesso">Resolvido</span></td>
-              <td>
-                <div class="acoes-linha">
-                  <button class="botao pequeno">Detalhes</button>
-                </div>
-              </td>
-            </tr>
+            @if (chamadosFiltrados().length === 0) {
+              <tr>
+                <td colspan="11">
+                  Nenhum chamado encontrado para {{ empresaSelecionada.nome }}.
+                </td>
+              </tr>
+            }
           </tbody>
         </table>
       </div>
     </section>
-
   </main>
-
 </div>

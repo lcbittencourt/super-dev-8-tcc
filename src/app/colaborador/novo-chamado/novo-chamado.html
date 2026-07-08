@@ -1,1 +1,120 @@
-<p>novo-chamado works!</p>
+<div class="pagina">
+
+  <header class="cabecalho">
+    <div>
+      <h1>{{ modoEdicao ? 'Editar chamado' : 'Novo chamado' }}</h1>
+      <p>Registre e acompanhe os chamados abertos pela equipe</p>
+    </div>
+
+    <button class="botao" routerLink="/colaborador">Voltar</button>
+  </header>
+
+  <main class="grade">
+
+    <section class="cartao">
+      <h2>Dados do chamado</h2>
+
+      <form (ngSubmit)="salvarChamado()">
+
+        <label>Título</label>
+        <input
+          type="text"
+          name="titulo"
+          placeholder="Ex.: Computador não liga"
+          [(ngModel)]="chamado.titulo"
+        >
+
+        <label>Categoria</label>
+        <select name="categoria" [(ngModel)]="chamado.categoria">
+          <option *ngFor="let categoria of categorias" [value]="categoria">
+            {{ categoria }}
+          </option>
+        </select>
+
+        <label>Prioridade</label>
+        <select name="prioridade" [(ngModel)]="chamado.prioridade">
+          <option *ngFor="let prioridade of prioridades" [value]="prioridade">
+            {{ prioridade }}
+          </option>
+        </select>
+
+        <label>Setor solicitante</label>
+        <input
+          type="text"
+          name="setorSolicitante"
+          placeholder="Ex.: Produção"
+          [(ngModel)]="chamado.setorSolicitante"
+        >
+
+        <label>Descrição</label>
+        <textarea
+          name="descricao"
+          rows="4"
+          placeholder="Descreva o problema com detalhes"
+          [(ngModel)]="chamado.descricao"
+        ></textarea>
+
+        <div class="acoes-rodape">
+          <button
+            *ngIf="modoEdicao"
+            type="button"
+            class="botao"
+            (click)="limparFormulario()"
+          >
+            Cancelar
+          </button>
+
+          <button type="submit" class="botao principal">
+            {{ modoEdicao ? 'Salvar alterações' : 'Abrir chamado' }}
+          </button>
+        </div>
+
+      </form>
+    </section>
+
+    <section class="cartao">
+      <h2>Chamados abertos</h2>
+
+      <div class="area-tabela">
+        <table>
+          <thead>
+            <tr>
+              <th>Título</th>
+              <th>Categoria</th>
+              <th>Prioridade</th>
+              <th>Setor</th>
+              <th>Situação</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr *ngFor="let item of chamados">
+              <td>{{ item.titulo }}</td>
+              <td>{{ item.categoria }}</td>
+              <td>{{ item.prioridade }}</td>
+              <td>{{ item.setorSolicitante }}</td>
+              <td>{{ item.situacao }}</td>
+              <td>
+                <div class="acoes-linha">
+                  <button class="botao pequeno" (click)="editarChamado(item)">
+                    Editar
+                  </button>
+                  <button class="botao pequeno excluir" (click)="excluirChamado(item.id)">
+                    Excluir
+                  </button>
+                </div>
+              </td>
+            </tr>
+
+            <tr *ngIf="chamados.length === 0">
+              <td colspan="6" class="vazio">Nenhum chamado aberto.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+  </main>
+
+</div>
