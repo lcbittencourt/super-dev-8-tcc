@@ -1,0 +1,192 @@
+:host {
+  display: block;
+  min-height: 100vh;
+  background: #f5efe6;
+  font-family: Arial, Helvetica, sans-serif;
+  color: #161e2f;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+.pagina {
+  padding: 14px;
+}
+
+.cabecalho {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 18px;
+}
+
+h1 {
+  margin: 0;
+  font-size: 24px;
+}
+
+.cabecalho p {
+  margin: 6px 0 0;
+  color: #5f6b7a;
+  font-size: 14px;
+}
+
+.perfil {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: #fff;
+  border: 1px solid #d3bea0;
+  border-radius: 12px;
+  padding: 18px 22px;
+  margin-bottom: 14px;
+}
+
+.avatar {
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  background: #fbe5d8;
+  color: #7a3a1e;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 18px;
+}
+
+.perfil h2 {
+  margin: 0;
+  font-size: 18px;
+}
+
+.perfil p {
+  margin: 4px 0 0;
+  color: #5f6b7a;
+  font-size: 14px;
+}
+
+.perfil .selo {
+  margin-left: auto;
+}
+
+.grade {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+  align-items: start;
+}
+
+.cartao {
+  background: #fff;
+  border: 1px solid #d3bea0;
+  border-radius: 12px;
+  padding: 22px;
+}
+
+.documentos {
+  grid-column: 1 / -1;
+}
+
+h3 {
+  margin: 0 0 18px;
+  font-size: 16px;
+}
+
+.campos {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.campos li {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.campos span {
+  text-transform: uppercase;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: #687386;
+}
+
+.campos strong {
+  font-size: 14px;
+}
+
+.lista-documentos {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.lista-documentos li {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 0;
+  border-top: 1px solid #eaddc9;
+}
+
+.lista-documentos li:first-child {
+  border-top: none;
+  padding-top: 0;
+}
+
+.lista-documentos strong {
+  display: block;
+  font-size: 14px;
+}
+
+.lista-documentos small {
+  display: block;
+  margin-top: 2px;
+  color: #5f6b7a;
+  font-size: 12px;
+}
+
+.lista-documentos .selo {
+  margin-left: auto;
+}
+
+.botao {
+  border: 1px solid #c9b28f;
+  background: #fff;
+  color: #161e2f;
+  padding: 9px 18px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.selo {
+  display: inline-block;
+  padding: 3px 9px;
+  border-radius: 999px;
+  font-size: 11px;
+}
+
+.selo.sucesso {
+  background: #eaf3de;
+  color: #3b6d11;
+}
+
+.selo.alerta {
+  background: #faeeda;
+  color: #854f0b;
+}
+
+@media (max-width: 640px) {
+  .grade {
+    grid-template-columns: 1fr;
+  }
+}

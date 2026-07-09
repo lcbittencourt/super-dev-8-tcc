@@ -11,6 +11,9 @@ import { NovaEmpresaComponent } from './admin/nova-empresa/nova-empresa';
 import { AprovacoesComponent } from './aprovacoes/aprovacoes';
 import { ColaboradorComponent } from './colaborador/colaborador';
 import { NovoChamado } from './colaborador/novo-chamado/novo-chamado';
+import { SolicitarFerias } from './colaborador/solicitar-ferias/solicitar-ferias';
+import { TreinamentosColaborador } from './colaborador/treinamentos-colaborador/treinamentos-colaborador';
+import { MeusDados } from './colaborador/meus-dados/meus-dados';
 
 export const routes: Routes = [
     { path: '', redirectTo: 'admin', pathMatch: 'full' },
@@ -19,10 +22,13 @@ export const routes: Routes = [
     { path: 'gestor', component: GestorComponent },
     { path: 'aprovacoes', component: AprovacoesComponent },
     { path: 'chamados', component: ChamadosComponent },
-    { path: 'treinamentos-equipe', component: TreinamentosEquipeComponent },
+    { path: 'treinamentos-equipe', component: TreinamentosComponent },
     { path: 'colaboradores', component: ColaboradoresComponent },
     { path: 'colaborador', component: ColaboradorComponent },
     { path: 'novo-chamado', component: NovoChamado },
+    { path: 'solicitar-ferias', component: SolicitarFerias },
+    { path: 'treinamentos-colaborador', component: TreinamentosColaborador },
+    { path: 'meus-dados', component: MeusDados },
     { path: 'controle-ponto', component: ControlePontoComponent },
     { path: 'ferias', component: FeriasComponent },
     { path: 'treinamentos', component: TreinamentosComponent },
