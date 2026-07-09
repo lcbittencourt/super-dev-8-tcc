@@ -1,22 +1,21 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Inject, OnInit, PLATFORM_ID } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
-import { Inject, PLATFORM_ID } from '@angular/core';
 import { Router, RouterLink, ActivatedRoute } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import { ApiPulsoService, EmpresaApi } from '../../servicos/api-pulso.service';
 
 @Component({
   selector: 'app-nova-empresa',
   standalone: true,
   imports: [RouterLink, FormsModule],
   templateUrl: './nova-empresa.html',
-  styleUrl: './nova-empresa.css'
+  styleUrl: './nova-empresa.css',
 })
 export class NovaEmpresaComponent implements OnInit {
-
   planoSelecionado = 'Profissional';
   modoEdicao = false;
   idEdicao = '';
-  empresaOriginal: any = null;
+  empresaOriginal: EmpresaApi | null = null;
 
   empresa = {
     razaoSocial: '',
@@ -27,13 +26,14 @@ export class NovaEmpresaComponent implements OnInit {
     setor: '',
     responsavel: '',
     email: '',
-    telefone: ''
+    telefone: '',
   };
 
   constructor(
     private router: Router,
     private route: ActivatedRoute,
-    @Inject(PLATFORM_ID) private platformId: object
+    private api: ApiPulsoService,
+    @Inject(PLATFORM_ID) private platformId: object,
   ) {}
 
   ngOnInit() {
@@ -50,19 +50,10 @@ export class NovaEmpresaComponent implements OnInit {
       return;
     }
 
-    const empresasSalvas = JSON.parse(localStorage.getItem('empresas') || '[]');
-    const empresaEmEdicao = JSON.parse(localStorage.getItem('empresaEmEdicao') || 'null');
-    const empresaEncontrada = empresasSalvas.find(
-      (empresa: any) => empresa.id === id
-    ) || (empresaEmEdicao?.id === id ? empresaEmEdicao : null);
-
-    if (empresaEncontrada) {
-      this.empresaOriginal = empresaEncontrada;
-      this.empresa.razaoSocial = empresaEncontrada.nome;
-      this.empresa.nomeFantasia = empresaEncontrada.nome;
-      this.empresa.cidade = empresaEncontrada.cidade;
-      this.planoSelecionado = empresaEncontrada.plano;
-    }
+    this.api.obterEmpresa(id).subscribe({
+      next: (empresa) => this.preencherFormulario(empresa),
+      error: () => this.carregarEmpresaLocal(id),
+    });
   }
 
   selecionarPlano(plano: string) {
@@ -72,55 +63,47 @@ export class NovaEmpresaComponent implements OnInit {
   salvarEmpresa() {
     const nomeEmpresa = this.empresa.nomeFantasia || this.empresa.razaoSocial;
 
-    const novaEmpresa = {
-      id: this.modoEdicao ? this.idEdicao : Date.now().toString(),
+    if (!nomeEmpresa.trim()) {
+      alert('Informe o nome da empresa.');
+      return;
+    }
+
+    const dadosEmpresa: Partial<EmpresaApi> = {
+      id: this.modoEdicao ? this.idEdicao : undefined,
+      razaoSocial: this.empresa.razaoSocial,
       nome: nomeEmpresa,
+      nomeFantasia: this.empresa.nomeFantasia,
+      cnpj: this.empresa.cnpj,
+      inscricaoEstadual: this.empresa.inscricaoEstadual,
       cidade: this.empresa.cidade,
+      setor: this.empresa.setor,
+      responsavel: this.empresa.responsavel,
+      email: this.empresa.email,
+      telefone: this.empresa.telefone,
       plano: this.planoSelecionado,
-      usuarios: this.empresaOriginal?.usuarios ?? this.empresaOriginal?.users ?? 0,
+      usuarios: this.empresaOriginal?.usuarios ?? 0,
       modulos: this.definirQuantidadeModulos(),
-      situacao: this.empresaOriginal?.situacao ?? this.empresaOriginal?.status ?? 'Trial',
-      logo: this.gerarLogo(nomeEmpresa)
+      situacao: this.empresaOriginal?.situacao ?? 'Trial',
+      logo: this.gerarLogo(nomeEmpresa),
     };
 
-    if (!this.estaNoNavegador()) {
-      this.router.navigate(['/admin']);
-      return;
-    }
+    const requisicao = this.modoEdicao
+      ? this.api.atualizarEmpresa(this.idEdicao, dadosEmpresa)
+      : this.api.criarEmpresa(dadosEmpresa);
 
-    const empresasSalvas = JSON.parse(localStorage.getItem('empresas') || '[]');
-
-    if (this.modoEdicao) {
-      const empresaJaSalva = empresasSalvas.some(
-        (empresa: any) => empresa.id === this.idEdicao
-      );
-
-      if (!empresaJaSalva) {
-        empresasSalvas.push(novaEmpresa);
-        localStorage.setItem('empresas', JSON.stringify(empresasSalvas));
-        localStorage.removeItem('empresaEmEdicao');
-        this.router.navigate(['/admin']);
-        return;
-      }
-
-      const empresasAtualizadas = empresasSalvas.map((empresa: any) => {
-        if (empresa.id === this.idEdicao) {
-          return novaEmpresa;
+    requisicao.subscribe({
+      next: (empresa) => {
+        if (this.estaNoNavegador()) {
+          localStorage.setItem('empresaSelecionadaDashboard', JSON.stringify(empresa));
+          localStorage.removeItem('empresaEmEdicao');
         }
 
-        return empresa;
-      });
-
-      localStorage.setItem('empresas', JSON.stringify(empresasAtualizadas));
-      localStorage.removeItem('empresaEmEdicao');
-      this.router.navigate(['/admin']);
-      return;
-    }
-
-    empresasSalvas.push(novaEmpresa);
-    localStorage.setItem('empresas', JSON.stringify(empresasSalvas));
-
-    this.router.navigate(['/admin']);
+        this.router.navigate(['/admin']);
+      },
+      error: () => {
+        alert('Não foi possível salvar no banco. Confira se a API está ligada com npm run api.');
+      },
+    });
   }
 
   definirQuantidadeModulos(): number {
@@ -177,8 +160,33 @@ export class NovaEmpresaComponent implements OnInit {
     this.empresa.telefone = valor;
   }
 
+  private preencherFormulario(empresa: EmpresaApi) {
+    this.empresaOriginal = empresa;
+    this.empresa.razaoSocial = empresa.razaoSocial || empresa.nome;
+    this.empresa.nomeFantasia = empresa.nomeFantasia || empresa.nome;
+    this.empresa.cnpj = empresa.cnpj || '';
+    this.empresa.inscricaoEstadual = empresa.inscricaoEstadual || '';
+    this.empresa.cidade = empresa.cidade || '';
+    this.empresa.setor = empresa.setor || '';
+    this.empresa.responsavel = empresa.responsavel || '';
+    this.empresa.email = empresa.email || '';
+    this.empresa.telefone = empresa.telefone || '';
+    this.planoSelecionado = empresa.plano || 'Profissional';
+  }
+
+  private carregarEmpresaLocal(id: string) {
+    const empresasSalvas = JSON.parse(localStorage.getItem('empresas') || '[]');
+    const empresaEmEdicao = JSON.parse(localStorage.getItem('empresaEmEdicao') || 'null');
+    const empresaEncontrada =
+      empresasSalvas.find((empresa: any) => empresa.id === id) ||
+      (empresaEmEdicao?.id === id ? empresaEmEdicao : null);
+
+    if (empresaEncontrada) {
+      this.preencherFormulario(empresaEncontrada);
+    }
+  }
+
   private estaNoNavegador(): boolean {
     return isPlatformBrowser(this.platformId);
   }
-
 }

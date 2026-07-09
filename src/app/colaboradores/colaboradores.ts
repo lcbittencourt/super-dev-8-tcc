@@ -2,6 +2,7 @@ import { isPlatformBrowser } from '@angular/common';
 import { Component, Inject, OnInit, PLATFORM_ID } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
+import { ApiPulsoService } from '../servicos/api-pulso.service';
 
 type SituacaoColaborador = 'Ativo' | 'Inativo' | 'Férias' | 'Licença Médica/Atestado';
 type NivelColaborador =
@@ -59,6 +60,7 @@ export class ColaboradoresComponent implements OnInit {
   filtroSituacao = 'Todos';
   filtroDepartamento = 'Todos';
   modoEdicao = false;
+  apiDisponivel = false;
 
   niveis: NivelColaborador[] = [
     'Não se aplica',
@@ -75,7 +77,10 @@ export class ColaboradoresComponent implements OnInit {
 
   colaborador: Colaborador = this.criarColaboradorVazio();
 
-  constructor(@Inject(PLATFORM_ID) private platformId: object) {}
+  constructor(
+    private api: ApiPulsoService,
+    @Inject(PLATFORM_ID) private platformId: object,
+  ) {}
 
   ngOnInit() {
     if (!this.estaNoNavegador()) {
@@ -84,16 +89,7 @@ export class ColaboradoresComponent implements OnInit {
     }
 
     this.carregarEmpresaSelecionada();
-    this.migrarColaboradoresAntigos();
-
-    const salvos = localStorage.getItem(this.chaveColaboradores());
-    const colaboradores = salvos ? JSON.parse(salvos) : [];
-
-    this.colaboradores = colaboradores.map((colaborador: Colaborador) => ({
-      ...colaborador,
-      nivel: colaborador.nivel || 'Não se aplica',
-      diasLicencaMedica: colaborador.diasLicencaMedica || 0,
-    }));
+    this.carregarColaboradoresBanco();
   }
 
   get colaboradoresFiltrados(): Colaborador[] {
@@ -140,9 +136,20 @@ export class ColaboradoresComponent implements OnInit {
   }
 
   excluirColaborador(colaborador: Colaborador) {
-    const confirmar = confirm(`Deseja excluir o colaborador ${colaborador.nome}?`);
+    const confirmar = confirm('Deseja excluir o colaborador ' + colaborador.nome + '?');
 
     if (!confirmar) {
+      return;
+    }
+
+    if (this.apiDisponivel) {
+      this.api.excluirColaborador(colaborador.id).subscribe({
+        next: () => {
+          this.colaboradores = this.colaboradores.filter((item) => item.id !== colaborador.id);
+          this.salvarLocalmente();
+        },
+        error: () => alert('Não foi possível excluir no banco. Confira se a API está ligada.'),
+      });
       return;
     }
 
@@ -151,6 +158,36 @@ export class ColaboradoresComponent implements OnInit {
   }
 
   salvarColaborador() {
+    const dados = {
+      ...this.colaborador,
+      empresaId: this.empresaSelecionada.id,
+    };
+
+    if (this.apiDisponivel) {
+      const requisicao = this.modoEdicao
+        ? this.api.atualizarColaborador(this.colaborador.id, dados)
+        : this.api.criarColaborador(dados);
+
+      requisicao.subscribe({
+        next: (colaboradorSalvo) => {
+          const colaboradorNormalizado = this.normalizarColaborador(colaboradorSalvo);
+
+          if (this.modoEdicao) {
+            this.colaboradores = this.colaboradores.map((item) =>
+              item.id === colaboradorNormalizado.id ? colaboradorNormalizado : item,
+            );
+          } else {
+            this.colaboradores = [colaboradorNormalizado, ...this.colaboradores];
+          }
+
+          this.salvarLocalmente();
+          this.voltarLista();
+        },
+        error: () => alert('Não foi possível salvar no banco. Confira se a API está ligada.'),
+      });
+      return;
+    }
+
     if (this.modoEdicao) {
       this.colaboradores = this.colaboradores.map((item) => {
         if (item.id === this.colaborador.id) {
@@ -230,6 +267,51 @@ export class ColaboradoresComponent implements OnInit {
     leitor.readAsDataURL(arquivo);
   }
 
+  private carregarColaboradoresBanco() {
+    this.api.listarColaboradores(this.empresaSelecionada.id).subscribe({
+      next: (colaboradores) => {
+        this.apiDisponivel = true;
+        this.colaboradores = colaboradores.map((colaborador) =>
+          this.normalizarColaborador(colaborador),
+        );
+        this.salvarLocalmente();
+      },
+      error: () => {
+        this.apiDisponivel = false;
+        this.carregarColaboradoresLocais();
+      },
+    });
+  }
+
+  private carregarColaboradoresLocais() {
+    this.migrarColaboradoresAntigos();
+
+    const salvos = localStorage.getItem(this.chaveColaboradores());
+    const colaboradores = salvos ? JSON.parse(salvos) : [];
+
+    this.colaboradores = colaboradores.map((colaborador: Colaborador) =>
+      this.normalizarColaborador(colaborador),
+    );
+  }
+
+  private normalizarColaborador(colaborador: any): Colaborador {
+    return {
+      id: colaborador.id || Date.now().toString(),
+      nome: colaborador.nome || '',
+      email: colaborador.email || '',
+      telefone: colaborador.telefone || '',
+      cargo: colaborador.cargo || '',
+      departamento: colaborador.departamento || '',
+      nivel: colaborador.nivel || 'Não se aplica',
+      admissao: colaborador.admissao || '',
+      salario: Number(colaborador.salario || 0),
+      gestor: colaborador.gestor || '',
+      situacao: colaborador.situacao || 'Ativo',
+      diasLicencaMedica: Number(colaborador.diasLicencaMedica || 0),
+      foto: colaborador.foto || '',
+    };
+  }
+
   private criarColaboradorVazio(): Colaborador {
     return {
       id: '',
@@ -271,7 +353,7 @@ export class ColaboradoresComponent implements OnInit {
   }
 
   private chaveColaboradores(): string {
-    return `colaboradores:${this.empresaSelecionada.id}`;
+    return 'colaboradores:' + this.empresaSelecionada.id;
   }
 
   private migrarColaboradoresAntigos() {
