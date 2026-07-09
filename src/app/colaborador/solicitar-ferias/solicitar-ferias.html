@@ -1,0 +1,131 @@
+<div class="pagina">
+
+  <header class="cabecalho">
+    <div>
+      <h1>{{ modoEdicao ? 'Editar solicitação de férias' : 'Solicitar férias' }}</h1>
+      <p>Solicite e acompanhe seus períodos de férias · saldo: 22 dias</p>
+    </div>
+
+    <button class="botao" routerLink="/colaborador">Voltar</button>
+  </header>
+
+  <main class="grade">
+
+    <section class="cartao">
+      <h2>Dados da solicitação</h2>
+
+      <form (ngSubmit)="salvarSolicitacao()">
+
+        <label>Data de início</label>
+        <input
+          type="date"
+          name="inicio"
+          [(ngModel)]="solicitacao.inicio"
+        >
+
+        <label>Quantidade de dias</label>
+        <input
+          type="number"
+          name="dias"
+          min="1"
+          max="30"
+          [(ngModel)]="solicitacao.dias"
+        >
+
+        <label>Tipo</label>
+        <select name="tipo" [(ngModel)]="solicitacao.tipo">
+          <option value="Férias integrais">Férias integrais</option>
+          <option value="Férias fracionadas">Férias fracionadas</option>
+          <option value="Abono pecuniário">Abono pecuniário</option>
+        </select>
+
+        <label>Observação</label>
+        <textarea
+          name="observacao"
+          rows="4"
+          placeholder="Justifique ou detalhe o período desejado"
+          [(ngModel)]="solicitacao.observacao"
+        ></textarea>
+
+        <div class="acoes-rodape">
+          <button
+            *ngIf="modoEdicao"
+            type="button"
+            class="botao"
+            (click)="limparFormulario()"
+          >
+            Cancelar
+          </button>
+
+          <button type="submit" class="botao principal">
+            {{ modoEdicao ? 'Salvar alterações' : 'Enviar solicitação' }}
+          </button>
+        </div>
+
+      </form>
+    </section>
+
+    <section class="cartao">
+      <h2>Minhas solicitações</h2>
+
+      <div class="area-tabela">
+        <table>
+          <thead>
+            <tr>
+              <th>Início</th>
+              <th>Dias</th>
+              <th>Tipo</th>
+              <th>Situação</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr>
+              <td>14/07/2025</td>
+              <td>15</td>
+              <td>Férias integrais</td>
+              <td><span class="selo sucesso">Aprovada</span></td>
+              <td>—</td>
+            </tr>
+
+            <tr>
+              <td>01/09/2025</td>
+              <td>10</td>
+              <td>Férias fracionadas</td>
+              <td><span class="selo informativo">Em análise</span></td>
+              <td>—</td>
+            </tr>
+
+            <tr>
+              <td>22/12/2025</td>
+              <td>5</td>
+              <td>Abono pecuniário</td>
+              <td><span class="selo alerta">Pendente</span></td>
+              <td>—</td>
+            </tr>
+
+            <tr *ngFor="let item of solicitacoes">
+              <td>{{ item.inicio }}</td>
+              <td>{{ item.dias }}</td>
+              <td>{{ item.tipo }}</td>
+              <td><span class="selo alerta">{{ item.situacao }}</span></td>
+              <td>
+                <div class="acoes-linha">
+                  <button class="botao pequeno" (click)="editarSolicitacao(item)">
+                    Editar
+                  </button>
+                  <button class="botao pequeno excluir" (click)="excluirSolicitacao(item.id)">
+                    Excluir
+                  </button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+  </main>
+
+</div>

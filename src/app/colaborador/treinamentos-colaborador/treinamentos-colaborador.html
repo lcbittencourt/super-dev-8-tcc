@@ -1,0 +1,112 @@
+<div class="pagina">
+
+  <header class="cabecalho">
+    <div>
+      <h1>Treinamentos disponíveis</h1>
+      <p>Cursos e capacitações abertos para você se inscrever</p>
+    </div>
+
+    <button class="botao" routerLink="/colaborador">Voltar</button>
+  </header>
+
+  <main class="grade">
+
+    <article class="cartao">
+      <div class="topo-cartao">
+        <span class="selo alerta">Obrigatório</span>
+        <span class="carga">3h</span>
+      </div>
+
+      <h2>NR-35 · Trabalho em altura</h2>
+      <p>Requisitos de segurança para atividades acima de 2 metros.</p>
+
+      <ul class="detalhes">
+        <li><strong>Modalidade:</strong> Presencial</li>
+        <li><strong>Data:</strong> 26/05/2025 · 14h</li>
+        <li><strong>Instrutor:</strong> Carlos Menezes</li>
+      </ul>
+
+      <button
+        class="botao principal"
+        [class.inscrito]="estaInscrito('NR-35')"
+        (click)="estaInscrito('NR-35') ? cancelarInscricao('NR-35') : inscrever('NR-35')"
+      >
+        {{ estaInscrito('NR-35') ? 'Inscrito · cancelar' : 'Inscrever-se' }}
+      </button>
+    </article>
+
+    <article class="cartao">
+      <div class="topo-cartao">
+        <span class="selo informativo">Recomendado</span>
+        <span class="carga">6h</span>
+      </div>
+
+      <h2>Excel para o dia a dia</h2>
+      <p>Fórmulas, tabelas dinâmicas e organização de planilhas.</p>
+
+      <ul class="detalhes">
+        <li><strong>Modalidade:</strong> Online</li>
+        <li><strong>Data:</strong> 02/06/2025 · 09h</li>
+        <li><strong>Instrutor:</strong> Renata Lima</li>
+      </ul>
+
+      <button
+        class="botao principal"
+        [class.inscrito]="estaInscrito('Excel')"
+        (click)="estaInscrito('Excel') ? cancelarInscricao('Excel') : inscrever('Excel')"
+      >
+        {{ estaInscrito('Excel') ? 'Inscrito · cancelar' : 'Inscrever-se' }}
+      </button>
+    </article>
+
+    <article class="cartao">
+      <div class="topo-cartao">
+        <span class="selo sucesso">Livre</span>
+        <span class="carga">4h</span>
+      </div>
+
+      <h2>Comunicação e feedback</h2>
+      <p>Técnicas para dar e receber feedback de forma construtiva.</p>
+
+      <ul class="detalhes">
+        <li><strong>Modalidade:</strong> Online</li>
+        <li><strong>Data:</strong> 10/06/2025 · 15h</li>
+        <li><strong>Instrutor:</strong> Paulo Freitas</li>
+      </ul>
+
+      <button
+        class="botao principal"
+        [class.inscrito]="estaInscrito('Comunicação')"
+        (click)="estaInscrito('Comunicação') ? cancelarInscricao('Comunicação') : inscrever('Comunicação')"
+      >
+        {{ estaInscrito('Comunicação') ? 'Inscrito · cancelar' : 'Inscrever-se' }}
+      </button>
+    </article>
+
+    <article class="cartao">
+      <div class="topo-cartao">
+        <span class="selo informativo">Recomendado</span>
+        <span class="carga">8h</span>
+      </div>
+
+      <h2>Primeiros socorros</h2>
+      <p>Atendimento inicial em situações de emergência no trabalho.</p>
+
+      <ul class="detalhes">
+        <li><strong>Modalidade:</strong> Presencial</li>
+        <li><strong>Data:</strong> 18/06/2025 · 08h</li>
+        <li><strong>Instrutor:</strong> Dra. Helena Souza</li>
+      </ul>
+
+      <button
+        class="botao principal"
+        [class.inscrito]="estaInscrito('Primeiros socorros')"
+        (click)="estaInscrito('Primeiros socorros') ? cancelarInscricao('Primeiros socorros') : inscrever('Primeiros socorros')"
+      >
+        {{ estaInscrito('Primeiros socorros') ? 'Inscrito · cancelar' : 'Inscrever-se' }}
+      </button>
+    </article>
+
+  </main>
+
+</div>

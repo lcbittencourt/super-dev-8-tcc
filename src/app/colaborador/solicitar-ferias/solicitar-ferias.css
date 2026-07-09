@@ -1,0 +1,168 @@
+:host {
+  display: block;
+  min-height: 100vh;
+  background: #f5efe6;
+  font-family: Arial, Helvetica, sans-serif;
+  color: #161e2f;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+.pagina {
+  padding: 14px;
+}
+
+.cabecalho {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 22px;
+}
+
+h1 {
+  margin: 0;
+  font-size: 24px;
+}
+
+p {
+  margin: 6px 0 0;
+  color: #5f6b7a;
+  font-size: 14px;
+}
+
+.grade {
+  display: grid;
+  grid-template-columns: 1fr 1.4fr;
+  gap: 14px;
+  align-items: start;
+}
+
+.cartao {
+  background: #fff;
+  border: 1px solid #d3bea0;
+  border-radius: 12px;
+  padding: 22px;
+}
+
+h2 {
+  margin: 0 0 20px;
+  font-size: 16px;
+}
+
+label {
+  display: block;
+  margin: 14px 0 8px;
+  text-transform: uppercase;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: #687386;
+}
+
+input,
+select,
+textarea {
+  width: 100%;
+  border: 1px solid #c9b28f;
+  border-radius: 8px;
+  background: #f5efe6;
+  padding: 10px 12px;
+  font-size: 14px;
+  color: #161e2f;
+  font-family: inherit;
+}
+
+input,
+select {
+  height: 40px;
+}
+
+textarea {
+  resize: vertical;
+}
+
+.acoes-rodape {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 22px;
+}
+
+.botao {
+  border: 1px solid #c9b28f;
+  background: #fff;
+  color: #161e2f;
+  padding: 9px 18px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.botao.principal {
+  background: #b9152b;
+  color: #fff;
+  border-color: #b9152b;
+}
+
+.botao.pequeno {
+  padding: 6px 12px;
+  font-size: 13px;
+}
+
+.botao.excluir {
+  color: #b9152b;
+  border-color: #d8a7a7;
+}
+
+.area-tabela {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+th,
+td {
+  text-align: left;
+  padding: 12px 10px;
+  border-bottom: 1px solid #eaddc9;
+}
+
+th {
+  text-transform: uppercase;
+  font-size: 12px;
+  letter-spacing: 1px;
+  color: #687386;
+}
+
+.acoes-linha {
+  display: flex;
+  gap: 8px;
+}
+
+.selo {
+  display: inline-block;
+  padding: 3px 9px;
+  border-radius: 999px;
+  font-size: 11px;
+}
+
+.selo.sucesso {
+  background: #eaf3de;
+  color: #3b6d11;
+}
+
+.selo.alerta {
+  background: #faeeda;
+  color: #854f0b;
+}
+
+.selo.informativo {
+  background: #e6f1fb;
+  color: #0c447c;
+}
