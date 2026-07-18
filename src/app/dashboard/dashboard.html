@@ -41,38 +41,38 @@
     <section class="grade-painel">
       <article class="metrica">
         <span>Funcionários</span>
-        <strong>{{ funcionarios() }}</strong>
+        <strong>6</strong>
       </article>
 
       <article class="metrica">
         <span>Presentes Hoje</span>
-        <strong>{{ presentesHoje() }}</strong>
+        <strong>3</strong>
       </article>
 
       <article class="metrica">
         <span>Férias</span>
-        <strong>{{ ferias() }}</strong>
+        <strong>1</strong>
       </article>
 
       <article class="metrica">
         <span>Licença Médica/Atestado</span>
-        <strong>{{ licencaMedica() }}</strong>
-        <small>{{ totalDiasLicenca() }} dia(s) informados</small>
+        <strong>1</strong>
+        <small>7 dia(s) informados</small>
       </article>
 
       <article class="metrica">
         <span>Aniversariantes</span>
-        <strong>{{ aniversariantes() }}</strong>
+        <strong>3</strong>
       </article>
 
       <article class="metrica">
         <span>Treinamentos Pendentes</span>
-        <strong>{{ treinamentosPendentes() }}</strong>
+        <strong>4</strong>
       </article>
 
       <article class="metrica">
         <span>Chamados Abertos</span>
-        <strong>{{ chamadosAbertos() }}</strong>
+        <strong>3</strong>
       </article>
     </section>
 
@@ -89,17 +89,67 @@
 
       <div class="linha-situacao">
         <span>Ativos no cadastro</span>
-        <strong>{{ colaboradores.length }}</strong>
+        <strong>6</strong>
       </div>
 
       <div class="linha-situacao">
         <span>Em férias</span>
-        <strong>{{ ferias() }}</strong>
+        <strong>1</strong>
       </div>
 
       <div class="linha-situacao">
         <span>Em licença médica/atestado</span>
-        <strong>{{ licencaMedica() }}</strong>
+        <strong>1</strong>
+      </div>
+    </section>
+
+    <section class="cartao">
+      <div class="cabecalho-cartao">
+        <div>
+          <h2>Aniversariantes do mês</h2>
+        </div>
+      </div>
+
+      <div class="linha-situacao">
+        <span>Ana Lima · Produção</span>
+        <strong>14/05</strong>
+      </div>
+
+      <div class="linha-situacao">
+        <span>Bruno Souza · Administrativo</span>
+        <strong>19/05</strong>
+      </div>
+
+      <div class="linha-situacao">
+        <span>Carla Dias · Financeiro</span>
+        <strong>27/05</strong>
+      </div>
+    </section>
+
+    <section class="cartao">
+      <div class="cabecalho-cartao">
+        <div>
+          <h2>Chamados recentes</h2>
+        </div>
+
+        <button class="botao principal" routerLink="/chamados">
+          Abrir chamados
+        </button>
+      </div>
+
+      <div class="linha-situacao">
+        <span>CH-1024 · Notebook não liga · TI</span>
+        <strong>Em andamento</strong>
+      </div>
+
+      <div class="linha-situacao">
+        <span>CH-1023 · Ar-condicionado com vazamento · Predial</span>
+        <strong>Aberto</strong>
+      </div>
+
+      <div class="linha-situacao">
+        <span>CH-1022 · Acesso ao ERP bloqueado · TI</span>
+        <strong>Aberto</strong>
       </div>
     </section>
 

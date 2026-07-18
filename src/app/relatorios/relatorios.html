@@ -1,0 +1,174 @@
+<div class="sistema">
+  <header class="barra-superior">
+    <div class="marca">
+      <div class="simbolo-marca">P</div>
+
+      <div>
+        <strong>Pulso<span>.</span></strong>
+      </div>
+    </div>
+
+    <span class="etiqueta-perfil">Relatórios</span>
+
+    <nav class="navegacao">
+      <a routerLink="/admin">Admin</a>
+      <a class="ativo" routerLink="/gestor">Gestor</a>
+      <a routerLink="/colaborador">Colaborador</a>
+    </nav>
+
+    <div class="identificacao">TV</div>
+  </header>
+
+  <main class="pagina">
+    <section class="cabecalho-pagina">
+      <div>
+        <h1>Relatórios</h1>
+        <p>Relatórios gerenciais da Têxtil Vale Norte</p>
+      </div>
+
+      <div class="acoes">
+        <button class="botao">Agendar</button>
+        <button class="botao principal">Gerar relatório</button>
+      </div>
+    </section>
+
+    <section class="indicadores">
+      <article class="indicador">
+        <span>Gerados no mês</span>
+        <strong>28</strong>
+        <small class="positivo">+6 vs. mês anterior</small>
+      </article>
+
+      <article class="indicador">
+        <span>Agendados</span>
+        <strong>5</strong>
+        <small class="informativo">Execução automática</small>
+      </article>
+
+      <article class="indicador">
+        <span>Downloads</span>
+        <strong>134</strong>
+        <small class="positivo">Últimos 30 dias</small>
+      </article>
+
+      <article class="indicador">
+        <span>Favoritos</span>
+        <strong>7</strong>
+        <small class="informativo">Acesso rápido</small>
+      </article>
+    </section>
+
+    <section class="grade-categorias">
+      <article class="categoria">
+        <h3>Pessoas</h3>
+        <p>Quadro, admissões, desligamentos e turnover.</p>
+        <span class="selo informativo">8 modelos</span>
+      </article>
+
+      <article class="categoria">
+        <h3>Ponto e jornada</h3>
+        <p>Horas trabalhadas, extras e banco de horas.</p>
+        <span class="selo informativo">6 modelos</span>
+      </article>
+
+      <article class="categoria">
+        <h3>Férias</h3>
+        <p>Saldos, programação e solicitações pendentes.</p>
+        <span class="selo informativo">4 modelos</span>
+      </article>
+
+      <article class="categoria">
+        <h3>Chamados</h3>
+        <p>Volume, SLA e distribuição por categoria.</p>
+        <span class="selo informativo">5 modelos</span>
+      </article>
+    </section>
+
+    <section class="cartao">
+      <div class="cabecalho-cartao">
+        <div>
+          <h2>Relatórios gerados</h2>
+          <p>Histórico dos últimos relatórios</p>
+        </div>
+      </div>
+
+      <div class="area-tabela">
+        <table>
+          <thead>
+            <tr>
+              <th>Relatório</th>
+              <th>Módulo</th>
+              <th>Período</th>
+              <th>Formato</th>
+              <th>Gerado em</th>
+              <th>Status</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr>
+              <td>Quadro de colaboradores</td>
+              <td>Pessoas</td>
+              <td>Maio/2025</td>
+              <td>PDF</td>
+              <td>12/05/2025</td>
+              <td><span class="selo sucesso">Concluído</span></td>
+              <td><button class="botao pequeno">Baixar</button></td>
+            </tr>
+
+            <tr>
+              <td>Horas extras por setor</td>
+              <td>Ponto e jornada</td>
+              <td>Abril/2025</td>
+              <td>Excel</td>
+              <td>10/05/2025</td>
+              <td><span class="selo sucesso">Concluído</span></td>
+              <td><button class="botao pequeno">Baixar</button></td>
+            </tr>
+
+            <tr>
+              <td>Programação de férias</td>
+              <td>Férias</td>
+              <td>2º semestre/2025</td>
+              <td>PDF</td>
+              <td>08/05/2025</td>
+              <td><span class="selo sucesso">Concluído</span></td>
+              <td><button class="botao pequeno">Baixar</button></td>
+            </tr>
+
+            <tr>
+              <td>SLA de chamados</td>
+              <td>Chamados</td>
+              <td>Maio/2025</td>
+              <td>Excel</td>
+              <td>—</td>
+              <td><span class="selo alerta">Processando</span></td>
+              <td><button class="botao pequeno" disabled>Baixar</button></td>
+            </tr>
+
+            <tr>
+              <td>Turnover trimestral</td>
+              <td>Pessoas</td>
+              <td>1º trimestre/2025</td>
+              <td>PDF</td>
+              <td>02/05/2025</td>
+              <td><span class="selo sucesso">Concluído</span></td>
+              <td><button class="botao pequeno">Baixar</button></td>
+            </tr>
+
+            <tr>
+              <td>Banco de horas consolidado</td>
+              <td>Ponto e jornada</td>
+              <td>Abril/2025</td>
+              <td>Excel</td>
+              <td>—</td>
+              <td><span class="selo erro">Falhou</span></td>
+              <td><button class="botao pequeno">Repetir</button></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+</div>

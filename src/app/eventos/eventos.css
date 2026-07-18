@@ -1,0 +1,288 @@
+* {
+  box-sizing: border-box;
+}
+
+:host {
+  display: block;
+  min-height: 100vh;
+  background: #f5efe6;
+  font-family: Arial, Helvetica, sans-serif;
+  color: #161e2f;
+}
+
+.sistema {
+  min-height: 100vh;
+}
+
+.barra-superior {
+  height: 58px;
+  background: #fbf6ee;
+  border-bottom: 1px solid #d9cdb8;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 0 18px;
+}
+
+.marca {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.simbolo-marca {
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  background: #161e2f;
+  color: #ffa586;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+}
+
+.marca span {
+  color: #b51a2b;
+}
+
+.etiqueta-perfil {
+  background: #f7e4dd;
+  color: #541a2e;
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-size: 12px;
+}
+
+.navegacao {
+  margin-left: auto;
+  display: flex;
+  gap: 6px;
+}
+
+.navegacao a {
+  text-decoration: none;
+  color: #384358;
+  padding: 7px 12px;
+  border-radius: 8px;
+  font-size: 13px;
+}
+
+.navegacao a.ativo {
+  background: #161e2f;
+  color: #fff;
+}
+
+.identificacao {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #fbe5d8;
+  color: #7a3a1e;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+}
+
+.pagina {
+  padding: 22px;
+}
+
+.cabecalho-pagina,
+.cabecalho-cartao {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.cabecalho-pagina {
+  margin-bottom: 18px;
+}
+
+h1,
+h2,
+p {
+  margin-top: 0;
+}
+
+h1 {
+  margin-bottom: 0;
+  font-size: 24px;
+}
+
+h2 {
+  margin-bottom: 0;
+  font-size: 16px;
+}
+
+.cabecalho-pagina p,
+.cabecalho-cartao p {
+  color: #6b7280;
+  margin: 4px 0 0;
+  font-size: 13px;
+}
+
+.acoes {
+  display: flex;
+  gap: 8px;
+}
+
+.botao {
+  border: 1px solid #c4b59a;
+  background: #fff;
+  color: #161e2f;
+  padding: 8px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+}
+
+.botao.principal {
+  background: #161e2f;
+  color: #ffa586;
+  border-color: #161e2f;
+}
+
+.indicadores {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+  margin-bottom: 18px;
+}
+
+.indicador {
+  background: #fff;
+  border: 1px solid #d9cdb8;
+  border-radius: 12px;
+  padding: 16px;
+}
+
+.indicador span {
+  display: block;
+  color: #6b7280;
+  font-size: 13px;
+  margin-bottom: 8px;
+}
+
+.indicador strong {
+  display: block;
+  font-size: 24px;
+}
+
+.indicador small {
+  display: inline-block;
+  margin-top: 8px;
+  padding: 3px 9px;
+  border-radius: 999px;
+  font-size: 11px;
+  color: #6b7280;
+}
+
+.positivo {
+  background: #eaf3de;
+  color: #3b6d11;
+}
+
+.negativo {
+  background: #fcebeb;
+  color: #791f1f;
+}
+
+.informativo {
+  background: #e6f1fb;
+  color: #0c447c;
+}
+
+.cartao {
+  background: #fff;
+  border: 1px solid #d9cdb8;
+  border-radius: 12px;
+  padding: 18px;
+}
+
+.cabecalho-cartao {
+  margin-bottom: 16px;
+}
+
+.area-tabela {
+  overflow-x: auto;
+}
+
+table {
+  border-collapse: collapse;
+  min-width: 900px;
+  width: 100%;
+}
+
+th,
+td {
+  border-top: 1px solid #d9cdb8;
+  padding: 12px;
+  text-align: left;
+  vertical-align: middle;
+  font-size: 13px;
+}
+
+th {
+  color: #6b7280;
+  font-size: 11px;
+  text-transform: uppercase;
+}
+
+.selo {
+  display: inline-block;
+  padding: 3px 9px;
+  border-radius: 999px;
+  font-size: 11px;
+}
+
+.selo.sucesso {
+  background: #eaf3de;
+  color: #3b6d11;
+}
+
+.selo.alerta {
+  background: #faeeda;
+  color: #854f0b;
+}
+
+.selo.informativo {
+  background: #e6f1fb;
+  color: #0c447c;
+}
+
+@media (max-width: 980px) {
+  .barra-superior,
+  .cabecalho-pagina,
+  .cabecalho-cartao {
+    align-items: flex-start;
+    flex-wrap: wrap;
+    height: auto;
+    min-height: 58px;
+  }
+
+  .navegacao {
+    margin-left: 0;
+    overflow-x: auto;
+    width: 100%;
+  }
+
+  .indicadores {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .pagina {
+    padding: 14px;
+  }
+
+  .indicadores {
+    grid-template-columns: 1fr;
+  }
+}

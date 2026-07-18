@@ -168,6 +168,12 @@ h3 {
   font-weight: 500;
 }
 
+.botao.voltar {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
 .selo {
   display: inline-block;
   padding: 3px 9px;

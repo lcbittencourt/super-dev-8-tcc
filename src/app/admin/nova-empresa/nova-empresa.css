@@ -35,6 +35,7 @@ p {
 .grade {
   display: grid;
   grid-template-columns: 1fr 1fr;
+  align-items: start;
   gap: 14px;
 }
 
@@ -43,10 +44,6 @@ p {
   border: 1px solid #d3bea0;
   border-radius: 12px;
   padding: 22px;
-}
-
-.empresa {
-  min-height: 670px;
 }
 
 .lateral {
@@ -120,6 +117,18 @@ input {
   border-radius: 8px;
   cursor: pointer;
   font-weight: 500;
+}
+
+.botao.voltar {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.com-icone {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
 }
 
 .botao.principal {

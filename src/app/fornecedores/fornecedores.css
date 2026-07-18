@@ -98,6 +98,12 @@ p {
   padding: 9px 14px;
 }
 
+.com-icone {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
 .aba-ativa {
   background: #161e2f;
   color: #fff;

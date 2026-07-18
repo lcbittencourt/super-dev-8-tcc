@@ -100,6 +100,30 @@ textarea {
   font-weight: 500;
 }
 
+.botao.voltar {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.com-icone {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.botao.icone {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 7px;
+  line-height: 0;
+}
+
+.botao.icone svg {
+  display: block;
+}
+
 .botao.principal {
   background: #b9152b;
   color: #fff;

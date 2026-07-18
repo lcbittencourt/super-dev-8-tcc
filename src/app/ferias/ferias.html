@@ -31,19 +31,19 @@
       <section class="grade-painel">
         <article class="metrica">
           <span>Solicitações Pendentes</span>
-          <strong>{{ pendentes() }}</strong>
+          <strong>1</strong>
         </article>
         <article class="metrica">
           <span>Colaboradores de férias</span>
-          <strong>{{ colaboradoresEmFerias().length }}</strong>
+          <strong>1</strong>
         </article>
         <article class="metrica">
           <span>Retornam esta semana</span>
-          <strong>{{ retornamEstaSemana() }}</strong>
+          <strong>1</strong>
         </article>
         <article class="metrica">
           <span>Próximas férias</span>
-          <strong>{{ proximasFerias().length }}</strong>
+          <strong>2</strong>
         </article>
       </section>
       <section class="cartao">
@@ -63,6 +63,31 @@
               </tr>
             </thead>
             <tbody>
+              <tr>
+                <td>Ana Lima</td>
+                <td>Produção</td>
+                <td>Analista de Produção</td>
+                <td><span class="selo">Ativo</span></td>
+              </tr>
+              <tr>
+                <td>Bruno Souza</td>
+                <td>Administrativo</td>
+                <td>Assistente Administrativo</td>
+                <td><span class="selo">Ativo</span></td>
+              </tr>
+              <tr>
+                <td>Carla Dias</td>
+                <td>Financeiro</td>
+                <td>Analista Financeiro</td>
+                <td><span class="selo">Férias</span></td>
+              </tr>
+              <tr>
+                <td>Elaine Rocha</td>
+                <td>Recursos Humanos</td>
+                <td>Coordenadora de RH</td>
+                <td><span class="selo">Ativo</span></td>
+              </tr>
+
               @for (colaborador of colaboradoresCadastrados(); track colaborador) {
                 <tr>
                   <td>{{ colaborador.nome }}</td>
@@ -144,6 +169,62 @@
               </tr>
             </thead>
             <tbody>
+              <tr>
+                <td>Ana Lima</td>
+                <td>Produção</td>
+                <td>14/07 a 28/07/2025</td>
+                <td>15</td>
+                <td>02/06/2025</td>
+                <td><span class="selo">Pendente</span></td>
+                <td>
+                  <button class="acao-texto" type="button">Aprovar / Reprovar</button>
+                </td>
+              </tr>
+              <tr>
+                <td>Bruno Souza</td>
+                <td>Administrativo</td>
+                <td>01/09 a 10/09/2025</td>
+                <td>10</td>
+                <td>28/05/2025</td>
+                <td><span class="selo">Aprovada</span></td>
+                <td>
+                  <button class="acao-texto" type="button">Visualizar</button>
+                </td>
+              </tr>
+              <tr>
+                <td>Carla Dias</td>
+                <td>Financeiro</td>
+                <td>05/05 a 24/05/2025</td>
+                <td>20</td>
+                <td>10/04/2025</td>
+                <td><span class="selo">Aprovada</span></td>
+                <td>
+                  <button class="acao-texto" type="button">Visualizar</button>
+                </td>
+              </tr>
+              <tr>
+                <td>Diego Alves</td>
+                <td>Produção</td>
+                <td>20/01 a 29/01/2025</td>
+                <td>10</td>
+                <td>15/12/2024</td>
+                <td><span class="selo">Reprovada</span></td>
+                <td>
+                  <button class="acao-texto" type="button">Visualizar</button>
+                </td>
+              </tr>
+              <tr>
+                <td>Elaine Rocha</td>
+                <td>Recursos Humanos</td>
+                <td>22/12 a 26/12/2025</td>
+                <td>5</td>
+                <td>02/06/2025</td>
+                <td><span class="selo">Cancelada</span></td>
+                <td>
+                  <button class="acao-texto" type="button">Visualizar</button>
+                </td>
+              </tr>
+
               @for (solicitacao of solicitacoesFiltradas(); track solicitacao) {
                 <tr>
                   <td>{{ solicitacao.colaborador }}</td>
@@ -232,6 +313,22 @@
             </div>
           </div>
           <div class="lista-cartoes">
+            <div class="cartao-pessoa">
+              <strong>Carla Dias</strong>
+              <span>Financeiro</span>
+              <span>05/05/2025</span>
+              <span>Retorna em 24/05/2025</span>
+              <small>8 dias restantes</small>
+            </div>
+
+            <div class="cartao-pessoa">
+              <strong>Marcos Vinícius</strong>
+              <span>Logística</span>
+              <span>12/05/2025</span>
+              <span>Retorna em 26/05/2025</span>
+              <small>10 dias restantes</small>
+            </div>
+
             @for (pessoa of colaboradoresEmFerias(); track pessoa) {
               <div class="cartao-pessoa">
                 <strong>{{ pessoa.colaborador }}</strong>
@@ -247,6 +344,20 @@
       <section class="duas-colunas">
         <article class="cartao">
           <h2>Próximas férias</h2>
+          <div class="cartao-pessoa">
+            <strong>Ana Lima</strong>
+            <span>Começa em 30 dias</span>
+            <span>Produção</span>
+            <small>15 dias</small>
+          </div>
+
+          <div class="cartao-pessoa">
+            <strong>Bruno Souza</strong>
+            <span>Começa em 75 dias</span>
+            <span>Administrativo</span>
+            <small>10 dias</small>
+          </div>
+
           @for (pessoa of proximasFerias(); track pessoa) {
             <div class="cartao-pessoa">
               <strong>{{ pessoa.colaborador }}</strong>
@@ -270,6 +381,28 @@
                 </tr>
               </thead>
               <tbody>
+                <tr>
+                  <td>Diego Alves</td>
+                  <td>10 dias</td>
+                  <td>Aprovada</td>
+                  <td>Marcos Andrade</td>
+                  <td>10/12/2024</td>
+                </tr>
+                <tr>
+                  <td>Elaine Rocha</td>
+                  <td>20 dias</td>
+                  <td>Aprovada</td>
+                  <td>Diretoria</td>
+                  <td>15/11/2024</td>
+                </tr>
+                <tr>
+                  <td>Ana Lima</td>
+                  <td>12 dias</td>
+                  <td>Aprovada</td>
+                  <td>Marcos Andrade</td>
+                  <td>03/07/2024</td>
+                </tr>
+
                 @for (item of historico(); track item) {
                   <tr>
                     <td>{{ item.colaborador }}</td>

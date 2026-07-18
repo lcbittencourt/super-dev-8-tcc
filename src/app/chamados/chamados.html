@@ -72,6 +72,124 @@
           </thead>
 
           <tbody>
+            <tr>
+              <td>CH-1024</td>
+              <td>Notebook não liga</td>
+              <td>TI</td>
+              <td>
+                <div class="pessoa">
+                  <div class="foto">AL</div>
+                  <strong>Ana Lima</strong>
+                </div>
+              </td>
+              <td>Produção</td>
+              <td>12/05/2025</td>
+              <td><span class="selo erro">Alta</span></td>
+              <td><span class="selo informativo">Em andamento</span></td>
+              <td>Carlos Menezes</td>
+              <td>4h</td>
+              <td>
+                <div class="acoes-linha">
+                  <button class="botao pequeno atender">Atender</button>
+                  <button class="botao pequeno encerrar">Encerrar</button>
+                </div>
+              </td>
+            </tr>
+
+            <tr>
+              <td>CH-1023</td>
+              <td>Ar-condicionado com vazamento</td>
+              <td>Predial</td>
+              <td>
+                <div class="pessoa">
+                  <div class="foto">BS</div>
+                  <strong>Bruno Souza</strong>
+                </div>
+              </td>
+              <td>Administrativo</td>
+              <td>11/05/2025</td>
+              <td><span class="selo alerta">Média</span></td>
+              <td><span class="selo alerta">Aberto</span></td>
+              <td>-</td>
+              <td>8h</td>
+              <td>
+                <div class="acoes-linha">
+                  <button class="botao pequeno atender">Atender</button>
+                  <button class="botao pequeno encerrar">Encerrar</button>
+                </div>
+              </td>
+            </tr>
+
+            <tr>
+              <td>CH-1022</td>
+              <td>Acesso ao ERP bloqueado</td>
+              <td>TI</td>
+              <td>
+                <div class="pessoa">
+                  <div class="foto">CD</div>
+                  <strong>Carla Dias</strong>
+                </div>
+              </td>
+              <td>Financeiro</td>
+              <td>10/05/2025</td>
+              <td><span class="selo erro">Urgente</span></td>
+              <td><span class="selo alerta">Aberto</span></td>
+              <td>-</td>
+              <td>2h</td>
+              <td>
+                <div class="acoes-linha">
+                  <button class="botao pequeno atender">Atender</button>
+                  <button class="botao pequeno encerrar">Encerrar</button>
+                </div>
+              </td>
+            </tr>
+
+            <tr>
+              <td>CH-1021</td>
+              <td>Troca de lâmpadas do galpão</td>
+              <td>Predial</td>
+              <td>
+                <div class="pessoa">
+                  <div class="foto">DA</div>
+                  <strong>Diego Alves</strong>
+                </div>
+              </td>
+              <td>Produção</td>
+              <td>09/05/2025</td>
+              <td><span class="selo informativo">Baixa</span></td>
+              <td><span class="selo sucesso">Resolvido</span></td>
+              <td>Paulo Freitas</td>
+              <td>24h</td>
+              <td>
+                <div class="acoes-linha">
+                  <button class="botao pequeno">Detalhes</button>
+                </div>
+              </td>
+            </tr>
+
+            <tr>
+              <td>CH-1020</td>
+              <td>Dúvida sobre saldo de férias</td>
+              <td>RH</td>
+              <td>
+                <div class="pessoa">
+                  <div class="foto">ER</div>
+                  <strong>Elaine Rocha</strong>
+                </div>
+              </td>
+              <td>Comercial</td>
+              <td>08/05/2025</td>
+              <td><span class="selo informativo">Baixa</span></td>
+              <td><span class="selo sucesso">Resolvido</span></td>
+              <td>Fernanda Rocha</td>
+              <td>12h</td>
+              <td>
+                <div class="acoes-linha">
+                  <button class="botao pequeno">Detalhes</button>
+                </div>
+              </td>
+            </tr>
+
             @for (chamado of chamadosFiltrados(); track chamado.id) {
               <tr>
                 <td>{{ chamado.numero }}</td>
