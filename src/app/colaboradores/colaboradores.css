@@ -167,6 +167,24 @@ h3 {
   font-size: 12px;
 }
 
+.botao.icone {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 7px;
+  line-height: 0;
+}
+
+.com-icone {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.botao.icone svg {
+  display: block;
+}
+
 .botao:disabled {
   opacity: 0.5;
   cursor: not-allowed;

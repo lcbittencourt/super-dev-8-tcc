@@ -14,6 +14,10 @@ import { NovoChamado } from './colaborador/novo-chamado/novo-chamado';
 import { SolicitarFerias } from './colaborador/solicitar-ferias/solicitar-ferias';
 import { TreinamentosColaborador } from './colaborador/treinamentos-colaborador/treinamentos-colaborador';
 import { MeusDados } from './colaborador/meus-dados/meus-dados';
+import { FornecedoresComponent } from './fornecedores/fornecedores';
+import { Comunicados } from './comunicados/comunicados';
+import { Eventos } from './eventos/eventos';
+import { Relatorios } from './relatorios/relatorios';
 
 export const routes: Routes = [
     { path: '', redirectTo: 'admin', pathMatch: 'full' },
@@ -32,6 +36,10 @@ export const routes: Routes = [
     { path: 'controle-ponto', component: ControlePontoComponent },
     { path: 'ferias', component: FeriasComponent },
     { path: 'treinamentos', component: TreinamentosComponent },
+    { path: 'fornecedores', component: FornecedoresComponent },
+    { path: 'comunicados', component: Comunicados },
+    { path: 'eventos', component: Eventos },
+    { path: 'relatorios', component: Relatorios },
     { path: 'nova-empresa', component: NovaEmpresaComponent},
     { path: 'nova-empresa/:id', component: NovaEmpresaComponent },
 ];

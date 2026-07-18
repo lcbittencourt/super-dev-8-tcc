@@ -224,6 +224,13 @@ h2 {
   grid-column: 1 / -1;
 }
 
+.com-icone {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
 input,
 select,
 textarea {
@@ -244,6 +251,10 @@ table {
   border-collapse: collapse;
   min-width: 760px;
   width: 100%;
+}
+
+.tabela.simples table {
+  min-width: 0;
 }
 
 th,

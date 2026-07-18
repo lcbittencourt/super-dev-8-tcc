@@ -31,27 +31,27 @@
       <section class="grade-painel seis-colunas">
         <article class="metrica">
           <span>Cursos cadastrados</span>
-          <strong>{{ cursos.length }}</strong>
+          <strong>5</strong>
         </article>
         <article class="metrica">
           <span>Cursos obrigatórios</span>
-          <strong>{{ cursosObrigatorios() }}</strong>
+          <strong>3</strong>
         </article>
         <article class="metrica">
           <span>Colaboradores em treinamento</span>
-          <strong>{{ colaboradoresEmTreinamento() }}</strong>
+          <strong>4</strong>
         </article>
         <article class="metrica">
           <span>Certificados emitidos</span>
-          <strong>{{ certificadosEmitidos() }}</strong>
+          <strong>9</strong>
         </article>
         <article class="metrica">
           <span>Vencendo em 30 dias</span>
-          <strong>{{ certificadosVencendo() }}</strong>
+          <strong>2</strong>
         </article>
         <article class="metrica">
           <span>Média geral de conclusão</span>
-          <strong>{{ mediaConclusao() }}%</strong>
+          <strong>78%</strong>
         </article>
       </section>
       @if (telaGestor === 'painel') {
@@ -72,6 +72,31 @@
                 </tr>
               </thead>
               <tbody>
+                <tr>
+                  <td>Ana Lima</td>
+                  <td>Produção</td>
+                  <td>Analista de Produção</td>
+                  <td><span class="selo">Ativo</span></td>
+                </tr>
+                <tr>
+                  <td>Bruno Souza</td>
+                  <td>Administrativo</td>
+                  <td>Assistente Administrativo</td>
+                  <td><span class="selo">Ativo</span></td>
+                </tr>
+                <tr>
+                  <td>Carla Dias</td>
+                  <td>Financeiro</td>
+                  <td>Analista Financeiro</td>
+                  <td><span class="selo">Férias</span></td>
+                </tr>
+                <tr>
+                  <td>Elaine Rocha</td>
+                  <td>Recursos Humanos</td>
+                  <td>Coordenadora de RH</td>
+                  <td><span class="selo">Ativo</span></td>
+                </tr>
+
                 @for (colaborador of colaboradoresCadastrados(); track colaborador) {
                   <tr>
                     <td>{{ colaborador.nome }}</td>
@@ -129,6 +154,57 @@
                 </tr>
               </thead>
               <tbody>
+                <tr>
+                  <td>NR-35 · Trabalho em altura</td>
+                  <td>Segurança</td>
+                  <td>8h</td>
+                  <td>Sim</td>
+                  <td><span class="selo">Ativo</span></td>
+                  <td>
+                    <button class="acao-texto com-icone" type="button"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9" /><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4Z" /></svg>Editar</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td>Excel para o dia a dia</td>
+                  <td>Tecnologia</td>
+                  <td>6h</td>
+                  <td>Não</td>
+                  <td><span class="selo">Ativo</span></td>
+                  <td>
+                    <button class="acao-texto com-icone" type="button"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9" /><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4Z" /></svg>Editar</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td>Comunicação e feedback</td>
+                  <td>Comportamental</td>
+                  <td>4h</td>
+                  <td>Não</td>
+                  <td><span class="selo">Ativo</span></td>
+                  <td>
+                    <button class="acao-texto com-icone" type="button"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9" /><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4Z" /></svg>Editar</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td>Primeiros socorros</td>
+                  <td>Segurança</td>
+                  <td>8h</td>
+                  <td>Sim</td>
+                  <td><span class="selo">Ativo</span></td>
+                  <td>
+                    <button class="acao-texto com-icone" type="button"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9" /><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4Z" /></svg>Editar</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td>LGPD na prática</td>
+                  <td>Compliance</td>
+                  <td>3h</td>
+                  <td>Sim</td>
+                  <td><span class="selo">Inativo</span></td>
+                  <td>
+                    <button class="acao-texto com-icone" type="button"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9" /><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4Z" /></svg>Editar</button>
+                  </td>
+                </tr>
+
                 @for (curso of cursosFiltrados(); track curso) {
                   <tr>
                     <td>{{ curso.nome }}</td>
@@ -139,7 +215,8 @@
                       <span class="selo">{{ curso.situacao }}</span>
                     </td>
                     <td>
-                      <button class="acao-texto" type="button" (click)="editarCurso(curso)">
+                      <button class="acao-texto com-icone" type="button" (click)="editarCurso(curso)">
+                        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9" /><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4Z" /></svg>
                         {{ curso.objetivo }}
                       </button>
                     </td>
@@ -310,7 +387,7 @@
                 }
               </div>
             </section>
-            <button class="botao principal campo-inteiro" type="submit">Salvar curso</button>
+            <button class="botao principal campo-inteiro com-icone" type="submit"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2Z" /><path d="M17 21v-8H7v8" /><path d="M7 3v5h8" /></svg>Salvar curso</button>
           </form>
         </section>
       }
@@ -330,6 +407,35 @@
                   </tr>
                 </thead>
                 <tbody>
+                  <tr>
+                    <td>Ana Lima</td>
+                    <td>NR-35 · Trabalho em altura</td>
+                    <td>100%</td>
+                    <td>9.0</td>
+                    <td>Concluído</td>
+                  </tr>
+                  <tr>
+                    <td>Bruno Souza</td>
+                    <td>Excel para o dia a dia</td>
+                    <td>60%</td>
+                    <td>-</td>
+                    <td>Em andamento</td>
+                  </tr>
+                  <tr>
+                    <td>Carla Dias</td>
+                    <td>Comunicação e feedback</td>
+                    <td>30%</td>
+                    <td>-</td>
+                    <td>Em andamento</td>
+                  </tr>
+                  <tr>
+                    <td>Elaine Rocha</td>
+                    <td>Primeiros socorros</td>
+                    <td>100%</td>
+                    <td>8.5</td>
+                    <td>Concluído</td>
+                  </tr>
+
                   @for (item of acompanhamentos; track item) {
                     <tr>
                       <td>{{ item.colaborador }}</td>

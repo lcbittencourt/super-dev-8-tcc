@@ -101,6 +101,12 @@ h2 {
   font-weight: 500;
 }
 
+.botao.voltar {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
 .botao.principal {
   background: #b9152b;
   color: #fff;

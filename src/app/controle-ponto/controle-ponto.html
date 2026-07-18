@@ -27,7 +27,8 @@
       </div>
 
       <div class="acoes">
-        <button class="botao principal" type="button" (click)="salvarAjustes()">
+        <button class="botao principal com-icone" type="button" (click)="salvarAjustes()">
+          <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2Z" /><path d="M17 21v-8H7v8" /><path d="M7 3v5h8" /></svg>
           Salvar ajustes
         </button>
       </div>
@@ -41,12 +42,12 @@
 
       <div class="resumo">
         <span>Funcionários</span>
-        <strong>{{ colaboradores.length }}</strong>
+        <strong>6</strong>
       </div>
 
       <div class="resumo">
         <span>Registros no dia</span>
-        <strong>{{ registrosDoDia().length }}</strong>
+        <strong>5</strong>
       </div>
     </section>
 
@@ -72,6 +73,56 @@
           </thead>
 
           <tbody>
+            <tr>
+              <td><strong>Ana Lima</strong></td>
+              <td><input type="time" value="08:00" /></td>
+              <td><input type="time" value="12:00" /></td>
+              <td><input type="time" value="13:00" /></td>
+              <td><input type="time" value="17:12" /></td>
+              <td><span class="selo sucesso">Completo</span></td>
+              <td><input type="text" placeholder="Ajuste, atestado, esquecimento..." /></td>
+            </tr>
+
+            <tr>
+              <td><strong>Bruno Souza</strong></td>
+              <td><input type="time" value="08:05" /></td>
+              <td><input type="time" value="12:00" /></td>
+              <td><input type="time" value="13:02" /></td>
+              <td><input type="time" value="17:15" /></td>
+              <td><span class="selo sucesso">Completo</span></td>
+              <td><input type="text" placeholder="Ajuste, atestado, esquecimento..." /></td>
+            </tr>
+
+            <tr>
+              <td><strong>Carla Dias</strong></td>
+              <td><input type="time" value="08:00" /></td>
+              <td><input type="time" value="12:15" /></td>
+              <td><input type="time" value="13:15" /></td>
+              <td><input type="time" /></td>
+              <td><span class="selo informativo">Pendente</span></td>
+              <td><input type="text" value="Ainda em expediente" /></td>
+            </tr>
+
+            <tr>
+              <td><strong>Diego Alves</strong></td>
+              <td><input type="time" /></td>
+              <td><input type="time" /></td>
+              <td><input type="time" /></td>
+              <td><input type="time" /></td>
+              <td><span class="selo neutro">Sem registro</span></td>
+              <td><input type="text" value="Atestado médico" /></td>
+            </tr>
+
+            <tr>
+              <td><strong>Elaine Rocha</strong></td>
+              <td><input type="time" value="07:58" /></td>
+              <td><input type="time" value="12:00" /></td>
+              <td><input type="time" value="13:00" /></td>
+              <td><input type="time" value="17:05" /></td>
+              <td><span class="selo sucesso">Completo</span></td>
+              <td><input type="text" placeholder="Ajuste, atestado, esquecimento..." /></td>
+            </tr>
+
             @for (registro of registrosDoDia(); track registro) {
               <tr>
                 <td>
@@ -127,26 +178,35 @@
           </tbody>
         </table>
 
-        @if (colaboradores.length === 0) {
-          <div class="vazio">Nenhum colaborador cadastrado para esta empresa.</div>
-        }
       </div>
     </section>
 
     <section class="grade-futuro">
       <article class="cartao-futuro">
         <span>Banco de horas</span>
-        <strong>Em preparação</strong>
+        <strong>+12h30</strong>
+        <div class="detalhe-futuro">
+          <div><span>Saldo positivo</span><strong>8 colaboradores</strong></div>
+          <div><span>Saldo negativo</span><strong>2 colaboradores</strong></div>
+        </div>
       </article>
 
       <article class="cartao-futuro">
         <span>Atrasos</span>
-        <strong>Em preparação</strong>
+        <strong>3</strong>
+        <div class="detalhe-futuro">
+          <div><span>Hoje</span><strong>1 ocorrência</strong></div>
+          <div><span>No mês</span><strong>3 ocorrências</strong></div>
+        </div>
       </article>
 
       <article class="cartao-futuro">
         <span>Horas extras</span>
-        <strong>Em preparação</strong>
+        <strong>18h20</strong>
+        <div class="detalhe-futuro">
+          <div><span>Aprovadas</span><strong>14h00</strong></div>
+          <div><span>Pendentes</span><strong>4h20</strong></div>
+        </div>
       </article>
     </section>
   </main>

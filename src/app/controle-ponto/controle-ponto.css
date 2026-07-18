@@ -140,6 +140,12 @@ h2 {
   border-color: #b51a2b;
 }
 
+.com-icone {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
 .cartao,
 .cartao-futuro {
   background: #fff;
@@ -255,6 +261,30 @@ th {
 
 .cartao-futuro {
   padding: 16px;
+}
+
+.detalhe-futuro {
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px solid #eae0cd;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.detalhe-futuro div {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.detalhe-futuro span {
+  margin-bottom: 0;
+  font-size: 12px;
+}
+
+.detalhe-futuro strong {
+  font-size: 13px;
 }
 
 /* Ajustes de espacamento entre textos, campos e botoes. */

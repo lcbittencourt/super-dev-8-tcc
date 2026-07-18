@@ -43,27 +43,27 @@
       <section class="indicadores">
         <div class="indicador">
           <span>Total</span>
-          <strong>{{ colaboradores.length }}</strong>
+          <strong>6</strong>
           <small class="positivo">Base atual</small>
         </div>
         <div class="indicador">
           <span>Ativos</span>
-          <strong>{{ contarPorSituacao('Ativo') }}</strong>
+          <strong>3</strong>
           <small class="positivo">Disponíveis</small>
         </div>
         <div class="indicador">
           <span>Férias</span>
-          <strong>{{ contarPorSituacao('Férias') }}</strong>
+          <strong>1</strong>
           <small class="informativo">Programados</small>
         </div>
         <div class="indicador">
           <span>Licença médica</span>
-          <strong>{{ contarPorSituacao('Licença Médica/Atestado') }}</strong>
+          <strong>1</strong>
           <small class="negativo">Atestado</small>
         </div>
         <div class="indicador">
           <span>Inativos</span>
-          <strong>{{ contarPorSituacao('Inativo') }}</strong>
+          <strong>1</strong>
           <small class="negativo">Histórico</small>
         </div>
       </section>
@@ -121,6 +121,183 @@
               </tr>
             </thead>
             <tbody>
+              <tr>
+                <td>
+                  <div class="pessoa">
+                    <div class="foto"><span>AL</span></div>
+                    <div>
+                      <strong>Ana Lima</strong>
+                      <small>ana.lima@vale-norte.com.br</small>
+                    </div>
+                  </div>
+                </td>
+                <td>Analista de Produção</td>
+                <td>Pleno</td>
+                <td>Produção</td>
+                <td>05/02/2021</td>
+                <td>R$ 4.200,00</td>
+                <td>Marcos Andrade</td>
+                <td><span class="selo sucesso">Ativo</span></td>
+                <td>
+                  <div class="acoes-linha">
+                    <button class="botao pequeno icone" type="button" title="Editar" aria-label="Editar">
+                      <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9" /><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4Z" /></svg>
+                    </button>
+                    <button class="botao pequeno perigo icone" type="button" title="Excluir" aria-label="Excluir">
+                      <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18" /><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" /><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" /></svg>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+
+              <tr>
+                <td>
+                  <div class="pessoa">
+                    <div class="foto"><span>BS</span></div>
+                    <div>
+                      <strong>Bruno Souza</strong>
+                      <small>bruno.souza@vale-norte.com.br</small>
+                    </div>
+                  </div>
+                </td>
+                <td>Assistente Administrativo</td>
+                <td>Júnior</td>
+                <td>Administrativo</td>
+                <td>12/08/2022</td>
+                <td>R$ 2.800,00</td>
+                <td>Regina Alves</td>
+                <td><span class="selo sucesso">Ativo</span></td>
+                <td>
+                  <div class="acoes-linha">
+                    <button class="botao pequeno icone" type="button" title="Editar" aria-label="Editar">
+                      <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9" /><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4Z" /></svg>
+                    </button>
+                    <button class="botao pequeno perigo icone" type="button" title="Excluir" aria-label="Excluir">
+                      <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18" /><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" /><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" /></svg>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+
+              <tr>
+                <td>
+                  <div class="pessoa">
+                    <div class="foto"><span>CD</span></div>
+                    <div>
+                      <strong>Carla Dias</strong>
+                      <small>carla.dias@vale-norte.com.br</small>
+                    </div>
+                  </div>
+                </td>
+                <td>Analista Financeiro</td>
+                <td>Sênior</td>
+                <td>Financeiro</td>
+                <td>03/03/2019</td>
+                <td>R$ 6.500,00</td>
+                <td>Regina Alves</td>
+                <td><span class="selo informativo">Férias</span></td>
+                <td>
+                  <div class="acoes-linha">
+                    <button class="botao pequeno icone" type="button" title="Editar" aria-label="Editar">
+                      <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9" /><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4Z" /></svg>
+                    </button>
+                    <button class="botao pequeno perigo icone" type="button" title="Excluir" aria-label="Excluir">
+                      <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18" /><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" /><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" /></svg>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+
+              <tr>
+                <td>
+                  <div class="pessoa">
+                    <div class="foto"><span>DA</span></div>
+                    <div>
+                      <strong>Diego Alves</strong>
+                      <small>diego.alves@vale-norte.com.br</small>
+                    </div>
+                  </div>
+                </td>
+                <td>Operador de Máquinas</td>
+                <td>Pleno</td>
+                <td>Produção</td>
+                <td>21/06/2020</td>
+                <td>R$ 3.100,00</td>
+                <td>Marcos Andrade</td>
+                <td>
+                  <span class="selo erro">Licença Médica/Atestado</span>
+                  <small class="dias-licenca">7 dia(s)</small>
+                </td>
+                <td>
+                  <div class="acoes-linha">
+                    <button class="botao pequeno icone" type="button" title="Editar" aria-label="Editar">
+                      <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9" /><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4Z" /></svg>
+                    </button>
+                    <button class="botao pequeno perigo icone" type="button" title="Excluir" aria-label="Excluir">
+                      <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18" /><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" /><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" /></svg>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+
+              <tr>
+                <td>
+                  <div class="pessoa">
+                    <div class="foto"><span>ER</span></div>
+                    <div>
+                      <strong>Elaine Rocha</strong>
+                      <small>elaine.rocha@vale-norte.com.br</small>
+                    </div>
+                  </div>
+                </td>
+                <td>Coordenadora de RH</td>
+                <td>Sênior</td>
+                <td>Recursos Humanos</td>
+                <td>10/01/2018</td>
+                <td>R$ 7.800,00</td>
+                <td>Diretoria</td>
+                <td><span class="selo sucesso">Ativo</span></td>
+                <td>
+                  <div class="acoes-linha">
+                    <button class="botao pequeno icone" type="button" title="Editar" aria-label="Editar">
+                      <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9" /><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4Z" /></svg>
+                    </button>
+                    <button class="botao pequeno perigo icone" type="button" title="Excluir" aria-label="Excluir">
+                      <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18" /><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" /><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" /></svg>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+
+              <tr>
+                <td>
+                  <div class="pessoa">
+                    <div class="foto"><span>FC</span></div>
+                    <div>
+                      <strong>Felipe Costa</strong>
+                      <small>felipe.costa@vale-norte.com.br</small>
+                    </div>
+                  </div>
+                </td>
+                <td>Vendedor</td>
+                <td>Júnior</td>
+                <td>Comercial</td>
+                <td>15/09/2023</td>
+                <td>R$ 2.500,00</td>
+                <td>Paulo Freitas</td>
+                <td><span class="selo erro">Inativo</span></td>
+                <td>
+                  <div class="acoes-linha">
+                    <button class="botao pequeno icone" type="button" title="Editar" aria-label="Editar">
+                      <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9" /><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4Z" /></svg>
+                    </button>
+                    <button class="botao pequeno perigo icone" type="button" title="Excluir" aria-label="Excluir">
+                      <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18" /><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" /><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" /></svg>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+
               @for (colaborador of colaboradoresFiltrados; track colaborador) {
                 <tr>
                   <td>
@@ -168,18 +345,22 @@
                   <td>
                     <div class="acoes-linha">
                       <button
-                        class="botao pequeno"
+                        class="botao pequeno icone"
                         type="button"
+                        title="Editar"
+                        aria-label="Editar"
                         (click)="editarColaborador(colaborador)"
                       >
-                        Editar
+                        <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9" /><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4Z" /></svg>
                       </button>
                       <button
-                        class="botao pequeno perigo"
+                        class="botao pequeno perigo icone"
                         type="button"
+                        title="Excluir"
+                        aria-label="Excluir"
                         (click)="excluirColaborador(colaborador)"
                       >
-                        Excluir
+                        <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18" /><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" /><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" /></svg>
                       </button>
                     </div>
                   </td>
@@ -187,9 +368,6 @@
               }
             </tbody>
           </table>
-          @if (colaboradoresFiltrados.length === 0) {
-            <div class="vazio">Nenhum colaborador encontrado.</div>
-          }
         </div>
       </section>
     }
@@ -307,7 +485,8 @@
           </div>
           <div class="acoes-rodape">
             <button class="botao" type="button" (click)="voltarLista()">Cancelar</button>
-            <button class="botao principal" type="submit" [disabled]="formColaborador.invalid">
+            <button class="botao principal com-icone" type="submit" [disabled]="formColaborador.invalid">
+              <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2Z" /><path d="M17 21v-8H7v8" /><path d="M7 3v5h8" /></svg>
               Salvar
             </button>
           </div>
