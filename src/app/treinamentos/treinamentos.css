@@ -332,6 +332,18 @@ th {
   grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
+.grade-certificados {
+  margin-bottom: 20px;
+}
+
+.grade-certificados + h2 {
+  margin-bottom: 12px;
+}
+
+.linha-info + .botao {
+  margin-top: 14px;
+}
+
 .cartao-curso strong,
 .cartao-curso small {
   display: block;

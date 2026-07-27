@@ -58,64 +58,6 @@
         <section class="cartao">
           <div class="cabecalho-cartao">
             <div>
-              <h2>Colaboradores cadastrados</h2>
-            </div>
-          </div>
-          <div class="tabela simples">
-            <table>
-              <thead>
-                <tr>
-                  <th>Colaborador</th>
-                  <th>Departamento</th>
-                  <th>Cargo</th>
-                  <th>Situação</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>Ana Lima</td>
-                  <td>Produção</td>
-                  <td>Analista de Produção</td>
-                  <td><span class="selo">Ativo</span></td>
-                </tr>
-                <tr>
-                  <td>Bruno Souza</td>
-                  <td>Administrativo</td>
-                  <td>Assistente Administrativo</td>
-                  <td><span class="selo">Ativo</span></td>
-                </tr>
-                <tr>
-                  <td>Carla Dias</td>
-                  <td>Financeiro</td>
-                  <td>Analista Financeiro</td>
-                  <td><span class="selo">Férias</span></td>
-                </tr>
-                <tr>
-                  <td>Elaine Rocha</td>
-                  <td>Recursos Humanos</td>
-                  <td>Coordenadora de RH</td>
-                  <td><span class="selo">Ativo</span></td>
-                </tr>
-
-                @for (colaborador of colaboradoresCadastrados(); track colaborador) {
-                  <tr>
-                    <td>{{ colaborador.nome }}</td>
-                    <td>{{ colaborador.departamento }}</td>
-                    <td>{{ colaborador.cargo || '-' }}</td>
-                    <td>
-                      <span class="selo">{{ colaborador.situacao || 'Ativo' }}</span>
-                    </td>
-                  </tr>
-                }
-              </tbody>
-            </table>
-          </div>
-        </section>
-      }
-      @if (telaGestor === 'painel') {
-        <section class="cartao">
-          <div class="cabecalho-cartao">
-            <div>
               <h2>Catálogo de cursos</h2>
             </div>
             <button class="botao principal" type="button" (click)="abrirNovoCurso()">

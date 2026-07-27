@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { isPlatformBrowser } from '@angular/common';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { Inject, PLATFORM_ID } from '@angular/core';
 import { Router, RouterLink, ActivatedRoute } from '@angular/router';
 import { FormsModule } from '@angular/forms';
@@ -7,7 +7,7 @@ import { FormsModule } from '@angular/forms';
 @Component({
   selector: 'app-nova-empresa',
   standalone: true,
-  imports: [RouterLink, FormsModule],
+  imports: [CommonModule, RouterLink, FormsModule],
   templateUrl: './nova-empresa.html',
   styleUrl: './nova-empresa.css'
 })
@@ -17,6 +17,15 @@ export class NovaEmpresaComponent implements OnInit {
   modoEdicao = false;
   idEdicao = '';
   empresaOriginal: any = null;
+
+  passoAtual = 1;
+  totalPassos = 3;
+
+  passos = [
+    { numero: 1, titulo: 'Responsável técnico', descricao: 'Contato principal' },
+    { numero: 2, titulo: 'Dados da empresa', descricao: 'Informações cadastrais' },
+    { numero: 3, titulo: 'Plano e contrato', descricao: 'Escolha do plano' },
+  ];
 
   empresa = {
     razaoSocial: '',
@@ -67,6 +76,22 @@ export class NovaEmpresaComponent implements OnInit {
 
   selecionarPlano(plano: string) {
     this.planoSelecionado = plano;
+  }
+
+  proximoPasso() {
+    if (this.passoAtual < this.totalPassos) {
+      this.passoAtual++;
+    }
+  }
+
+  passoAnterior() {
+    if (this.passoAtual > 1) {
+      this.passoAtual--;
+    }
+  }
+
+  irParaPasso(numero: number) {
+    this.passoAtual = numero;
   }
 
   salvarEmpresa() {
