@@ -160,7 +160,7 @@ h2 {
 
 .barra-ferramentas {
   display: grid;
-  grid-template-columns: 220px repeat(2, 160px);
+  grid-template-columns: 260px repeat(3, 160px);
   gap: 14px;
   align-items: end;
 }
@@ -392,6 +392,39 @@ td {
 
   .barra-ferramentas,
   .grade-futuro {
+    grid-template-columns: 1fr;
+  }
+}
+
+
+.campo-data {
+  align-self: stretch;
+}
+
+.navegacao-data {
+  display: grid;
+  gap: 6px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.botao.pequeno {
+  font-size: 12px;
+  min-height: 32px;
+  padding: 6px 8px;
+}
+
+td strong {
+  white-space: nowrap;
+}
+
+@media (max-width: 980px) {
+  .barra-ferramentas {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .barra-ferramentas {
     grid-template-columns: 1fr;
   }
 }

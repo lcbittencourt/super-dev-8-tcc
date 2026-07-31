@@ -1,10 +1,12 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Inject, OnInit, PLATFORM_ID } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
-import { Inject, PLATFORM_ID } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink, Router } from '@angular/router';
+import { ApiPulsoService, EmpresaApi, ModuloApi } from '../servicos/api-pulso.service';
 
+import { AcoesTopoComponent } from '../acoes-topo/acoes-topo';
 interface ModuloSistema {
+  id?: string;
   nome: string;
   descricao: string;
   liberado: boolean;
@@ -13,12 +15,12 @@ interface ModuloSistema {
 @Component({
   selector: 'app-admin',
   standalone: true,
-  imports: [RouterLink, FormsModule],
+  imports: [RouterLink, FormsModule, AcoesTopoComponent],
   templateUrl: './admin.html',
   styleUrl: './admin.css',
 })
 export class AdminComponent implements OnInit {
-  empresas = [
+  empresas: EmpresaApi[] = [
     {
       id: 'tx001',
       nome: 'Têxtil Vale Norte',
@@ -31,58 +33,69 @@ export class AdminComponent implements OnInit {
     },
   ];
 
-  empresaSelecionada: any = this.empresas[0];
+  empresaSelecionada: EmpresaApi | null = this.empresas[0];
   pesquisaEmpresa = '';
   paginaEmpresas = 0;
   empresasPorPagina = 3;
+  apiDisponivel = false;
 
   private modulosBase: ModuloSistema[] = [
     {
+      id: 'dashboard',
       nome: 'Dashboard',
       descricao: 'Painel geral com indicadores',
       liberado: true,
     },
     {
-      nome: 'Colaboradores',
-      descricao: 'Cadastro e gestão de pessoas',
+      id: 'colaboradores',
+      nome: 'Colaboradores e departamentos',
+      descricao: 'Cadastro de pessoas, áreas e responsáveis',
       liberado: true,
     },
     {
+      id: 'controle-ponto',
       nome: 'Controle de ponto',
       descricao: 'Jornada, banco de horas e exceções',
       liberado: true,
     },
     {
+      id: 'ferias',
       nome: 'Férias e afastamentos',
       descricao: 'Solicitações, aprovações e calendário',
       liberado: true,
     },
     {
+      id: 'treinamentos',
       nome: 'Treinamentos',
       descricao: 'NRs, compliance e capacitações',
       liberado: true,
     },
     {
+      id: 'chamados',
       nome: 'Chamados',
       descricao: 'TI, manutenção e atendimento interno',
       liberado: true,
     },
     {
+      id: 'comunicados',
       nome: 'Comunicados',
       descricao: 'Mural e avisos corporativos',
       liberado: true,
     },
     {
+      id: 'eventos',
       nome: 'Eventos',
       descricao: 'Confraternizações e datas importantes',
       liberado: true,
     },
     {
+      id: 'fornecedores',
       nome: 'Fornecedores',
       descricao: 'Cadastro e contratos',
       liberado: false,
     },
     {
+      id: 'relatorios',
       nome: 'Relatórios',
       descricao: 'Exportações e análises customizadas',
       liberado: true,
@@ -93,6 +106,7 @@ export class AdminComponent implements OnInit {
 
   constructor(
     private router: Router,
+    private api: ApiPulsoService,
     @Inject(PLATFORM_ID) private platformId: object,
   ) {}
 
@@ -101,18 +115,10 @@ export class AdminComponent implements OnInit {
       return;
     }
 
-    const empresasSalvas = JSON.parse(localStorage.getItem('empresas') || '[]');
-
-    this.empresas = this.mesclarEmpresasSalvas(empresasSalvas);
-    this.atualizarUsuariosEmpresas();
-
-    this.empresaSelecionada = this.recuperarEmpresaSelecionada() || this.empresas[0];
-    this.posicionarPaginaEmpresaSelecionada();
-    this.carregarModulosEmpresa();
-    this.salvarEmpresaSelecionada();
+    this.carregarEmpresasBanco();
   }
 
-  selecionarEmpresa(empresa: any) {
+  selecionarEmpresa(empresa: EmpresaApi) {
     this.empresaSelecionada = empresa;
     this.carregarModulosEmpresa();
     this.salvarEmpresaSelecionada();
@@ -183,31 +189,22 @@ export class AdminComponent implements OnInit {
       return;
     }
 
-    const confirmar = confirm(`Deseja excluir a empresa ${this.empresaSelecionada.nome}?`);
+    const empresa = this.empresaSelecionada;
+    const confirmar = confirm('Deseja excluir a empresa ' + empresa.nome + '?');
 
     if (!confirmar) {
       return;
     }
 
-    this.empresas = this.empresas.filter((empresa) => empresa.id !== this.empresaSelecionada.id);
-
-    const empresasSalvas = this.estaNoNavegador()
-      ? JSON.parse(localStorage.getItem('empresas') || '[]')
-      : [];
-
-    const empresasAtualizadas = empresasSalvas.filter(
-      (empresa: any) => empresa.id !== this.empresaSelecionada.id,
-    );
-
-    localStorage.setItem('empresas', JSON.stringify(empresasAtualizadas));
-
-    if (this.paginaEmpresas > this.totalPaginasEmpresas() - 1) {
-      this.paginaEmpresas = this.totalPaginasEmpresas() - 1;
+    if (this.apiDisponivel) {
+      this.api.excluirEmpresa(empresa.id).subscribe({
+        next: () => this.removerEmpresaDaTela(empresa.id),
+        error: () => alert('Não foi possível excluir no banco. Confira se a API está ligada.'),
+      });
+      return;
     }
 
-    this.empresaSelecionada = this.empresasVisiveis()[0] || this.empresas[0] || null;
-    this.carregarModulosEmpresa();
-    this.salvarEmpresaSelecionada();
+    this.removerEmpresaDaTela(empresa.id);
   }
 
   alternarModulo(modulo: ModuloSistema) {
@@ -218,7 +215,11 @@ export class AdminComponent implements OnInit {
 
     if (this.modulosLiberados() >= this.limiteModulosEmpresa()) {
       alert(
-        `O plano ${this.empresaSelecionada.plano} permite liberar somente ${this.limiteModulosEmpresa()} módulo(s).`,
+        'O plano ' +
+          this.empresaSelecionada?.plano +
+          ' permite liberar somente ' +
+          this.limiteModulosEmpresa() +
+          ' módulo(s).',
       );
       return;
     }
@@ -231,26 +232,37 @@ export class AdminComponent implements OnInit {
       return;
     }
 
-    localStorage.setItem(this.chaveModulosEmpresa(), JSON.stringify(this.modulosSistema));
+    if (this.apiDisponivel) {
+      this.api.salvarModulosEmpresa(this.empresaSelecionada.id, this.modulosSistema).subscribe({
+        next: (modulos) => {
+          this.modulosSistema = this.mesclarModulosComBase(
+            modulos.map((modulo) => this.normalizarModulo(modulo)),
+          );
+          this.atualizarContagemModulosSelecionada();
+          this.salvarModulosLocais();
+          this.salvarEmpresaSelecionada();
+          alert('Alterações salvas para ' + this.empresaSelecionada?.nome + '.');
+        },
+        error: (erro) => {
+          const mensagem = erro?.error?.mensagem || 'Não foi possível salvar os módulos no banco.';
+          alert(mensagem);
+        },
+      });
+      return;
+    }
 
-    this.empresaSelecionada.modulos = this.modulosLiberados();
-    this.empresas = this.empresas.map((empresa) => {
-      if (empresa.id === this.empresaSelecionada.id) {
-        return {
-          ...empresa,
-          modulos: this.empresaSelecionada.modulos,
-        };
-      }
-
-      return empresa;
-    });
-
+    this.salvarModulosLocais();
+    this.atualizarContagemModulosSelecionada();
     this.salvarEmpresaSelecionada();
-    alert(`Alterações salvas para ${this.empresaSelecionada.nome}.`);
+    alert('Alterações salvas para ' + this.empresaSelecionada.nome + '.');
   }
 
   modulosLiberados(): number {
     return this.modulosSistema.filter((modulo) => modulo.liberado).length;
+  }
+
+  totalModulosDisponiveis(): number {
+    return this.modulosSistema.length || this.modulosBase.length;
   }
 
   limiteModulosEmpresa(): number {
@@ -274,7 +286,7 @@ export class AdminComponent implements OnInit {
   }
 
   totalUsuarios() {
-    return this.empresas.reduce((total, empresa) => total + empresa.usuarios, 0);
+    return this.empresas.reduce((total, empresa) => total + Number(empresa.usuarios || 0), 0);
   }
 
   mrrEstimado(): string {
@@ -292,11 +304,64 @@ export class AdminComponent implements OnInit {
     return this.empresas.filter((empresa) => empresa.situacao === 'Ativa').length;
   }
 
+  private carregarEmpresasBanco() {
+    this.api.listarEmpresas().subscribe({
+      next: (empresas) => {
+        this.apiDisponivel = true;
+        this.empresas = empresas.map((empresa) => this.normalizarEmpresa(empresa));
+
+        if (this.empresas.length === 0) {
+          this.empresas = [];
+          this.empresaSelecionada = null;
+          return;
+        }
+
+        this.empresaSelecionada = this.recuperarEmpresaSelecionada() || this.empresas[0];
+        this.posicionarPaginaEmpresaSelecionada();
+        this.carregarModulosEmpresa();
+        this.salvarEmpresaSelecionada();
+      },
+      error: () => {
+        this.apiDisponivel = false;
+        this.carregarEmpresasLocais();
+      },
+    });
+  }
+
+  private carregarEmpresasLocais() {
+    const empresasSalvas = JSON.parse(localStorage.getItem('empresas') || '[]');
+
+    this.empresas = this.mesclarEmpresasSalvas(empresasSalvas);
+    this.atualizarUsuariosEmpresasLocais();
+    this.empresaSelecionada = this.recuperarEmpresaSelecionada() || this.empresas[0] || null;
+    this.posicionarPaginaEmpresaSelecionada();
+    this.carregarModulosEmpresa();
+    this.salvarEmpresaSelecionada();
+  }
+
+  private removerEmpresaDaTela(empresaId: string) {
+    this.empresas = this.empresas.filter((empresa) => empresa.id !== empresaId);
+
+    if (this.estaNoNavegador()) {
+      const empresasSalvas = JSON.parse(localStorage.getItem('empresas') || '[]');
+      const empresasAtualizadas = empresasSalvas.filter((empresa: any) => empresa.id !== empresaId);
+      localStorage.setItem('empresas', JSON.stringify(empresasAtualizadas));
+    }
+
+    if (this.paginaEmpresas > this.totalPaginasEmpresas() - 1) {
+      this.paginaEmpresas = this.totalPaginasEmpresas() - 1;
+    }
+
+    this.empresaSelecionada = this.empresasVisiveis()[0] || this.empresas[0] || null;
+    this.carregarModulosEmpresa();
+    this.salvarEmpresaSelecionada();
+  }
+
   private estaNoNavegador(): boolean {
     return isPlatformBrowser(this.platformId);
   }
 
-  private atualizarUsuariosEmpresas() {
+  private atualizarUsuariosEmpresasLocais() {
     this.empresas = this.empresas.map((empresa) => ({
       ...empresa,
       usuarios: this.contarColaboradoresEmpresa(empresa.id),
@@ -308,7 +373,7 @@ export class AdminComponent implements OnInit {
       return 0;
     }
 
-    const colaboradores = JSON.parse(localStorage.getItem(`colaboradores:${empresaId}`) || '[]');
+    const colaboradores = JSON.parse(localStorage.getItem('colaboradores:' + empresaId) || '[]');
 
     return Array.isArray(colaboradores) ? colaboradores.length : 0;
   }
@@ -365,16 +430,54 @@ export class AdminComponent implements OnInit {
       return;
     }
 
+    if (this.apiDisponivel) {
+      this.api.listarModulosEmpresa(this.empresaSelecionada.id).subscribe({
+        next: (modulos) => {
+          this.modulosSistema = this.mesclarModulosComBase(
+            modulos.map((modulo) => this.normalizarModulo(modulo)),
+          );
+          this.ajustarModulosAoLimite();
+          this.atualizarContagemModulosSelecionada();
+          this.salvarModulosLocais();
+        },
+        error: () => this.carregarModulosLocais(),
+      });
+      return;
+    }
+
+    this.carregarModulosLocais();
+  }
+
+  private carregarModulosLocais() {
+    if (!this.empresaSelecionada) {
+      return;
+    }
+
     const modulosSalvos = localStorage.getItem(this.chaveModulosEmpresa());
-    this.modulosSistema = modulosSalvos ? JSON.parse(modulosSalvos) : this.criarModulosPadrao();
+    this.modulosSistema = modulosSalvos
+      ? this.mesclarModulosComBase(JSON.parse(modulosSalvos))
+      : this.criarModulosPadrao();
 
     this.ajustarModulosAoLimite();
-    this.empresaSelecionada.modulos = this.modulosLiberados();
-    this.atualizarContagemEmpresaSelecionada();
+    this.atualizarContagemModulosSelecionada();
   }
 
   private criarModulosPadrao(): ModuloSistema[] {
     return this.modulosBase.map((modulo) => ({ ...modulo }));
+  }
+
+  private mesclarModulosComBase(modulos: ModuloSistema[]): ModuloSistema[] {
+    const modulosNormalizados = Array.isArray(modulos) ? modulos : [];
+
+    return this.modulosBase.map((moduloBase) => {
+      const moduloSalvo = modulosNormalizados.find(
+        (modulo) => modulo.id === moduloBase.id || modulo.nome === moduloBase.nome,
+      );
+
+      return moduloSalvo
+        ? { ...moduloBase, liberado: Boolean(moduloSalvo.liberado) }
+        : { ...moduloBase };
+    });
   }
 
   private ajustarModulosAoLimite() {
@@ -400,15 +503,32 @@ export class AdminComponent implements OnInit {
   }
 
   private chaveModulosEmpresa(): string {
-    return `modulos:${this.empresaSelecionada.id}`;
+    return 'modulos:' + this.empresaSelecionada?.id;
   }
 
-  private atualizarContagemEmpresaSelecionada() {
+  private salvarModulosLocais() {
+    if (!this.estaNoNavegador() || !this.empresaSelecionada) {
+      return;
+    }
+
+    localStorage.setItem(this.chaveModulosEmpresa(), JSON.stringify(this.modulosSistema));
+  }
+
+  private atualizarContagemModulosSelecionada() {
+    if (!this.empresaSelecionada) {
+      return;
+    }
+
+    this.empresaSelecionada = {
+      ...this.empresaSelecionada,
+      modulos: this.modulosLiberados(),
+    };
+
     this.empresas = this.empresas.map((empresa) => {
-      if (empresa.id === this.empresaSelecionada.id) {
+      if (empresa.id === this.empresaSelecionada?.id) {
         return {
           ...empresa,
-          modulos: this.empresaSelecionada.modulos,
+          modulos: this.modulosLiberados(),
         };
       }
 
@@ -435,14 +555,45 @@ export class AdminComponent implements OnInit {
     return [...empresasBaseAtualizadas, ...empresasNovas];
   }
 
-  private normalizarEmpresa(empresa: any) {
+  private normalizarEmpresa(empresa: any): EmpresaApi {
     const { users, status, ...dadosEmpresa } = empresa;
 
     return {
-      ...dadosEmpresa,
-      usuarios: empresa.usuarios ?? users ?? 0,
-      situacao: empresa.situacao ?? status ?? 'Ativa',
+      id: dadosEmpresa.id,
+      razaoSocial: dadosEmpresa.razaoSocial || dadosEmpresa.razao_social || dadosEmpresa.nome || '',
+      nome: dadosEmpresa.nome || dadosEmpresa.nomeFantasia || dadosEmpresa.razaoSocial || '',
+      nomeFantasia: dadosEmpresa.nomeFantasia || dadosEmpresa.nome || '',
+      cnpj: dadosEmpresa.cnpj || '',
+      inscricaoEstadual: dadosEmpresa.inscricaoEstadual || dadosEmpresa.inscricao_estadual || '',
+      cidade: dadosEmpresa.cidade || '',
+      setor: dadosEmpresa.setor || '',
+      responsavel: dadosEmpresa.responsavel || '',
+      email: dadosEmpresa.email || '',
+      telefone: dadosEmpresa.telefone || '',
+      plano: dadosEmpresa.plano || 'Profissional',
+      usuarios: dadosEmpresa.usuarios ?? users ?? 0,
+      modulos: dadosEmpresa.modulos ?? 0,
+      situacao: dadosEmpresa.situacao ?? status ?? 'Ativa',
+      logo: dadosEmpresa.logo || this.gerarLogo(dadosEmpresa.nome || ''),
     };
   }
 
+  private normalizarModulo(modulo: ModuloApi): ModuloSistema {
+    return {
+      id: modulo.id,
+      nome: modulo.nome,
+      descricao: modulo.descricao,
+      liberado: modulo.liberado,
+    };
+  }
+
+  private gerarLogo(nome: string): string {
+    const partes = (nome || '').split(' ').filter(Boolean).slice(0, 2);
+
+    if (partes.length === 0) {
+      return 'NE';
+    }
+
+    return partes.map((parte) => parte[0]).join('').toUpperCase();
+  }
 }

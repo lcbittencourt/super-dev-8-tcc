@@ -1,10 +1,11 @@
 import { Component } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { AcoesTopoComponent } from '../acoes-topo/acoes-topo';
 
 @Component({
   selector: 'app-aprovacoes',
   standalone: true,
-  imports: [RouterLink],
+  imports: [RouterLink, AcoesTopoComponent],
   templateUrl: './aprovacoes.html',
   styleUrl: './aprovacoes.css',
 })

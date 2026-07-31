@@ -272,9 +272,9 @@ label {
 }
 
 input,
-select {
+select,
+textarea {
   width: 100%;
-  height: 40px;
   border: 1px solid #c9b28f;
   border-radius: 8px;
   background: #f5efe6;
@@ -282,6 +282,11 @@ select {
   padding: 0 12px;
   margin-top: 8px;
   font-size: 14px;
+}
+
+input,
+select {
+  height: 40px;
 }
 
 .area-tabela {
@@ -366,6 +371,30 @@ th {
   max-width: 980px;
 }
 
+.grade-departamentos {
+  display: grid;
+  gap: 14px;
+  grid-template-columns: minmax(320px, 0.9fr) minmax(0, 1.4fr);
+}
+
+.formulario-departamento {
+  display: grid;
+  gap: 14px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.campo-inteiro {
+  grid-column: 1 / -1;
+}
+
+.departamentos-filtros {
+  grid-template-columns: minmax(0, 1fr) 180px;
+}
+
+.tabela-departamentos {
+  min-width: 860px;
+}
+
 .cadastro {
   padding: 22px;
 }
@@ -420,7 +449,9 @@ th {
 .filtros,
 .formulario,
 .campos,
+.formulario-departamento,
 .grade-formulario,
+.grade-departamentos,
 .grade-participantes,
 .grade-certificados,
 .lista-compacta,
@@ -435,12 +466,14 @@ th {
 
 label,
 .formulario label,
+.formulario-departamento label,
 .avaliacao label,
 .grade-participantes label {
   line-height: 1.35;
 }
 
 .formulario label,
+.formulario-departamento label,
 .avaliacao label,
 .grade-participantes label {
   gap: 8px;
@@ -503,7 +536,9 @@ td {
 
   .indicadores,
   .filtros,
-  .campos {
+  .campos,
+  .grade-departamentos,
+  .formulario-departamento {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
@@ -516,6 +551,8 @@ td {
   .indicadores,
   .filtros,
   .campos,
+  .grade-departamentos,
+  .formulario-departamento,
   .acoes,
   .acoes-rodape {
     grid-template-columns: 1fr;

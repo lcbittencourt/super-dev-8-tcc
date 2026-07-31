@@ -1,8 +1,9 @@
 import { isPlatformBrowser } from '@angular/common';
 import { Component, Inject, OnInit, PLATFORM_ID } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 
+import { AcoesTopoComponent } from '../acoes-topo/acoes-topo';
 type PerfilTreinamento = 'gestor' | 'colaborador' | '';
 type SituacaoCurso = 'Ativo' | 'Inativo';
 type SituacaoAcompanhamento = 'Em andamento' | 'Concluído' | 'Pendente';
@@ -79,7 +80,7 @@ interface CursoColaborador {
 @Component({
   selector: 'app-treinamentos',
   standalone: true,
-  imports: [FormsModule, RouterLink],
+  imports: [FormsModule, AcoesTopoComponent],
   templateUrl: './treinamentos.html',
   styleUrl: './treinamentos.css',
 })

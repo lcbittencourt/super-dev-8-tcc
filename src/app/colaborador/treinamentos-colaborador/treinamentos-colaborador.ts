@@ -1,11 +1,12 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { AcoesTopoComponent } from '../../acoes-topo/acoes-topo';
 
 @Component({
   selector: 'app-treinamentos-colaborador',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, AcoesTopoComponent],
   templateUrl: './treinamentos-colaborador.html',
   styleUrl: './treinamentos-colaborador.css',
 })

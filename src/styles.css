@@ -1,1 +1,12 @@
 /* You can add global styles to this file, and also import other style files */
+
+.acoes-cabecalho {
+  align-items: center;
+  display: flex;
+  gap: 10px;
+  margin-left: auto;
+}
+
+.acoes-cabecalho app-acoes-topo {
+  margin-left: 0;
+}

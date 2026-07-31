@@ -32,84 +32,11 @@ p {
   font-size: 14px;
 }
 
-.assistente {
-  max-width: 720px;
-  margin: 0 auto;
-}
-
-.passos {
-  list-style: none;
-  display: flex;
-  margin: 0 0 16px;
-  padding: 0;
-}
-
-.passo {
-  flex: 1;
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
-  text-align: center;
-  cursor: pointer;
-}
-
-.passo::before {
-  content: '';
-  position: absolute;
-  top: 17px;
-  right: 50%;
-  width: 100%;
-  height: 2px;
-  background: #d3bea0;
-}
-
-.passo:first-child::before {
-  display: none;
-}
-
-.passo.ativo::before,
-.passo.concluido::before {
-  background: #b9152b;
-}
-
-.marcador {
-  position: relative;
-  z-index: 1;
-  width: 34px;
-  height: 34px;
-  border-radius: 50%;
-  background: #fff;
-  border: 2px solid #d3bea0;
-  color: #687386;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 700;
-  font-size: 14px;
-}
-
-.passo.ativo .marcador {
-  background: #b9152b;
-  border-color: #b9152b;
-  color: #fff;
-}
-
-.passo.concluido .marcador {
-  background: #f7e4dd;
-  border-color: #b9152b;
-  color: #b9152b;
-}
-
-.rotulo-passo strong {
-  display: block;
-  font-size: 13px;
-}
-
-.rotulo-passo span {
-  font-size: 12px;
-  color: #687386;
+.grade {
+  display: grid;
+  grid-template-columns: 1fr;
+  align-items: start;
+  gap: 14px;
 }
 
 .cartao {
@@ -119,9 +46,9 @@ p {
   padding: 22px;
 }
 
-h2 {
-  margin: 0 0 4px;
-  font-size: 18px;
+.lateral {
+  display: flex;
+  justify-content: flex-end;
 }
 
 .ajuda {
@@ -298,13 +225,74 @@ td {
   line-height: 1.35;
 }
 
-@media (max-width: 560px) {
-  .rotulo-passo span {
-    display: none;
-  }
 
-  .rotulo-passo strong {
-    font-size: 12px;
-  }
+
+.passos {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  margin-bottom: 14px;
 }
 
+.passo {
+  align-items: center;
+  background: #fff;
+  border: 1px solid #d3bea0;
+  border-radius: 8px;
+  color: #384358;
+  cursor: pointer;
+  display: flex;
+  gap: 10px;
+  padding: 12px;
+  text-align: left;
+}
+
+.passo span {
+  align-items: center;
+  background: #f5efe6;
+  border-radius: 999px;
+  display: flex;
+  font-weight: 700;
+  height: 28px;
+  justify-content: center;
+  width: 28px;
+}
+
+.passo.ativo {
+  border-color: #b9152b;
+  color: #161e2f;
+}
+
+.passo.ativo span,
+.passo.concluido span {
+  background: #b9152b;
+  color: #fff;
+}
+
+.resumo-etapa,
+.revisao {
+  display: grid;
+  gap: 10px;
+}
+
+.resumo-etapa,
+.revisao div {
+  background: #f5efe6;
+  border: 1px solid #eadfce;
+  border-radius: 8px;
+  padding: 12px;
+}
+
+.resumo-etapa span,
+.revisao span {
+  color: #687386;
+  display: block;
+  font-size: 12px;
+  margin-bottom: 4px;
+}
+
+@media (max-width: 760px) {
+  .passos {
+    grid-template-columns: 1fr;
+  }
+}

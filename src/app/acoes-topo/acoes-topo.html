@@ -1,0 +1,15 @@
+<div class="acoes-topo">
+  <app-notificacoes></app-notificacoes>
+
+  <details class="menu-acesso">
+    <summary class="botao-menu" aria-label="Abrir menu de navegação">
+      {{ perfilSessao }}
+    </summary>
+
+    <nav class="opcoes-menu" aria-label="Menu da sessão">
+      <a [routerLink]="destinoSessao">{{ perfilSessao }}</a>
+      <button type="button" (click)="abrirConfiguracoes()">Configuração</button>
+      <button class="sair" type="button" (click)="sair()">Sair</button>
+    </nav>
+  </details>
+</div>

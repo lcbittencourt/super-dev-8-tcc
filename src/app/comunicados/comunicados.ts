@@ -1,10 +1,10 @@
 import { Component } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { AcoesTopoComponent } from '../acoes-topo/acoes-topo';
 
 @Component({
   selector: 'app-comunicados',
   standalone: true,
-  imports: [RouterLink],
+  imports: [AcoesTopoComponent],
   templateUrl: './comunicados.html',
   styleUrl: './comunicados.css',
 })

@@ -2,6 +2,8 @@ import { isPlatformBrowser } from '@angular/common';
 import { Component, Inject, OnInit, PLATFORM_ID } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
+import { ApiPulsoService } from '../servicos/api-pulso.service';
+import { AcoesTopoComponent } from '../acoes-topo/acoes-topo';
 interface EmpresaGestor {
   id: string;
   nome: string;
@@ -20,6 +22,12 @@ interface Resumo {
   titulo: string;
   valor: string;
   nota: string;
+}
+
+interface ModuloGestor {
+  id?: string;
+  nome?: string;
+  liberado?: boolean;
 }
 
 interface BarraGrafico {
@@ -69,6 +77,7 @@ interface FeriasGestor {
 }
 
 interface ChamadoGestor {
+  id?: string;
   numero?: string;
   titulo?: string;
   categoria?: string;
@@ -108,7 +117,7 @@ interface CursoColaboradorGestor {
 @Component({
   selector: 'app-gestor',
   standalone: true,
-  imports: [RouterLink],
+  imports: [RouterLink, AcoesTopoComponent],
   templateUrl: './gestor.html',
   styleUrl: './gestor.css',
 })
@@ -132,6 +141,7 @@ export class GestorComponent implements OnInit {
   cursos: CursoGestor[] = [];
   acompanhamentos: AcompanhamentoGestor[] = [];
   cursosColaborador: CursoColaboradorGestor[] = [];
+  modulosGestor: ModuloGestor[] = [];
 
   indicadores: Indicador[] = [];
   resumos: Resumo[] = [];
@@ -139,7 +149,10 @@ export class GestorComponent implements OnInit {
   chamadosPorCategoria: BarraGrafico[] = [];
   aprovacoes: Aprovacao[] = [];
 
-  constructor(@Inject(PLATFORM_ID) private platformId: object) {}
+  constructor(
+    private api: ApiPulsoService,
+    @Inject(PLATFORM_ID) private platformId: object,
+  ) {}
 
   ngOnInit() {
     this.mesAtual = this.nomeMesAtual();
@@ -150,6 +163,7 @@ export class GestorComponent implements OnInit {
     }
 
     this.carregarEmpresaSelecionada();
+    this.carregarModulosGestor();
     this.carregarDadosDaEmpresa();
     this.atualizarPainel();
   }
@@ -162,8 +176,94 @@ export class GestorComponent implements OnInit {
     this.menuAberto = false;
   }
 
+  chamadosParaAprovacao(): ChamadoGestor[] {
+    return this.chamados.filter((chamado) => this.chamadoAguardandoAprovacao(chamado));
+  }
+
+  identificarChamado(chamado: ChamadoGestor): string {
+    return chamado.id || chamado.numero || chamado.titulo || '-';
+  }
+
+  aprovarChamado(chamado: ChamadoGestor) {
+    this.atualizarSituacaoChamado(chamado, 'Em análise');
+  }
+
+  iniciarAtendimentoChamado(chamado: ChamadoGestor) {
+    this.atualizarSituacaoChamado(chamado, 'Em andamento');
+  }
+
+  reprovarChamado(chamado: ChamadoGestor) {
+    const confirmar = confirm('Deseja reprovar/cancelar este chamado?');
+
+    if (!confirmar) {
+      return;
+    }
+
+    this.atualizarSituacaoChamado(chamado, 'Cancelado');
+  }
+
+  moduloLiberado(id: string): boolean {
+    if (!this.modulosGestor.length) {
+      return true;
+    }
+
+    const idControle = this.normalizarIdModulo(id);
+    const modulo = this.modulosGestor.find(
+      (item) => this.normalizarIdModulo(item.id || item.nome || '') === idControle,
+    );
+
+    return modulo ? Boolean(modulo.liberado) : true;
+  }
+
   iniciaisEmpresa(): string {
     return this.empresa.logo || this.iniciais(this.empresa.nome || 'Empresa');
+  }
+
+  private carregarModulosGestor() {
+    this.carregarModulosGestorLocais();
+
+    this.api.listarModulosEmpresa(this.empresa.id).subscribe({
+      next: (modulos) => {
+        this.modulosGestor = modulos.map((modulo) => ({
+          id: modulo.id,
+          nome: modulo.nome,
+          liberado: modulo.liberado,
+        }));
+        this.salvarModulosGestorLocais();
+      },
+      error: () => undefined,
+    });
+  }
+
+  private carregarModulosGestorLocais() {
+    const modulos = this.lerJson('modulos:' + this.empresa.id, []);
+
+    this.modulosGestor = Array.isArray(modulos) ? modulos : [];
+  }
+
+  private salvarModulosGestorLocais() {
+    if (!this.estaNoNavegador()) {
+      return;
+    }
+
+    localStorage.setItem('modulos:' + this.empresa.id, JSON.stringify(this.modulosGestor));
+  }
+
+  private normalizarIdModulo(valor: string): string {
+    const texto = valor
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .toLowerCase()
+      .trim();
+    const mapa: Record<string, string> = {
+      'colaboradores e departamentos': 'colaboradores',
+      departamentos: 'colaboradores',
+      'controle de ponto': 'controle-ponto',
+      'ferias e afastamentos': 'ferias',
+      relatorios: 'relatorios',
+    };
+
+    return mapa[texto] || texto.replace(/\s+/g, '-');
   }
 
   private carregarEmpresaSelecionada() {
@@ -313,7 +413,7 @@ export class GestorComponent implements OnInit {
   }
 
   private pendenciasGestor(): number {
-    return this.feriasPendentes() + this.treinamentosPendentes() + this.chamadosUrgentes();
+    return this.feriasPendentes() + this.treinamentosPendentes() + this.chamadosParaAprovacao().length;
   }
 
   private feriasPendentes(): number {
@@ -458,6 +558,38 @@ export class GestorComponent implements OnInit {
   private chamadoAberto(chamado: ChamadoGestor): boolean {
     const situacao = chamado.situacao || chamado.status || '';
     return !['Resolvido', 'Cancelado'].includes(situacao);
+  }
+
+  private chamadoAguardandoAprovacao(chamado: ChamadoGestor): boolean {
+    const situacao = chamado.situacao || chamado.status || 'Aberto';
+    return ['Aberto', 'Reaberto'].includes(situacao);
+  }
+
+  private atualizarSituacaoChamado(chamado: ChamadoGestor, situacao: string) {
+    const id = this.identificarChamado(chamado);
+
+    this.chamados = this.chamados.map((item) =>
+      this.identificarChamado(item) === id
+        ? {
+            ...item,
+            situacao,
+            status: situacao,
+            responsavel: this.gestor,
+            ultimaAtualizacao: this.dataHoje(),
+          }
+        : item,
+    );
+
+    this.salvarChamados();
+    this.atualizarPainel();
+  }
+
+  private salvarChamados() {
+    if (!this.estaNoNavegador()) {
+      return;
+    }
+
+    localStorage.setItem('chamados:' + this.empresa.id, JSON.stringify(this.chamados));
   }
 
   private lerArray(chave: string): any[] {

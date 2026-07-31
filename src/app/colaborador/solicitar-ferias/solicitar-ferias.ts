@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import { AcoesTopoComponent } from '../../acoes-topo/acoes-topo';
 
 interface SolicitacaoFerias {
   id: number;
@@ -15,7 +16,7 @@ interface SolicitacaoFerias {
 @Component({
   selector: 'app-solicitar-ferias',
   standalone: true,
-  imports: [CommonModule, RouterLink, FormsModule],
+  imports: [CommonModule, RouterLink, FormsModule, AcoesTopoComponent],
   templateUrl: './solicitar-ferias.html',
   styleUrl: './solicitar-ferias.css',
 })

@@ -10,13 +10,7 @@
 
     <span class="etiqueta-perfil">Férias</span>
 
-    <nav class="navegacao">
-      <a routerLink="/admin">Admin</a>
-      <a routerLink="/gestor">Gestor</a>
-      <a routerLink="/colaborador">Colaborador</a>
-    </nav>
-
-    <div class="identificacao">{{ empresaSelecionada.logo }}</div>
+    <app-acoes-topo [iniciais]="empresaSelecionada.logo"></app-acoes-topo>
   </header>
 
   <main class="pagina">
@@ -31,20 +25,57 @@
       <section class="grade-painel">
         <article class="metrica">
           <span>Solicitações Pendentes</span>
-          <strong>1</strong>
+          <strong>{{ pendentes() }}</strong>
         </article>
         <article class="metrica">
           <span>Colaboradores de férias</span>
-          <strong>1</strong>
+          <strong>{{ colaboradoresEmFerias().length }}</strong>
         </article>
         <article class="metrica">
           <span>Retornam esta semana</span>
-          <strong>1</strong>
+          <strong>{{ retornamEstaSemana() }}</strong>
         </article>
         <article class="metrica">
           <span>Próximas férias</span>
-          <strong>2</strong>
+          <strong>{{ proximasFerias().length }}</strong>
         </article>
+      </section>
+      <section class="cartao">
+        <div class="cabecalho-cartao">
+          <div>
+            <h2>Colaboradores cadastrados</h2>
+          </div>
+        </div>
+        <div class="tabela simples">
+          <table>
+            <thead>
+              <tr>
+                <th>Colaborador</th>
+                <th>Departamento</th>
+                <th>Cargo</th>
+                <th>Situação</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (colaborador of colaboradoresCadastrados(); track colaborador) {
+                <tr>
+                  <td>{{ colaborador.nome }}</td>
+                  <td>{{ colaborador.departamento }}</td>
+                  <td>{{ colaborador.cargo || '-' }}</td>
+                  <td>
+                    <span class="selo">{{ colaborador.situacao || 'Ativo' }}</span>
+                  </td>
+                </tr>
+              }
+
+              @if (colaboradoresCadastrados().length === 0) {
+                <tr>
+                  <td colspan="4">Nenhum colaborador cadastrado para esta empresa.</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
       </section>
       <section class="cartao">
         <div class="cabecalho-cartao">
@@ -113,62 +144,6 @@
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td>Ana Lima</td>
-                <td>Produção</td>
-                <td>14/07 a 28/07/2025</td>
-                <td>15</td>
-                <td>02/06/2025</td>
-                <td><span class="selo">Pendente</span></td>
-                <td>
-                  <button class="acao-texto" type="button">Aprovar / Reprovar</button>
-                </td>
-              </tr>
-              <tr>
-                <td>Bruno Souza</td>
-                <td>Administrativo</td>
-                <td>01/09 a 10/09/2025</td>
-                <td>10</td>
-                <td>28/05/2025</td>
-                <td><span class="selo">Aprovada</span></td>
-                <td>
-                  <button class="acao-texto" type="button">Visualizar</button>
-                </td>
-              </tr>
-              <tr>
-                <td>Carla Dias</td>
-                <td>Financeiro</td>
-                <td>05/05 a 24/05/2025</td>
-                <td>20</td>
-                <td>10/04/2025</td>
-                <td><span class="selo">Aprovada</span></td>
-                <td>
-                  <button class="acao-texto" type="button">Visualizar</button>
-                </td>
-              </tr>
-              <tr>
-                <td>Diego Alves</td>
-                <td>Produção</td>
-                <td>20/01 a 29/01/2025</td>
-                <td>10</td>
-                <td>15/12/2024</td>
-                <td><span class="selo">Reprovada</span></td>
-                <td>
-                  <button class="acao-texto" type="button">Visualizar</button>
-                </td>
-              </tr>
-              <tr>
-                <td>Elaine Rocha</td>
-                <td>Recursos Humanos</td>
-                <td>22/12 a 26/12/2025</td>
-                <td>5</td>
-                <td>02/06/2025</td>
-                <td><span class="selo">Cancelada</span></td>
-                <td>
-                  <button class="acao-texto" type="button">Visualizar</button>
-                </td>
-              </tr>
-
               @for (solicitacao of solicitacoesFiltradas(); track solicitacao) {
                 <tr>
                   <td>{{ solicitacao.colaborador }}</td>
@@ -190,6 +165,12 @@
                       }}
                     </button>
                   </td>
+                </tr>
+              }
+
+              @if (solicitacoesFiltradas().length === 0) {
+                <tr>
+                  <td colspan="7">Nenhuma solicitação encontrada.</td>
                 </tr>
               }
             </tbody>
@@ -257,22 +238,6 @@
             </div>
           </div>
           <div class="lista-cartoes">
-            <div class="cartao-pessoa">
-              <strong>Carla Dias</strong>
-              <span>Financeiro</span>
-              <span>05/05/2025</span>
-              <span>Retorna em 24/05/2025</span>
-              <small>8 dias restantes</small>
-            </div>
-
-            <div class="cartao-pessoa">
-              <strong>Marcos Vinícius</strong>
-              <span>Logística</span>
-              <span>12/05/2025</span>
-              <span>Retorna em 26/05/2025</span>
-              <small>10 dias restantes</small>
-            </div>
-
             @for (pessoa of colaboradoresEmFerias(); track pessoa) {
               <div class="cartao-pessoa">
                 <strong>{{ pessoa.colaborador }}</strong>
@@ -282,32 +247,32 @@
                 <small>{{ diasRestantesFerias(pessoa) }} dias restantes</small>
               </div>
             }
+
+            @if (colaboradoresEmFerias().length === 0) {
+              <div class="cartao-pessoa">
+                <strong>Nenhum colaborador em férias</strong>
+                <span>0 registros ativos</span>
+              </div>
+            }
           </div>
         </article>
       </section>
       <section class="duas-colunas">
         <article class="cartao">
           <h2>Próximas férias</h2>
-          <div class="cartao-pessoa">
-            <strong>Ana Lima</strong>
-            <span>Começa em 30 dias</span>
-            <span>Produção</span>
-            <small>15 dias</small>
-          </div>
-
-          <div class="cartao-pessoa">
-            <strong>Bruno Souza</strong>
-            <span>Começa em 75 dias</span>
-            <span>Administrativo</span>
-            <small>10 dias</small>
-          </div>
-
           @for (pessoa of proximasFerias(); track pessoa) {
             <div class="cartao-pessoa">
               <strong>{{ pessoa.colaborador }}</strong>
               <span>Começa em {{ diasParaInicio(pessoa) }} dias</span>
               <span>{{ pessoa.departamento }}</span>
               <small>{{ pessoa.dias }} dias</small>
+            </div>
+          }
+
+          @if (proximasFerias().length === 0) {
+            <div class="cartao-pessoa">
+              <strong>Nenhuma próxima férias</strong>
+              <span>0 registros programados</span>
             </div>
           }
         </article>
@@ -325,28 +290,6 @@
                 </tr>
               </thead>
               <tbody>
-                <tr>
-                  <td>Diego Alves</td>
-                  <td>10 dias</td>
-                  <td>Aprovada</td>
-                  <td>Marcos Andrade</td>
-                  <td>10/12/2024</td>
-                </tr>
-                <tr>
-                  <td>Elaine Rocha</td>
-                  <td>20 dias</td>
-                  <td>Aprovada</td>
-                  <td>Diretoria</td>
-                  <td>15/11/2024</td>
-                </tr>
-                <tr>
-                  <td>Ana Lima</td>
-                  <td>12 dias</td>
-                  <td>Aprovada</td>
-                  <td>Marcos Andrade</td>
-                  <td>03/07/2024</td>
-                </tr>
-
                 @for (item of historico(); track item) {
                   <tr>
                     <td>{{ item.colaborador }}</td>
@@ -354,6 +297,12 @@
                     <td>{{ item.situacao }}</td>
                     <td>{{ item.aprovador || '-' }}</td>
                     <td>{{ formatarData(item.dataAprovacao) }}</td>
+                  </tr>
+                }
+
+                @if (historico().length === 0) {
+                  <tr>
+                    <td colspan="5">Nenhum histórico cadastrado.</td>
                   </tr>
                 }
               </tbody>
@@ -393,26 +342,61 @@
           <h2>Nova solicitação</h2>
           <form class="formulario" (ngSubmit)="enviarSolicitacao()">
             <label>
-              Data início
-              <input type="date" [(ngModel)]="novaSolicitacao.inicio" name="inicio" />
+              Férias fracionadas
+              <select [(ngModel)]="novaSolicitacao.fracionar" name="fracionar" (change)="atualizarFracionamento()">
+                <option>Não</option>
+                <option>Sim</option>
+              </select>
             </label>
-            <label>
-              Quantidade de dias
-              <input
-                type="number"
-                min="0"
-                [max]="saldoFerias()"
-                [(ngModel)]="novaSolicitacao.dias"
-                name="dias"
-              />
-            </label>
+
+            @if (novaSolicitacao.fracionar === 'Não') {
+              <label>
+                Data início
+                <input type="date" [(ngModel)]="novaSolicitacao.inicio" name="inicio" />
+              </label>
+              <label>
+                Quantidade de dias
+                <input type="number" min="0" [max]="saldoFerias()" [(ngModel)]="novaSolicitacao.dias" name="dias" />
+              </label>
+            }
+
+            @if (novaSolicitacao.fracionar === 'Sim') {
+              <div class="campo-inteiro periodos-fracionados">
+                <div class="cabecalho-periodos">
+                  <strong>Períodos fracionados</strong>
+                  <button class="botao" type="button" (click)="adicionarPeriodoFerias()">Adicionar período</button>
+                </div>
+
+                @for (periodo of novaSolicitacao.periodos; track periodo; let indice = $index) {
+                  <div class="linha-periodo">
+                    <label>
+                      Início
+                      <input type="date" [(ngModel)]="periodo.inicio" [name]="'periodoInicio' + indice" />
+                    </label>
+                    <label>
+                      Dias
+                      <input type="number" min="5" [(ngModel)]="periodo.dias" [name]="'periodoDias' + indice" />
+                    </label>
+                    <button class="botao perigo" type="button" (click)="removerPeriodoFerias(indice)">Remover</button>
+                  </div>
+                }
+              </div>
+            }
+
             <label>
               Abono pecuniário
               <select [(ngModel)]="novaSolicitacao.abono" name="abono">
-                <option>Sim</option>
                 <option>Não</option>
+                <option>Sim</option>
               </select>
             </label>
+
+            @if (novaSolicitacao.abono === 'Sim') {
+              <label>
+                Dias de abono
+                <input type="number" min="0" [max]="maximoAbono()" [(ngModel)]="novaSolicitacao.diasAbono" name="diasAbono" />
+              </label>
+            }
             <label>
               Substituto
               <select [(ngModel)]="novaSolicitacao.substituto" name="substituto">
@@ -440,8 +424,10 @@
             <strong>{{ formatarData(novaSolicitacao.inicio) }}</strong>
             <span>Retornará</span>
             <strong>{{ formatarData(calcularRetorno()) }}</strong>
-            <span>{{ novaSolicitacao.dias }} dias</span>
+            <span>{{ totalDiasFeriasSolicitados() }} dias de férias</span>
+            <strong>Abono: {{ diasAbonoSelecionados() }} dia(s)</strong>
             <strong>Saldo restante: {{ saldoRestante() }} dias</strong>
+            <small>{{ periodoDescricao() }}</small>
           </div>
           <h2>Andamento</h2>
           <div class="linha-tempo">
@@ -496,6 +482,11 @@
             Você possui <strong>{{ saldoFerias() }} dias disponíveis</strong>.
           </p>
           <p>Período aquisitivo não cadastrado.</p>
+          <div class="regras-ferias">
+            @for (regra of regrasFerias(); track regra) {
+              <span>{{ regra }}</span>
+            }
+          </div>
           <div class="fluxo">
             <span>Colaborador</span>
             <span>Solicita férias</span>
