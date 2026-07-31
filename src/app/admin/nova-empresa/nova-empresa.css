@@ -51,9 +51,10 @@ p {
   justify-content: flex-end;
 }
 
-h2 {
-  margin: 0 0 20px;
-  font-size: 16px;
+.ajuda {
+  margin: 0 0 6px;
+  color: #5f6b7a;
+  font-size: 14px;
 }
 
 label {
@@ -104,8 +105,9 @@ input {
 
 .acoes-rodape {
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
   gap: 10px;
+  margin-top: 24px;
 }
 
 .botao {

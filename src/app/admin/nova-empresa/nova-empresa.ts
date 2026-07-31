@@ -26,6 +26,15 @@ export class NovaEmpresaComponent implements OnInit {
     { numero: 4, titulo: 'Revisão' },
   ];
 
+  passoAtual = 1;
+  totalPassos = 3;
+
+  passos = [
+    { numero: 1, titulo: 'Responsável técnico', descricao: 'Contato principal' },
+    { numero: 2, titulo: 'Dados da empresa', descricao: 'Informações cadastrais' },
+    { numero: 3, titulo: 'Plano e contrato', descricao: 'Escolha do plano' },
+  ];
+
   empresa = {
     razaoSocial: '',
     nomeFantasia: '',
