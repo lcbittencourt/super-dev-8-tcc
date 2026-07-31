@@ -1,7 +1,8 @@
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { Component, Inject, OnInit, PLATFORM_ID } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
+import { AcoesTopoComponent } from '../acoes-topo/acoes-topo';
 
 type PerfilFerias = 'gestor' | 'colaborador' | '';
 type SituacaoFerias = 'Pendente' | 'Aprovada' | 'Reprovada' | 'Cancelada' | 'Concluída';
@@ -21,6 +22,11 @@ interface ColaboradorFerias {
   situacao?: string;
 }
 
+interface PeriodoFerias {
+  inicio: string;
+  dias: number;
+}
+
 interface SolicitacaoFerias {
   id: string;
   colaboradorId: string;
@@ -38,6 +44,10 @@ interface SolicitacaoFerias {
   aprovador: string;
   dataAprovacao: string;
   saldoDisponivel: number;
+  fracionada?: boolean;
+  periodos?: PeriodoFerias[];
+  abonoPecuniario?: boolean;
+  diasAbono?: number;
 }
 
 interface DiaCalendario {
@@ -50,7 +60,7 @@ interface DiaCalendario {
 @Component({
   selector: 'app-ferias',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink],
+  imports: [CommonModule, FormsModule, AcoesTopoComponent],
   templateUrl: './ferias.html',
   styleUrl: './ferias.css'
 })
@@ -76,7 +86,13 @@ export class FeriasComponent implements OnInit {
   novaSolicitacao = {
     inicio: '',
     dias: 0,
+    fracionar: 'Não',
     abono: 'Não',
+    diasAbono: 0,
+    periodos: [
+      { inicio: '', dias: 14 },
+      { inicio: '', dias: 5 }
+    ] as PeriodoFerias[],
     substituto: '',
     observacoes: ''
   };
@@ -222,20 +238,29 @@ export class FeriasComponent implements OnInit {
 
   enviarSolicitacao() {
     const colaborador = this.colaboradores[0];
+    const erros = this.validarRegrasSolicitacao();
 
-    if (!colaborador || !this.novaSolicitacao.inicio || Number(this.novaSolicitacao.dias || 0) <= 0) {
-      alert('Informe um colaborador cadastrado, data de início e quantidade de dias.');
+    if (!colaborador) {
+      alert('Informe um colaborador cadastrado.');
       return;
     }
+
+    if (erros.length > 0) {
+      alert(erros.join('\n'));
+      return;
+    }
+
+    const periodos = this.periodosSolicitacaoValidos();
+    const primeiroPeriodo = periodos[0];
 
     const nova: SolicitacaoFerias = {
       id: Date.now().toString(),
       colaboradorId: colaborador.id,
       colaborador: colaborador.nome,
       departamento: colaborador.departamento,
-      inicio: this.novaSolicitacao.inicio,
-      fim: this.calcularRetorno(-1),
-      dias: Number(this.novaSolicitacao.dias || 0),
+      inicio: primeiroPeriodo.inicio,
+      fim: this.calcularFimPeriodo(primeiroPeriodo, -1),
+      dias: this.totalDiasFeriasSolicitados(),
       dataSolicitacao: this.dataHoje(),
       situacao: 'Pendente',
       substituto: this.novaSolicitacao.substituto,
@@ -244,7 +269,11 @@ export class FeriasComponent implements OnInit {
       parecerGestor: '',
       aprovador: '',
       dataAprovacao: '',
-      saldoDisponivel: this.saldoFerias()
+      saldoDisponivel: this.saldoFerias(),
+      fracionada: this.novaSolicitacao.fracionar === 'Sim',
+      periodos,
+      abonoPecuniario: this.novaSolicitacao.abono === 'Sim',
+      diasAbono: this.diasAbonoSelecionados()
     };
 
     this.solicitacoes = [nova, ...this.solicitacoes];
@@ -253,6 +282,13 @@ export class FeriasComponent implements OnInit {
   }
 
   calcularRetorno(ajusteDias = 0): string {
+    if (this.novaSolicitacao.fracionar === 'Sim') {
+      const periodos = this.periodosSolicitacaoValidos();
+      const ultimo = periodos[periodos.length - 1];
+
+      return ultimo ? this.calcularFimPeriodo(ultimo, ajusteDias) : '';
+    }
+
     if (!this.novaSolicitacao.inicio || Number(this.novaSolicitacao.dias || 0) <= 0) {
       return '';
     }
@@ -264,11 +300,13 @@ export class FeriasComponent implements OnInit {
   }
 
   saldoFerias(): number {
-    return 0;
+    return 30;
   }
 
   diasVendidos(): number {
-    return 0;
+    return this.solicitacoes
+      .filter(solicitacao => solicitacao.abonoPecuniario && solicitacao.situacao !== 'Cancelada')
+      .reduce((total, solicitacao) => total + Number(solicitacao.diasAbono || 0), 0);
   }
 
   solicitacoesPendentesColaborador(): number {
@@ -276,7 +314,136 @@ export class FeriasComponent implements OnInit {
   }
 
   saldoRestante(): number {
-    return Math.max(this.saldoFerias() - Number(this.novaSolicitacao.dias || 0), 0);
+    return Math.max(
+      this.saldoFerias() - this.totalDiasFeriasSolicitados() - this.diasAbonoSelecionados(),
+      0
+    );
+  }
+
+  totalDiasFeriasSolicitados(): number {
+    return this.periodosSolicitacaoValidos().reduce(
+      (total, periodo) => total + Number(periodo.dias || 0),
+      0
+    );
+  }
+
+  diasAbonoSelecionados(): number {
+    return this.novaSolicitacao.abono === 'Sim'
+      ? Number(this.novaSolicitacao.diasAbono || 0)
+      : 0;
+  }
+
+  maximoAbono(): number {
+    return Math.min(10, Math.floor(this.saldoFerias() / 3));
+  }
+
+  periodoDescricao(): string {
+    const periodos = this.periodosSolicitacaoValidos();
+
+    if (periodos.length === 0) {
+      return '-';
+    }
+
+    return periodos
+      .map((periodo, indice) => 'Período ' + (indice + 1) + ': ' + this.formatarData(periodo.inicio) + ' · ' + periodo.dias + ' dias')
+      .join(' | ');
+  }
+
+  atualizarFracionamento() {
+    if (this.novaSolicitacao.fracionar === 'Não') {
+      this.novaSolicitacao.periodos = [
+        { inicio: this.novaSolicitacao.inicio, dias: Number(this.novaSolicitacao.dias || 0) }
+      ];
+      return;
+    }
+
+    if (this.novaSolicitacao.periodos.length === 0) {
+      this.novaSolicitacao.periodos = [{ inicio: '', dias: 14 }, { inicio: '', dias: 5 }];
+    }
+  }
+
+  adicionarPeriodoFerias() {
+    if (this.novaSolicitacao.periodos.length >= 3) {
+      alert('As férias podem ser fracionadas em no máximo 3 períodos.');
+      return;
+    }
+
+    this.novaSolicitacao.periodos.push({ inicio: '', dias: 5 });
+  }
+
+  removerPeriodoFerias(indice: number) {
+    if (this.novaSolicitacao.periodos.length <= 1) {
+      return;
+    }
+
+    this.novaSolicitacao.periodos.splice(indice, 1);
+  }
+
+  validarRegrasSolicitacao(): string[] {
+    const erros: string[] = [];
+    const periodos = this.periodosSolicitacaoValidos();
+    const totalDias = this.totalDiasFeriasSolicitados();
+    const diasAbono = this.diasAbonoSelecionados();
+
+    if (periodos.length === 0 || totalDias <= 0) {
+      erros.push('Informe ao menos um período de férias.');
+    }
+
+    if (this.novaSolicitacao.fracionar === 'Sim') {
+      if (periodos.length > 3) {
+        erros.push('As férias fracionadas podem ter no máximo 3 períodos.');
+      }
+
+      if (!periodos.some(periodo => Number(periodo.dias || 0) >= 14)) {
+        erros.push('Nas férias fracionadas, um dos períodos precisa ter pelo menos 14 dias.');
+      }
+
+      if (periodos.some(periodo => Number(periodo.dias || 0) < 5)) {
+        erros.push('Nas férias fracionadas, os demais períodos precisam ter pelo menos 5 dias.');
+      }
+    }
+
+    if (diasAbono > this.maximoAbono()) {
+      erros.push('O abono pecuniário pode ser de no máximo ' + this.maximoAbono() + ' dias.');
+    }
+
+    if (totalDias + diasAbono > this.saldoFerias()) {
+      erros.push('A soma de férias e abono não pode ultrapassar o saldo disponível.');
+    }
+
+    return erros;
+  }
+
+  regrasFerias(): string[] {
+    return [
+      'Férias fracionadas: até 3 períodos.',
+      'Um período deve ter no mínimo 14 dias.',
+      'Os demais períodos devem ter no mínimo 5 dias.',
+      'Abono pecuniário: venda de até 1/3 do saldo, limitado a ' + this.maximoAbono() + ' dias.'
+    ];
+  }
+
+  calcularFimPeriodo(periodo: PeriodoFerias, ajusteDias = 0): string {
+    if (!periodo.inicio || Number(periodo.dias || 0) <= 0) {
+      return '';
+    }
+
+    const data = new Date(periodo.inicio + 'T00:00:00');
+    data.setDate(data.getDate() + Number(periodo.dias || 0) + ajusteDias);
+
+    return data.toISOString().slice(0, 10);
+  }
+
+  private periodosSolicitacaoValidos(): PeriodoFerias[] {
+    if (this.novaSolicitacao.fracionar === 'Não') {
+      return this.novaSolicitacao.inicio && Number(this.novaSolicitacao.dias || 0) > 0
+        ? [{ inicio: this.novaSolicitacao.inicio, dias: Number(this.novaSolicitacao.dias || 0) }]
+        : [];
+    }
+
+    return this.novaSolicitacao.periodos
+      .filter(periodo => periodo.inicio && Number(periodo.dias || 0) > 0)
+      .map(periodo => ({ inicio: periodo.inicio, dias: Number(periodo.dias || 0) }));
   }
 
   diasRestantesFerias(solicitacao: SolicitacaoFerias): number {

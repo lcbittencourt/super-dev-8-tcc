@@ -1,0 +1,37 @@
+<details class="notificacoes" #painelNotificacoes>
+  <summary class="botao-sino" aria-label="Abrir notificações">
+    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9" />
+      <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+    </svg>
+    <span>{{ totalAvisos() }}</span>
+  </summary>
+
+  <section class="painel-notificacoes">
+    <div class="cabecalho-notificacoes">
+      <strong>Avisos</strong>
+      <small>{{ totalAvisos() }} item(ns)</small>
+    </div>
+
+    @for (aviso of avisos; track aviso.titulo) {
+      <a
+        class="aviso"
+        [class.alerta]="aviso.tipo === 'alerta'"
+        [class.sucesso]="aviso.tipo === 'sucesso'"
+        [routerLink]="aviso.rota"
+        [queryParams]="aviso.parametros || null"
+        (click)="marcarComoLida(aviso); painelNotificacoes.open = false"
+      >
+        <strong>{{ aviso.titulo }}</strong>
+        <span>{{ aviso.detalhe }}</span>
+        <small>Abrir página</small>
+      </a>
+    }
+
+    @if (avisos.length === 0) {
+      <div class="sem-avisos">
+        Nenhuma notificação pendente.
+      </div>
+    }
+  </section>
+</details>

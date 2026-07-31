@@ -18,9 +18,12 @@ import { FornecedoresComponent } from './fornecedores/fornecedores';
 import { Comunicados } from './comunicados/comunicados';
 import { Eventos } from './eventos/eventos';
 import { Relatorios } from './relatorios/relatorios';
+import { DepartamentosComponent } from './departamentos/departamentos';
+import { LoginInicialComponent } from './login-inicial/login-inicial';
 
 export const routes: Routes = [
-    { path: '', redirectTo: 'admin', pathMatch: 'full' },
+    { path: '', component: LoginInicialComponent },
+    { path: 'login', component: LoginInicialComponent },
     { path: 'admin', component: AdminComponent },
     { path: 'dashboard', component: DashboardComponent },
     { path: 'gestor', component: GestorComponent },
@@ -37,6 +40,7 @@ export const routes: Routes = [
     { path: 'ferias', component: FeriasComponent },
     { path: 'treinamentos', component: TreinamentosComponent },
     { path: 'fornecedores', component: FornecedoresComponent },
+    { path: 'departamentos', component: DepartamentosComponent },
     { path: 'comunicados', component: Comunicados },
     { path: 'eventos', component: Eventos },
     { path: 'relatorios', component: Relatorios },

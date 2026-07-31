@@ -14,6 +14,34 @@ carregarVariaveisAmbiente();
 const app = express();
 let conexaoSql;
 
+const MODULOS_PADRAO = [
+  { id: 'dashboard', nome: 'Dashboard', descricao: 'Painel geral com indicadores', ordem: 1 },
+  {
+    id: 'colaboradores',
+    nome: 'Colaboradores e departamentos',
+    descricao: 'Cadastro de pessoas, áreas e responsáveis',
+    ordem: 2,
+  },
+  {
+    id: 'controle-ponto',
+    nome: 'Controle de ponto',
+    descricao: 'Jornada, banco de horas e exceções',
+    ordem: 3,
+  },
+  {
+    id: 'ferias',
+    nome: 'Férias e afastamentos',
+    descricao: 'Solicitações, aprovações e calendário',
+    ordem: 4,
+  },
+  { id: 'treinamentos', nome: 'Treinamentos', descricao: 'NRs, compliance e capacitações', ordem: 5 },
+  { id: 'chamados', nome: 'Chamados', descricao: 'TI, manutenção e atendimento interno', ordem: 6 },
+  { id: 'comunicados', nome: 'Comunicados', descricao: 'Mural e avisos corporativos', ordem: 7 },
+  { id: 'eventos', nome: 'Eventos', descricao: 'Confraternizações e datas importantes', ordem: 8 },
+  { id: 'fornecedores', nome: 'Fornecedores', descricao: 'Cadastro e contratos', ordem: 9 },
+  { id: 'relatorios', nome: 'Relatórios', descricao: 'Exportações e análises customizadas', ordem: 10 },
+];
+
 app.use(express.json({ limit: '10mb' }));
 app.use((req, res, next) => {
   const origem = req.headers.origin;
@@ -70,6 +98,7 @@ app.get('/api/status-banco', async (req, res) => {
 app.get('/api/empresas', async (req, res) => {
   try {
     const sql = await obterSql();
+    await garantirModulosSistema(sql);
     const empresas = await sql`
       select
         e.*,
@@ -83,9 +112,12 @@ app.get('/api/empresas', async (req, res) => {
       ) c on c.empresa_id = e.id
       left join (
         select empresa_id, count(*) as total
-        from empresa_modulos
-        where liberado = true
-        group by empresa_id
+        from empresa_modulos em
+        join modulos_sistema ms
+          on ms.id = em.modulo_id
+          and ms.ativo = true
+        where em.liberado = true
+        group by em.empresa_id
       ) m on m.empresa_id = e.id
       order by e.nome
     `;
@@ -99,6 +131,7 @@ app.get('/api/empresas', async (req, res) => {
 app.get('/api/empresas/:id', async (req, res) => {
   try {
     const sql = await obterSql();
+    await garantirModulosSistema(sql);
     const empresa = await buscarEmpresaPorId(sql, req.params.id);
 
     if (!empresa) {
@@ -264,6 +297,8 @@ app.put('/api/empresas/:id/modulos', async (req, res) => {
       return;
     }
 
+    await garantirModulosSistema(sql);
+
     for (const modulo of modulos) {
       await sql`
         insert into empresa_modulos (empresa_id, modulo_id, liberado)
@@ -400,6 +435,117 @@ app.delete('/api/colaboradores/:id', async (req, res) => {
 
     if (excluido.length === 0) {
       res.status(404).json({ mensagem: 'Colaborador nao encontrado.' });
+      return;
+    }
+
+    res.status(204).end();
+  } catch (erro) {
+    responderErro(res, erro);
+  }
+});
+
+app.get('/api/departamentos', async (req, res) => {
+  try {
+    const sql = await obterSql();
+    const empresaId = textoLimpo(req.query.empresaId);
+
+    if (!empresaId) {
+      res.status(400).json({ mensagem: 'Informe o empresaId.' });
+      return;
+    }
+
+    const departamentos = await sql`
+      select *
+      from departamentos
+      where empresa_id = ${empresaId}
+      order by nome
+    `;
+
+    res.json(departamentos.map(mapearDepartamentoBanco));
+  } catch (erro) {
+    responderErro(res, erro);
+  }
+});
+
+app.post('/api/departamentos', async (req, res) => {
+  try {
+    const sql = await obterSql();
+    const dados = normalizarDepartamentoEntrada(req.body);
+
+    if (!dados.empresaId || !dados.nome) {
+      res.status(400).json({ mensagem: 'Informe empresa e nome do departamento.' });
+      return;
+    }
+
+    const departamento = await sql`
+      insert into departamentos (
+        id,
+        empresa_id,
+        nome,
+        codigo,
+        responsavel,
+        centro_custo,
+        descricao,
+        situacao
+      ) values (
+        ${dados.id},
+        ${dados.empresaId},
+        ${dados.nome},
+        ${dados.codigo},
+        ${dados.responsavel},
+        ${dados.centroCusto},
+        ${dados.descricao},
+        ${dados.situacao}
+      )
+      returning *
+    `;
+
+    res.status(201).json(mapearDepartamentoBanco(departamento[0]));
+  } catch (erro) {
+    responderErro(res, erro);
+  }
+});
+
+app.put('/api/departamentos/:id', async (req, res) => {
+  try {
+    const sql = await obterSql();
+    const dados = normalizarDepartamentoEntrada({ ...req.body, id: req.params.id });
+
+    const departamento = await sql`
+      update departamentos
+      set
+        nome = ${dados.nome},
+        codigo = ${dados.codigo},
+        responsavel = ${dados.responsavel},
+        centro_custo = ${dados.centroCusto},
+        descricao = ${dados.descricao},
+        situacao = ${dados.situacao}
+      where id = ${req.params.id}
+      returning *
+    `;
+
+    if (departamento.length === 0) {
+      res.status(404).json({ mensagem: 'Departamento nao encontrado.' });
+      return;
+    }
+
+    res.json(mapearDepartamentoBanco(departamento[0]));
+  } catch (erro) {
+    responderErro(res, erro);
+  }
+});
+
+app.delete('/api/departamentos/:id', async (req, res) => {
+  try {
+    const sql = await obterSql();
+    const departamento = await sql`
+      delete from departamentos
+      where id = ${req.params.id}
+      returning id
+    `;
+
+    if (departamento.length === 0) {
+      res.status(404).json({ mensagem: 'Departamento nao encontrado.' });
       return;
     }
 
@@ -1688,9 +1834,12 @@ async function buscarEmpresaPorId(sql, id) {
     ) c on c.empresa_id = e.id
     left join (
       select empresa_id, count(*) as total
-      from empresa_modulos
-      where liberado = true
-      group by empresa_id
+      from empresa_modulos em
+      join modulos_sistema ms
+        on ms.id = em.modulo_id
+        and ms.ativo = true
+      where em.liberado = true
+      group by em.empresa_id
     ) m on m.empresa_id = e.id
     where e.id = ${id}
     limit 1
@@ -1699,7 +1848,29 @@ async function buscarEmpresaPorId(sql, id) {
   return empresas[0] ? mapearEmpresaBanco(empresas[0]) : null;
 }
 
+async function garantirModulosSistema(sql) {
+  for (const modulo of MODULOS_PADRAO) {
+    await sql`
+      insert into modulos_sistema (id, nome, descricao, ordem, ativo)
+      values (${modulo.id}, ${modulo.nome}, ${modulo.descricao}, ${modulo.ordem}, true)
+      on conflict (id) do update set
+        nome = excluded.nome,
+        descricao = excluded.descricao,
+        ordem = excluded.ordem,
+        ativo = excluded.ativo
+    `;
+  }
+
+  await sql`
+    update modulos_sistema
+    set ativo = false
+    where id = 'departamentos'
+  `;
+}
+
 async function garantirModulosEmpresa(sql, empresaId) {
+  await garantirModulosSistema(sql);
+
   const empresa = await buscarEmpresaPorId(sql, empresaId);
 
   if (!empresa) {
@@ -1716,6 +1887,8 @@ async function garantirModulosEmpresa(sql, empresaId) {
 }
 
 async function listarModulosEmpresa(sql, empresaId) {
+  await garantirModulosSistema(sql);
+
   const modulos = await sql`
     select
       m.id,
@@ -1776,6 +1949,19 @@ function normalizarColaboradorEntrada(entrada) {
   };
 }
 
+function normalizarDepartamentoEntrada(entrada) {
+  return {
+    id: textoLimpo(entrada.id) || Date.now().toString(),
+    empresaId: textoLimpo(entrada.empresaId || entrada.empresa_id),
+    nome: textoLimpo(entrada.nome),
+    codigo: textoLimpo(entrada.codigo),
+    responsavel: textoLimpo(entrada.responsavel),
+    centroCusto: textoLimpo(entrada.centroCusto || entrada.centro_custo),
+    descricao: textoLimpo(entrada.descricao),
+    situacao: textoLimpo(entrada.situacao) || 'Ativo',
+  };
+}
+
 function mapearEmpresaBanco(empresa) {
   return {
     id: empresa.id,
@@ -1826,11 +2012,25 @@ function mapearColaboradorBanco(colaborador) {
   };
 }
 
+function mapearDepartamentoBanco(departamento) {
+  return {
+    id: departamento.id,
+    empresaId: departamento.empresa_id,
+    nome: departamento.nome || '',
+    codigo: departamento.codigo || '',
+    responsavel: departamento.responsavel || '',
+    centroCusto: departamento.centro_custo || '',
+    descricao: departamento.descricao || '',
+    situacao: departamento.situacao || 'Ativo',
+  };
+}
+
 function idModulo(modulo) {
   const valor = removerAcentos(String(modulo.id || modulo.nome || '')).toLowerCase();
   const mapa = {
     dashboard: 'dashboard',
     colaboradores: 'colaboradores',
+    departamentos: 'colaboradores',
     'controle de ponto': 'controle-ponto',
     'controle-ponto': 'controle-ponto',
     'ferias e afastamentos': 'ferias',
@@ -1855,7 +2055,7 @@ function limiteModulosPorPlano(plano) {
     return 7;
   }
 
-  return 10;
+  return MODULOS_PADRAO.length;
 }
 
 function textoLimpo(valor) {

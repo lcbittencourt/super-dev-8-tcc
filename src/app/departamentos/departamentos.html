@@ -1,0 +1,194 @@
+<div class="sistema">
+  <header class="barra-superior">
+    <div class="marca">
+      <div class="simbolo-marca">P</div>
+
+      <div>
+        <strong>Pulso<span>.</span></strong>
+      </div>
+    </div>
+
+    <span class="etiqueta-perfil">Departamentos</span>
+
+    <app-acoes-topo [iniciais]="empresaSelecionada.logo"></app-acoes-topo>
+  </header>
+
+  <main class="pagina">
+    <section class="cabecalho-pagina">
+      <div>
+        <h1>Departamentos</h1>
+        <p>Cadastro de áreas, responsáveis e centros de custo da {{ empresaSelecionada.nome }}</p>
+      </div>
+    </section>
+
+    <section class="indicadores">
+      <article class="indicador">
+        <span>Total</span>
+        <strong>{{ departamentos.length }}</strong>
+      </article>
+
+      <article class="indicador">
+        <span>Ativos</span>
+        <strong>{{ totalAtivos() }}</strong>
+      </article>
+
+      <article class="indicador">
+        <span>Inativos</span>
+        <strong>{{ totalInativos() }}</strong>
+      </article>
+    </section>
+
+    <section class="grade">
+      <article class="cartao">
+        <div class="cabecalho-cartao">
+          <div>
+            <h2>{{ modoEdicao ? 'Editar departamento' : 'Cadastrar departamento' }}</h2>
+            <p>Dados usados nos cadastros de colaboradores e relatórios da empresa.</p>
+          </div>
+        </div>
+
+        <form class="formulario" (ngSubmit)="salvarDepartamento()">
+          <label>
+            Nome do departamento
+            <input
+              type="text"
+              name="nome"
+              placeholder="Ex.: Recursos Humanos"
+              [(ngModel)]="departamento.nome"
+            />
+          </label>
+
+          <label>
+            Código
+            <input
+              type="text"
+              name="codigo"
+              placeholder="Ex.: RH"
+              [(ngModel)]="departamento.codigo"
+            />
+          </label>
+
+          <label>
+            Responsável
+            <input
+              type="text"
+              name="responsavel"
+              placeholder="Nome do gestor da área"
+              [(ngModel)]="departamento.responsavel"
+            />
+          </label>
+
+          <label>
+            Centro de custo
+            <input
+              type="text"
+              name="centroCusto"
+              placeholder="Ex.: CC-001"
+              [(ngModel)]="departamento.centroCusto"
+            />
+          </label>
+
+          <label>
+            Situação
+            <select name="situacao" [(ngModel)]="departamento.situacao">
+              <option>Ativo</option>
+              <option>Inativo</option>
+            </select>
+          </label>
+
+          <label class="campo-inteiro">
+            Descrição
+            <textarea
+              name="descricao"
+              rows="4"
+              placeholder="Resumo das atividades do departamento"
+              [(ngModel)]="departamento.descricao"
+            ></textarea>
+          </label>
+
+          <div class="acoes-rodape">
+            @if (modoEdicao) {
+              <button class="botao" type="button" (click)="limparFormulario()">Cancelar</button>
+            }
+
+            <button class="botao principal" type="submit">
+              {{ modoEdicao ? 'Salvar alterações' : 'Cadastrar departamento' }}
+            </button>
+          </div>
+        </form>
+      </article>
+
+      <article class="cartao">
+        <div class="cabecalho-cartao">
+          <div>
+            <h2>Departamentos cadastrados</h2>
+          </div>
+        </div>
+
+        <div class="filtros">
+          <input
+            type="search"
+            placeholder="Pesquisar departamento"
+            [(ngModel)]="termoPesquisa"
+          />
+
+          <select [(ngModel)]="filtroSituacao">
+            <option>Todos</option>
+            <option>Ativo</option>
+            <option>Inativo</option>
+          </select>
+        </div>
+
+        <div class="area-tabela">
+          <table>
+            <thead>
+              <tr>
+                <th>Departamento</th>
+                <th>Código</th>
+                <th>Responsável</th>
+                <th>Centro de custo</th>
+                <th>Situação</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              @for (item of departamentosFiltrados; track item.id) {
+                <tr>
+                  <td>
+                    <strong>{{ item.nome }}</strong>
+                    <small>{{ item.descricao || '-' }}</small>
+                  </td>
+                  <td>{{ item.codigo || '-' }}</td>
+                  <td>{{ item.responsavel || '-' }}</td>
+                  <td>{{ item.centroCusto || '-' }}</td>
+                  <td>
+                    <span class="selo" [class.sucesso]="item.situacao === 'Ativo'">
+                      {{ item.situacao }}
+                    </span>
+                  </td>
+                  <td>
+                    <div class="acoes-tabela">
+                      <button class="acao-texto" type="button" (click)="editarDepartamento(item)">
+                        Editar
+                      </button>
+                      <button class="acao-texto perigo" type="button" (click)="excluirDepartamento(item)">
+                        Excluir
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              }
+
+              @if (departamentosFiltrados.length === 0) {
+                <tr>
+                  <td colspan="6" class="vazio">Nenhum departamento cadastrado.</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </article>
+    </section>
+  </main>
+</div>

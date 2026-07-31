@@ -10,22 +10,19 @@
 
     <span class="etiqueta-perfil">Gestão de pessoas</span>
 
-    <nav class="navegacao">
-      <a routerLink="/admin">Admin</a>
-      <a routerLink="/gestor">Gestor</a>
-      <a routerLink="/colaborador">Colaborador</a>
-    </nav>
-
-    <div class="identificacao">RH</div>
+    <app-acoes-topo [iniciais]="empresaSelecionada.logo"></app-acoes-topo>
   </header>
 
   <main class="pagina">
     <section class="cabecalho-pagina">
       <div>
-        <h1>Colaboradores</h1>
+        <h1>{{ visaoAdmin ? 'Colaboradores e departamentos' : 'Colaboradores' }}</h1>
         <p>
           {{ empresaSelecionada.nome }} · {{ colaboradores.length }} colaboradores cadastrados ·
           {{ contarPorSituacao('Ativo') }} ativos
+          @if (visaoAdmin) {
+            · {{ departamentosCadastrados.length }} departamentos
+          }
         </p>
       </div>
 
@@ -42,30 +39,37 @@
     @if (tela === 'lista') {
       <section class="indicadores">
         <div class="indicador">
-          <span>Total</span>
-          <strong>6</strong>
+          <span>Colaboradores</span>
+          <strong>{{ colaboradores.length }}</strong>
           <small class="positivo">Base atual</small>
         </div>
         <div class="indicador">
           <span>Ativos</span>
-          <strong>3</strong>
+          <strong>{{ contarPorSituacao('Ativo') }}</strong>
           <small class="positivo">Disponíveis</small>
         </div>
         <div class="indicador">
           <span>Férias</span>
-          <strong>1</strong>
+          <strong>{{ contarPorSituacao('Férias') }}</strong>
           <small class="informativo">Programados</small>
         </div>
         <div class="indicador">
           <span>Licença médica</span>
-          <strong>1</strong>
+          <strong>{{ contarPorSituacao('Licença Médica/Atestado') }}</strong>
           <small class="negativo">Atestado</small>
         </div>
         <div class="indicador">
           <span>Inativos</span>
-          <strong>1</strong>
+          <strong>{{ contarPorSituacao('Inativo') }}</strong>
           <small class="negativo">Histórico</small>
         </div>
+        @if (visaoAdmin) {
+          <div class="indicador">
+            <span>Departamentos</span>
+            <strong>{{ departamentosCadastrados.length }}</strong>
+            <small class="positivo">{{ contarDepartamentosPorSituacao('Ativo') }} ativo(s)</small>
+          </div>
+        }
       </section>
       <section class="cartao">
         <div class="cabecalho-cartao">
@@ -370,6 +374,195 @@
           </table>
         </div>
       </section>
+
+      @if (visaoAdmin) {
+        <section class="grade-departamentos">
+          <article class="cartao">
+            <div class="cabecalho-cartao">
+              <div>
+                <h2>{{ modoEdicaoDepartamento ? 'Editar departamento' : 'Cadastrar departamento' }}</h2>
+                <p>Áreas usadas no cadastro dos colaboradores da empresa.</p>
+              </div>
+            </div>
+
+            <form
+              class="formulario-departamento"
+              #formDepartamento="ngForm"
+              (ngSubmit)="salvarDepartamento()"
+            >
+              <label>
+                Nome do departamento
+                <input
+                  type="text"
+                  name="nomeDepartamento"
+                  required
+                  placeholder="Ex.: Recursos Humanos"
+                  [(ngModel)]="departamentoCadastro.nome"
+                />
+              </label>
+
+              <label>
+                Código
+                <input
+                  type="text"
+                  name="codigoDepartamento"
+                  placeholder="Ex.: RH"
+                  [(ngModel)]="departamentoCadastro.codigo"
+                />
+              </label>
+
+              <label>
+                Responsável
+                <input
+                  type="text"
+                  name="responsavelDepartamento"
+                  placeholder="Nome do gestor da área"
+                  [(ngModel)]="departamentoCadastro.responsavel"
+                />
+              </label>
+
+              <label>
+                Centro de custo
+                <input
+                  type="text"
+                  name="centroCustoDepartamento"
+                  placeholder="Ex.: CC-001"
+                  [(ngModel)]="departamentoCadastro.centroCusto"
+                />
+              </label>
+
+              <label>
+                Situação
+                <select name="situacaoDepartamento" [(ngModel)]="departamentoCadastro.situacao">
+                  <option>Ativo</option>
+                  <option>Inativo</option>
+                </select>
+              </label>
+
+              <label class="campo-inteiro">
+                Descrição
+                <textarea
+                  name="descricaoDepartamento"
+                  rows="4"
+                  placeholder="Resumo das atividades do departamento"
+                  [(ngModel)]="departamentoCadastro.descricao"
+                ></textarea>
+              </label>
+
+              <div class="acoes-rodape">
+                @if (modoEdicaoDepartamento) {
+                  <button class="botao" type="button" (click)="limparFormularioDepartamento()">
+                    Cancelar
+                  </button>
+                }
+
+                <button
+                  class="botao principal"
+                  type="submit"
+                  [disabled]="formDepartamento.invalid"
+                >
+                  {{ modoEdicaoDepartamento ? 'Salvar alterações' : 'Cadastrar departamento' }}
+                </button>
+              </div>
+            </form>
+          </article>
+
+          <article class="cartao">
+            <div class="cabecalho-cartao">
+              <div>
+                <h2>Departamentos cadastrados</h2>
+                <p>{{ departamentosFiltrados.length }} resultado(s) encontrados</p>
+              </div>
+            </div>
+
+            <div class="filtros departamentos-filtros">
+              <label>
+                Pesquisa
+                <input
+                  type="search"
+                  placeholder="Pesquisar departamento"
+                  [(ngModel)]="termoPesquisaDepartamento"
+                />
+              </label>
+
+              <label>
+                Situação
+                <select [(ngModel)]="filtroSituacaoDepartamento">
+                  <option>Todos</option>
+                  <option>Ativo</option>
+                  <option>Inativo</option>
+                </select>
+              </label>
+            </div>
+
+            <div class="area-tabela">
+              <table class="tabela-departamentos">
+                <thead>
+                  <tr>
+                    <th>Departamento</th>
+                    <th>Código</th>
+                    <th>Responsável</th>
+                    <th>Centro de custo</th>
+                    <th>Situação</th>
+                    <th>Ações</th>
+                  </tr>
+                </thead>
+
+                <tbody>
+                  @for (departamento of departamentosFiltrados; track departamento.id) {
+                    <tr>
+                      <td>
+                        <strong>{{ departamento.nome }}</strong>
+                        <small>{{ departamento.descricao || '-' }}</small>
+                      </td>
+                      <td>{{ departamento.codigo || '-' }}</td>
+                      <td>{{ departamento.responsavel || '-' }}</td>
+                      <td>{{ departamento.centroCusto || '-' }}</td>
+                      <td>
+                        <span
+                          class="selo"
+                          [class.sucesso]="departamento.situacao === 'Ativo'"
+                          [class.erro]="departamento.situacao === 'Inativo'"
+                        >
+                          {{ departamento.situacao }}
+                        </span>
+                      </td>
+                      <td>
+                        <div class="acoes-linha">
+                          <button
+                            class="botao pequeno icone"
+                            type="button"
+                            title="Editar"
+                            aria-label="Editar"
+                            (click)="editarDepartamento(departamento)"
+                          >
+                            <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9" /><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4Z" /></svg>
+                          </button>
+                          <button
+                            class="botao pequeno perigo icone"
+                            type="button"
+                            title="Excluir"
+                            aria-label="Excluir"
+                            (click)="excluirDepartamento(departamento)"
+                          >
+                            <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18" /><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" /><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" /></svg>
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  }
+
+                  @if (departamentosFiltrados.length === 0) {
+                    <tr>
+                      <td colspan="6" class="vazio">Nenhum departamento cadastrado.</td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+          </article>
+        </section>
+      }
     }
 
     @if (tela === 'cadastro') {

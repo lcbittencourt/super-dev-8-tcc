@@ -1,10 +1,12 @@
 import { isPlatformBrowser } from '@angular/common';
 import { Component, Inject, OnInit, PLATFORM_ID } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { RouterLink } from '@angular/router';
-import { ApiPulsoService } from '../servicos/api-pulso.service';
+import { ActivatedRoute } from '@angular/router';
+import { ApiPulsoService, DepartamentoApi } from '../servicos/api-pulso.service';
 
+import { AcoesTopoComponent } from '../acoes-topo/acoes-topo';
 type SituacaoColaborador = 'Ativo' | 'Inativo' | 'Férias' | 'Licença Médica/Atestado';
+type SituacaoDepartamento = 'Ativo' | 'Inativo';
 type NivelColaborador =
   | 'Não se aplica'
   | 'Junior I'
@@ -33,6 +35,17 @@ interface Colaborador {
   foto: string;
 }
 
+interface Departamento {
+  id: string;
+  empresaId: string;
+  nome: string;
+  codigo: string;
+  responsavel: string;
+  centroCusto: string;
+  descricao: string;
+  situacao: SituacaoDepartamento;
+}
+
 interface EmpresaSelecionada {
   id: string;
   nome: string;
@@ -43,7 +56,7 @@ interface EmpresaSelecionada {
 @Component({
   selector: 'app-colaboradores',
   standalone: true,
-  imports: [FormsModule, RouterLink],
+  imports: [FormsModule, AcoesTopoComponent],
   templateUrl: './colaboradores.html',
   styleUrl: './colaboradores.css',
 })
@@ -56,11 +69,18 @@ export class ColaboradoresComponent implements OnInit {
     logo: 'TV',
   };
   tela: 'lista' | 'cadastro' = 'lista';
+  visaoAdmin = false;
   termoPesquisa = '';
   filtroSituacao = 'Todos';
   filtroDepartamento = 'Todos';
   modoEdicao = false;
   apiDisponivel = false;
+  departamentosCadastrados: Departamento[] = [];
+  departamentoCadastro: Departamento = this.criarDepartamentoVazio();
+  termoPesquisaDepartamento = '';
+  filtroSituacaoDepartamento = 'Todos';
+  modoEdicaoDepartamento = false;
+  apiDepartamentosDisponivel = false;
 
   niveis: NivelColaborador[] = [
     'Não se aplica',
@@ -79,6 +99,7 @@ export class ColaboradoresComponent implements OnInit {
 
   constructor(
     private api: ApiPulsoService,
+    private route: ActivatedRoute,
     @Inject(PLATFORM_ID) private platformId: object,
   ) {}
 
@@ -89,7 +110,9 @@ export class ColaboradoresComponent implements OnInit {
     }
 
     this.carregarEmpresaSelecionada();
+    this.visaoAdmin = this.route.snapshot.queryParamMap.get('visao') === 'admin';
     this.carregarColaboradoresBanco();
+    this.carregarDepartamentosBanco();
   }
 
   get colaboradoresFiltrados(): Colaborador[] {
@@ -121,6 +144,29 @@ export class ColaboradoresComponent implements OnInit {
     return [
       ...new Set(this.colaboradores.map((colaborador) => colaborador.departamento).filter(Boolean)),
     ].sort();
+  }
+
+  get departamentosFiltrados(): Departamento[] {
+    const busca = this.termoPesquisaDepartamento.trim().toLowerCase();
+
+    return this.departamentosCadastrados.filter((departamento) => {
+      const texto = [
+        departamento.nome,
+        departamento.codigo,
+        departamento.responsavel,
+        departamento.centroCusto,
+        departamento.descricao,
+        departamento.situacao,
+      ]
+        .join(' ')
+        .toLowerCase();
+      const combinaPesquisa = !busca || texto.includes(busca);
+      const combinaSituacao =
+        this.filtroSituacaoDepartamento === 'Todos' ||
+        departamento.situacao === this.filtroSituacaoDepartamento;
+
+      return combinaPesquisa && combinaSituacao;
+    });
   }
 
   abrirCadastro() {
@@ -207,12 +253,79 @@ export class ColaboradoresComponent implements OnInit {
     this.voltarLista();
   }
 
+  salvarDepartamento() {
+    const nome = this.departamentoCadastro.nome.trim();
+
+    if (!nome) {
+      alert('Informe o nome do departamento.');
+      return;
+    }
+
+    const departamentoParaSalvar: Departamento = {
+      ...this.departamentoCadastro,
+      empresaId: this.empresaSelecionada.id,
+      nome,
+      codigo: this.departamentoCadastro.codigo.trim() || this.gerarCodigoDepartamento(nome),
+      responsavel: this.departamentoCadastro.responsavel.trim(),
+      centroCusto: this.departamentoCadastro.centroCusto.trim(),
+      descricao: this.departamentoCadastro.descricao.trim(),
+    };
+
+    if (this.apiDepartamentosDisponivel) {
+      const requisicao = this.modoEdicaoDepartamento
+        ? this.api.atualizarDepartamento(departamentoParaSalvar.id, departamentoParaSalvar)
+        : this.api.criarDepartamento(departamentoParaSalvar);
+
+      requisicao.subscribe({
+        next: (departamento) => this.confirmarDepartamentoSalvo(departamento),
+        error: () => this.salvarDepartamentoLocal(departamentoParaSalvar),
+      });
+      return;
+    }
+
+    this.salvarDepartamentoLocal(departamentoParaSalvar);
+  }
+
+  editarDepartamento(departamento: Departamento) {
+    this.departamentoCadastro = { ...departamento };
+    this.modoEdicaoDepartamento = true;
+  }
+
+  excluirDepartamento(departamento: Departamento) {
+    const confirmar = confirm('Deseja excluir o departamento ' + departamento.nome + '?');
+
+    if (!confirmar) {
+      return;
+    }
+
+    if (this.apiDepartamentosDisponivel) {
+      this.api.excluirDepartamento(departamento.id).subscribe({
+        next: () => this.removerDepartamentoDaTela(departamento.id),
+        error: () => this.removerDepartamentoDaTela(departamento.id),
+      });
+      return;
+    }
+
+    this.removerDepartamentoDaTela(departamento.id);
+  }
+
+  limparFormularioDepartamento() {
+    this.departamentoCadastro = this.criarDepartamentoVazio();
+    this.modoEdicaoDepartamento = false;
+  }
+
   voltarLista() {
     this.tela = 'lista';
   }
 
   contarPorSituacao(situacao: SituacaoColaborador): number {
     return this.colaboradores.filter((colaborador) => colaborador.situacao === situacao).length;
+  }
+
+  contarDepartamentosPorSituacao(situacao: SituacaoDepartamento): number {
+    return this.departamentosCadastrados.filter(
+      (departamento) => departamento.situacao === situacao,
+    ).length;
   }
 
   atualizarSituacao() {
@@ -283,6 +396,22 @@ export class ColaboradoresComponent implements OnInit {
     });
   }
 
+  private carregarDepartamentosBanco() {
+    this.api.listarDepartamentos(this.empresaSelecionada.id).subscribe({
+      next: (departamentos) => {
+        this.apiDepartamentosDisponivel = true;
+        this.departamentosCadastrados = departamentos.map((departamento) =>
+          this.normalizarDepartamento(departamento),
+        );
+        this.salvarDepartamentosLocalmente();
+      },
+      error: () => {
+        this.apiDepartamentosDisponivel = false;
+        this.carregarDepartamentosLocais();
+      },
+    });
+  }
+
   private carregarColaboradoresLocais() {
     this.migrarColaboradoresAntigos();
 
@@ -292,6 +421,15 @@ export class ColaboradoresComponent implements OnInit {
     this.colaboradores = colaboradores.map((colaborador: Colaborador) =>
       this.normalizarColaborador(colaborador),
     );
+  }
+
+  private carregarDepartamentosLocais() {
+    const salvos = localStorage.getItem(this.chaveDepartamentos());
+    const departamentos = salvos ? JSON.parse(salvos) : [];
+
+    this.departamentosCadastrados = Array.isArray(departamentos)
+      ? departamentos.map((departamento) => this.normalizarDepartamento(departamento))
+      : [];
   }
 
   private normalizarColaborador(colaborador: any): Colaborador {
@@ -309,6 +447,19 @@ export class ColaboradoresComponent implements OnInit {
       situacao: colaborador.situacao || 'Ativo',
       diasLicencaMedica: Number(colaborador.diasLicencaMedica || 0),
       foto: colaborador.foto || '',
+    };
+  }
+
+  private normalizarDepartamento(departamento: any): Departamento {
+    return {
+      id: departamento.id || Date.now().toString(),
+      empresaId: departamento.empresaId || departamento.empresa_id || this.empresaSelecionada.id,
+      nome: departamento.nome || '',
+      codigo: departamento.codigo || '',
+      responsavel: departamento.responsavel || '',
+      centroCusto: departamento.centroCusto || departamento.centro_custo || '',
+      descricao: departamento.descricao || '',
+      situacao: departamento.situacao === 'Inativo' ? 'Inativo' : 'Ativo',
     };
   }
 
@@ -330,12 +481,75 @@ export class ColaboradoresComponent implements OnInit {
     };
   }
 
+  private criarDepartamentoVazio(): Departamento {
+    return {
+      id: Date.now().toString(),
+      empresaId: this.empresaSelecionada.id,
+      nome: '',
+      codigo: '',
+      responsavel: '',
+      centroCusto: '',
+      descricao: '',
+      situacao: 'Ativo',
+    };
+  }
+
+  private confirmarDepartamentoSalvo(departamento: DepartamentoApi) {
+    const departamentoNormalizado = this.normalizarDepartamento(departamento);
+    const jaExiste = this.departamentosCadastrados.some(
+      (item) => item.id === departamentoNormalizado.id,
+    );
+
+    this.departamentosCadastrados = jaExiste
+      ? this.departamentosCadastrados.map((item) =>
+          item.id === departamentoNormalizado.id ? departamentoNormalizado : item,
+        )
+      : [departamentoNormalizado, ...this.departamentosCadastrados];
+
+    this.salvarDepartamentosLocalmente();
+    this.limparFormularioDepartamento();
+  }
+
+  private salvarDepartamentoLocal(departamento: Departamento) {
+    const departamentoNormalizado = this.normalizarDepartamento(departamento);
+
+    if (this.modoEdicaoDepartamento) {
+      this.departamentosCadastrados = this.departamentosCadastrados.map((item) =>
+        item.id === departamentoNormalizado.id ? departamentoNormalizado : item,
+      );
+    } else {
+      this.departamentosCadastrados = [departamentoNormalizado, ...this.departamentosCadastrados];
+    }
+
+    this.salvarDepartamentosLocalmente();
+    this.limparFormularioDepartamento();
+  }
+
+  private removerDepartamentoDaTela(id: string) {
+    this.departamentosCadastrados = this.departamentosCadastrados.filter(
+      (departamento) => departamento.id !== id,
+    );
+    this.salvarDepartamentosLocalmente();
+    this.limparFormularioDepartamento();
+  }
+
   private salvarLocalmente() {
     if (!this.estaNoNavegador()) {
       return;
     }
 
     localStorage.setItem(this.chaveColaboradores(), JSON.stringify(this.colaboradores));
+  }
+
+  private salvarDepartamentosLocalmente() {
+    if (!this.estaNoNavegador()) {
+      return;
+    }
+
+    localStorage.setItem(
+      this.chaveDepartamentos(),
+      JSON.stringify(this.departamentosCadastrados),
+    );
   }
 
   private estaNoNavegador(): boolean {
@@ -354,6 +568,20 @@ export class ColaboradoresComponent implements OnInit {
 
   private chaveColaboradores(): string {
     return 'colaboradores:' + this.empresaSelecionada.id;
+  }
+
+  private chaveDepartamentos(): string {
+    return 'departamentos:' + this.empresaSelecionada.id;
+  }
+
+  private gerarCodigoDepartamento(nome: string): string {
+    return nome
+      .split(' ')
+      .filter(Boolean)
+      .slice(0, 3)
+      .map((parte) => parte.charAt(0))
+      .join('')
+      .toUpperCase();
   }
 
   private migrarColaboradoresAntigos() {

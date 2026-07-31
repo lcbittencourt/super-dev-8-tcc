@@ -247,7 +247,7 @@ h2 {
 .acessos-modulos {
   display: grid;
   gap: 10px;
-  grid-template-columns: repeat(10, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
   margin-bottom: 18px;
 }
 
@@ -366,7 +366,7 @@ td {
 
 @media (max-width: 1280px) {
   .acessos-modulos {
-    grid-template-columns: repeat(5, minmax(0, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
   }
 }
 
@@ -455,6 +455,10 @@ td {
   padding: 18px;
 }
 
+.pagina > .cartao {
+  margin-bottom: 18px;
+}
+
 .cabecalho-cartao {
   margin-bottom: 16px;
 }
@@ -500,6 +504,33 @@ td {
 
 .area-tabela {
   overflow-x: auto;
+}
+
+.acoes-tabela {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.botao.pequeno {
+  font-size: 12px;
+  min-height: 32px;
+  padding: 6px 10px;
+}
+
+.botao.perigo {
+  border-color: #b51a2b;
+  color: #b51a2b;
+}
+
+.botao.perigo:hover {
+  background: #fcebeb;
+}
+
+.vazio {
+  color: #6b7280;
+  text-align: center;
 }
 
 table {

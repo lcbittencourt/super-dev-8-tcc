@@ -2,6 +2,7 @@ import { isPlatformBrowser } from '@angular/common';
 import { Component, Inject, OnInit, PLATFORM_ID } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
+import { AcoesTopoComponent } from '../acoes-topo/acoes-topo';
 type AbaFornecedores = 'fornecedores' | 'solicitacoes' | 'contratos';
 type ModalFornecedores = 'cadastro' | 'detalhes' | 'contrato' | null;
 type StatusFornecedor = 'Ativo' | 'Inativo' | 'Pendente';
@@ -49,7 +50,7 @@ interface ContratoFornecedor {
 @Component({
   selector: 'app-fornecedores',
   standalone: true,
-  imports: [FormsModule],
+  imports: [FormsModule, AcoesTopoComponent],
   templateUrl: './fornecedores.html',
   styleUrl: './fornecedores.css',
 })

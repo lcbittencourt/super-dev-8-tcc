@@ -224,3 +224,83 @@ td {
   line-height: 1.35;
 }
 
+
+
+.passos {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  margin-bottom: 14px;
+}
+
+.passo {
+  align-items: center;
+  background: #fff;
+  border: 1px solid #d3bea0;
+  border-radius: 8px;
+  color: #384358;
+  cursor: pointer;
+  display: flex;
+  gap: 10px;
+  padding: 12px;
+  text-align: left;
+}
+
+.passo span {
+  align-items: center;
+  background: #f5efe6;
+  border-radius: 999px;
+  display: flex;
+  font-weight: 700;
+  height: 28px;
+  justify-content: center;
+  width: 28px;
+}
+
+.passo.ativo {
+  border-color: #b9152b;
+  color: #161e2f;
+}
+
+.passo.ativo span,
+.passo.concluido span {
+  background: #b9152b;
+  color: #fff;
+}
+
+.resumo-etapa,
+.revisao,
+.lista-orientacao {
+  display: grid;
+  gap: 10px;
+}
+
+.resumo-etapa,
+.revisao div,
+.lista-orientacao div {
+  background: #f5efe6;
+  border: 1px solid #eadfce;
+  border-radius: 8px;
+  padding: 12px;
+}
+
+.resumo-etapa span,
+.revisao span {
+  color: #687386;
+  display: block;
+  font-size: 12px;
+  margin-bottom: 4px;
+}
+
+.lista-orientacao div.ativo {
+  border-color: #b9152b;
+  color: #b9152b;
+  font-weight: 700;
+}
+
+@media (max-width: 760px) {
+  .passos,
+  .grade {
+    grid-template-columns: 1fr;
+  }
+}

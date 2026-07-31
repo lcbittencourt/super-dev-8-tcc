@@ -46,6 +46,17 @@ export interface ColaboradorApi {
   foto: string;
 }
 
+export interface DepartamentoApi {
+  id: string;
+  empresaId?: string;
+  nome: string;
+  codigo: string;
+  responsavel: string;
+  centroCusto: string;
+  descricao: string;
+  situacao: string;
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -103,6 +114,27 @@ export class ApiPulsoService {
 
   excluirColaborador(id: string): Observable<void> {
     return this.http.delete<void>(this.enderecoApi + '/colaboradores/' + id);
+  }
+
+  listarDepartamentos(empresaId: string): Observable<DepartamentoApi[]> {
+    return this.http.get<DepartamentoApi[]>(
+      this.enderecoApi + '/departamentos?empresaId=' + encodeURIComponent(empresaId),
+    );
+  }
+
+  criarDepartamento(departamento: Partial<DepartamentoApi>): Observable<DepartamentoApi> {
+    return this.http.post<DepartamentoApi>(this.enderecoApi + '/departamentos', departamento);
+  }
+
+  atualizarDepartamento(
+    id: string,
+    departamento: Partial<DepartamentoApi>,
+  ): Observable<DepartamentoApi> {
+    return this.http.put<DepartamentoApi>(this.enderecoApi + '/departamentos/' + id, departamento);
+  }
+
+  excluirDepartamento(id: string): Observable<void> {
+    return this.http.delete<void>(this.enderecoApi + '/departamentos/' + id);
   }
 
   obterDashboard(empresaId: string): Observable<any> {

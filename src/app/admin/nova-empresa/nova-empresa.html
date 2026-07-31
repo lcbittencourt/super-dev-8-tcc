@@ -1,164 +1,148 @@
 <div class="pagina">
-
   <header class="cabecalho">
     <div>
       <h1>{{ modoEdicao ? 'Editar empresa' : 'Cadastrar nova empresa' }}</h1>
-      <p>Preencha os dados da empresa para liberar o acesso ao Pulso</p>
+      <p>Cadastro orientado em etapas para liberar o acesso ao Pulso</p>
     </div>
 
-    <button class="botao voltar" routerLink="/admin">
-      <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5" /><path d="M12 19l-7-7 7-7" /></svg>
-      Voltar
-    </button>
+    <div class="acoes-cabecalho">
+      <app-acoes-topo iniciais="AD"></app-acoes-topo>
+
+      <button class="botao voltar" routerLink="/admin">
+        <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5" /><path d="M12 19l-7-7 7-7" /></svg>
+        Voltar
+      </button>
+    </div>
   </header>
 
+  <section class="passos">
+    @for (etapa of etapasCadastro; track etapa.numero) {
+      <button
+        type="button"
+        class="passo"
+        [class.ativo]="etapaAtual === etapa.numero"
+        [class.concluido]="etapaAtual > etapa.numero"
+        (click)="irParaEtapa(etapa.numero)"
+      >
+        <span>{{ etapa.numero }}</span>
+        <strong>{{ etapa.titulo }}</strong>
+      </button>
+    }
+  </section>
+
   <main class="grade">
-
     <section class="cartao empresa">
-      <h2>Dados da empresa</h2>
+      @if (etapaAtual === 1) {
+        <h2>1. Dados da empresa</h2>
 
-      <label>Razão social</label>
-      <input
-        type="text"
-        placeholder="Ex.: Têxtil Vale Norte Ltda"
-        [(ngModel)]="empresa.razaoSocial"
-      >
+        <label>Razão social</label>
+        <input type="text" placeholder="Ex.: Têxtil Vale Norte Ltda" [(ngModel)]="empresa.razaoSocial" />
 
-      <label>Nome fantasia</label>
-      <input
-        type="text"
-        placeholder="Ex.: Vale Norte"
-        [(ngModel)]="empresa.nomeFantasia"
-      >
+        <label>Nome fantasia</label>
+        <input type="text" placeholder="Ex.: Vale Norte" [(ngModel)]="empresa.nomeFantasia" />
 
-      <label>CNPJ</label>
-      <input
-        type="text"
-        placeholder="00.000.000/0000-00"
-        maxlength="18"
-        [(ngModel)]="empresa.cnpj"
-        (input)="formatarCnpj()"
-      >
+        <label>CNPJ</label>
+        <input type="text" placeholder="00.000.000/0000-00" maxlength="18" [(ngModel)]="empresa.cnpj" (input)="formatarCnpj()" />
 
-      <label>Inscrição estadual</label>
-      <input
-        type="text"
-        placeholder="Opcional"
-        [(ngModel)]="empresa.inscricaoEstadual"
-      >
+        <label>Inscrição estadual</label>
+        <input type="text" placeholder="Opcional" [(ngModel)]="empresa.inscricaoEstadual" />
 
-      <label>Cidade / Estado</label>
-      <input
-        type="text"
-        placeholder="Ex.: Blumenau, SC"
-        [(ngModel)]="empresa.cidade"
-      >
+        <label>Cidade / Estado</label>
+        <input type="text" placeholder="Ex.: Blumenau, SC" [(ngModel)]="empresa.cidade" />
 
-      <label>Setor de atividade</label>
-      <input
-        type="text"
-        placeholder="Ex.: Indústria têxtil"
-        [(ngModel)]="empresa.setor"
-      >
-    </section>
+        <label>Setor de atividade</label>
+        <input type="text" placeholder="Ex.: Indústria têxtil" [(ngModel)]="empresa.setor" />
+      }
 
-    <div class="lateral">
+      @if (etapaAtual === 2) {
+        <h2>2. Plano e módulos</h2>
 
-      <section class="cartao">
-        <h2>Plano e contrato</h2>
-
-        <label>Plano</label>
-
-        <div
-          class="plano"
-          [class.selecionado]="planoSelecionado === 'Inicial'"
-          (click)="selecionarPlano('Inicial')"
-        >
+        <div class="plano" [class.selecionado]="planoSelecionado === 'Inicial'" (click)="selecionarPlano('Inicial')">
           <div>
             <strong>Inicial</strong>
-            <p>4 módulos</p>
+            <p>4 módulos liberados</p>
           </div>
-
           <strong>R$ 0/mês</strong>
         </div>
 
-        <div
-          class="plano"
-          [class.selecionado]="planoSelecionado === 'Profissional'"
-          (click)="selecionarPlano('Profissional')"
-        >
+        <div class="plano" [class.selecionado]="planoSelecionado === 'Profissional'" (click)="selecionarPlano('Profissional')">
           <div>
             <strong>Profissional</strong>
-            <p>7 módulos</p>
+            <p>7 módulos liberados</p>
           </div>
-
           <strong>R$ 0/mês</strong>
         </div>
 
-        <div
-          class="plano"
-          [class.selecionado]="planoSelecionado === 'Empresarial'"
-          (click)="selecionarPlano('Empresarial')"
-        >
+        <div class="plano" [class.selecionado]="planoSelecionado === 'Empresarial'" (click)="selecionarPlano('Empresarial')">
           <div>
             <strong>Empresarial</strong>
             <p>Usuários ilimitados · todos os módulos</p>
           </div>
-
           <strong>R$ 0/mês</strong>
         </div>
 
-        <label>Período de trial</label>
-        <input
-          type="text"
-          value="0 dias"
-          readonly
-        >
-      </section>
+        <div class="resumo-etapa">
+          <span>Módulos permitidos</span>
+          <strong>{{ definirQuantidadeModulos() }}</strong>
+        </div>
+      }
 
-      <section class="cartao">
-        <h2>Responsável técnico</h2>
+      @if (etapaAtual === 3) {
+        <h2>3. Responsável técnico</h2>
 
         <label>Nome completo</label>
-        <input
-          type="text"
-          placeholder="Nome do contato principal"
-          [(ngModel)]="empresa.responsavel"
-        >
+        <input type="text" placeholder="Nome do contato principal" [(ngModel)]="empresa.responsavel" />
 
         <label>E-mail</label>
-        <input
-          type="email"
-          placeholder="email@empresa.com.br"
-          [(ngModel)]="empresa.email"
-        >
+        <input type="email" placeholder="email@empresa.com.br" [(ngModel)]="empresa.email" />
 
         <label>Telefone</label>
-        <input
-          type="text"
-          placeholder="(00) 0000-0000"
-          maxlength="15"
-          [(ngModel)]="empresa.telefone"
-          (input)="formatarTelefone()"
-        >
+        <input type="text" placeholder="(00) 0000-0000" maxlength="15" [(ngModel)]="empresa.telefone" (input)="formatarTelefone()" />
+      }
+
+      @if (etapaAtual === 4) {
+        <h2>4. Revisão</h2>
+
+        <div class="revisao">
+          <div><span>Empresa</span><strong>{{ empresa.nomeFantasia || empresa.razaoSocial || '-' }}</strong></div>
+          <div><span>CNPJ</span><strong>{{ empresa.cnpj || '-' }}</strong></div>
+          <div><span>Cidade</span><strong>{{ empresa.cidade || '-' }}</strong></div>
+          <div><span>Plano</span><strong>{{ planoSelecionado }} · {{ definirQuantidadeModulos() }} módulos</strong></div>
+          <div><span>Responsável</span><strong>{{ empresa.responsavel || '-' }}</strong></div>
+          <div><span>E-mail</span><strong>{{ empresa.email || '-' }}</strong></div>
+        </div>
+      }
+    </section>
+
+    <aside class="lateral">
+      <section class="cartao">
+        <h2>Orientação</h2>
+        <div class="lista-orientacao">
+          <div [class.ativo]="etapaAtual === 1">Preencha a identificação da empresa.</div>
+          <div [class.ativo]="etapaAtual === 2">Escolha o plano contratado.</div>
+          <div [class.ativo]="etapaAtual === 3">Informe quem será o contato principal.</div>
+          <div [class.ativo]="etapaAtual === 4">Revise antes de salvar.</div>
+        </div>
       </section>
 
       <div class="acoes-rodape">
-        <button class="botao" routerLink="/admin">
-          Cancelar
-        </button>
+        <button class="botao" routerLink="/admin">Cancelar</button>
 
-        <button
-          class="botao principal com-icone"
-          (click)="salvarEmpresa()"
-        >
-          <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2Z" /><path d="M17 21v-8H7v8" /><path d="M7 3v5h8" /></svg>
-          {{ modoEdicao ? 'Salvar alterações' : 'Salvar' }}
-        </button>
+        @if (etapaAtual > 1) {
+          <button class="botao" type="button" (click)="voltarEtapa()">Anterior</button>
+        }
+
+        @if (etapaAtual < etapasCadastro.length) {
+          <button class="botao principal" type="button" (click)="avancarEtapa()">Próximo</button>
+        }
+
+        @if (etapaAtual === etapasCadastro.length) {
+          <button class="botao principal com-icone" type="button" (click)="salvarEmpresa()">
+            <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2Z" /><path d="M17 21v-8H7v8" /><path d="M7 3v5h8" /></svg>
+            {{ modoEdicao ? 'Salvar alterações' : 'Salvar' }}
+          </button>
+        }
       </div>
-
-    </div>
-
+    </aside>
   </main>
-
 </div>

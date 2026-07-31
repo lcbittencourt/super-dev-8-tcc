@@ -57,6 +57,21 @@ create table if not exists usuarios_sistema (
   unique (empresa_id, login)
 );
 
+create table if not exists departamentos (
+  id text primary key default gen_random_uuid()::text,
+  empresa_id text not null references empresas(id) on delete cascade,
+  nome varchar(160) not null,
+  codigo varchar(30),
+  responsavel varchar(180),
+  centro_custo varchar(80),
+  descricao text,
+  situacao varchar(30) not null default 'Ativo',
+  criado_em timestamptz not null default now(),
+  atualizado_em timestamptz not null default now()
+);
+
+create index if not exists departamentos_empresa_idx on departamentos (empresa_id);
+
 create table if not exists colaboradores (
   id text primary key default gen_random_uuid()::text,
   empresa_id text not null references empresas(id) on delete cascade,
@@ -337,6 +352,7 @@ begin
   foreach tabela in array array[
     'empresas',
     'usuarios_sistema',
+    'departamentos',
     'colaboradores',
     'registros_ponto',
     'solicitacoes_ferias',
@@ -359,7 +375,7 @@ end $$;
 
 insert into modulos_sistema (id, nome, descricao, ordem, ativo) values
   ('dashboard', 'Dashboard', 'Painel geral com indicadores', 1, true),
-  ('colaboradores', 'Colaboradores', 'Cadastro e gestão de pessoas', 2, true),
+  ('colaboradores', 'Colaboradores e departamentos', 'Cadastro de pessoas, áreas e responsáveis', 2, true),
   ('controle-ponto', 'Controle de ponto', 'Jornada, banco de horas e exceções', 3, true),
   ('ferias', 'Férias e afastamentos', 'Solicitações, aprovações e calendário', 4, true),
   ('treinamentos', 'Treinamentos', 'NRs, compliance e capacitações', 5, true),
@@ -373,6 +389,10 @@ on conflict (id) do update set
   descricao = excluded.descricao,
   ordem = excluded.ordem,
   ativo = excluded.ativo;
+
+update modulos_sistema
+set ativo = false
+where id = 'departamentos';
 
 insert into empresas (
   id,
@@ -400,4 +420,5 @@ on conflict (id) do nothing;
 insert into empresa_modulos (empresa_id, modulo_id, liberado)
 select 'tx001', id, true
 from modulos_sistema
+where ativo = true
 on conflict (empresa_id, modulo_id) do nothing;

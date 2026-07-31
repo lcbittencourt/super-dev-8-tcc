@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { RouterLink, Router } from '@angular/router';
 import { ApiPulsoService, EmpresaApi, ModuloApi } from '../servicos/api-pulso.service';
 
+import { AcoesTopoComponent } from '../acoes-topo/acoes-topo';
 interface ModuloSistema {
   id?: string;
   nome: string;
@@ -14,7 +15,7 @@ interface ModuloSistema {
 @Component({
   selector: 'app-admin',
   standalone: true,
-  imports: [RouterLink, FormsModule],
+  imports: [RouterLink, FormsModule, AcoesTopoComponent],
   templateUrl: './admin.html',
   styleUrl: './admin.css',
 })
@@ -47,8 +48,8 @@ export class AdminComponent implements OnInit {
     },
     {
       id: 'colaboradores',
-      nome: 'Colaboradores',
-      descricao: 'Cadastro e gestão de pessoas',
+      nome: 'Colaboradores e departamentos',
+      descricao: 'Cadastro de pessoas, áreas e responsáveis',
       liberado: true,
     },
     {
@@ -234,8 +235,11 @@ export class AdminComponent implements OnInit {
     if (this.apiDisponivel) {
       this.api.salvarModulosEmpresa(this.empresaSelecionada.id, this.modulosSistema).subscribe({
         next: (modulos) => {
-          this.modulosSistema = modulos.map((modulo) => this.normalizarModulo(modulo));
+          this.modulosSistema = this.mesclarModulosComBase(
+            modulos.map((modulo) => this.normalizarModulo(modulo)),
+          );
           this.atualizarContagemModulosSelecionada();
+          this.salvarModulosLocais();
           this.salvarEmpresaSelecionada();
           alert('Alterações salvas para ' + this.empresaSelecionada?.nome + '.');
         },
@@ -247,7 +251,7 @@ export class AdminComponent implements OnInit {
       return;
     }
 
-    localStorage.setItem(this.chaveModulosEmpresa(), JSON.stringify(this.modulosSistema));
+    this.salvarModulosLocais();
     this.atualizarContagemModulosSelecionada();
     this.salvarEmpresaSelecionada();
     alert('Alterações salvas para ' + this.empresaSelecionada.nome + '.');
@@ -255,6 +259,10 @@ export class AdminComponent implements OnInit {
 
   modulosLiberados(): number {
     return this.modulosSistema.filter((modulo) => modulo.liberado).length;
+  }
+
+  totalModulosDisponiveis(): number {
+    return this.modulosSistema.length || this.modulosBase.length;
   }
 
   limiteModulosEmpresa(): number {
@@ -425,9 +433,12 @@ export class AdminComponent implements OnInit {
     if (this.apiDisponivel) {
       this.api.listarModulosEmpresa(this.empresaSelecionada.id).subscribe({
         next: (modulos) => {
-          this.modulosSistema = modulos.map((modulo) => this.normalizarModulo(modulo));
+          this.modulosSistema = this.mesclarModulosComBase(
+            modulos.map((modulo) => this.normalizarModulo(modulo)),
+          );
           this.ajustarModulosAoLimite();
           this.atualizarContagemModulosSelecionada();
+          this.salvarModulosLocais();
         },
         error: () => this.carregarModulosLocais(),
       });
@@ -443,7 +454,9 @@ export class AdminComponent implements OnInit {
     }
 
     const modulosSalvos = localStorage.getItem(this.chaveModulosEmpresa());
-    this.modulosSistema = modulosSalvos ? JSON.parse(modulosSalvos) : this.criarModulosPadrao();
+    this.modulosSistema = modulosSalvos
+      ? this.mesclarModulosComBase(JSON.parse(modulosSalvos))
+      : this.criarModulosPadrao();
 
     this.ajustarModulosAoLimite();
     this.atualizarContagemModulosSelecionada();
@@ -451,6 +464,20 @@ export class AdminComponent implements OnInit {
 
   private criarModulosPadrao(): ModuloSistema[] {
     return this.modulosBase.map((modulo) => ({ ...modulo }));
+  }
+
+  private mesclarModulosComBase(modulos: ModuloSistema[]): ModuloSistema[] {
+    const modulosNormalizados = Array.isArray(modulos) ? modulos : [];
+
+    return this.modulosBase.map((moduloBase) => {
+      const moduloSalvo = modulosNormalizados.find(
+        (modulo) => modulo.id === moduloBase.id || modulo.nome === moduloBase.nome,
+      );
+
+      return moduloSalvo
+        ? { ...moduloBase, liberado: Boolean(moduloSalvo.liberado) }
+        : { ...moduloBase };
+    });
   }
 
   private ajustarModulosAoLimite() {
@@ -477,6 +504,14 @@ export class AdminComponent implements OnInit {
 
   private chaveModulosEmpresa(): string {
     return 'modulos:' + this.empresaSelecionada?.id;
+  }
+
+  private salvarModulosLocais() {
+    if (!this.estaNoNavegador() || !this.empresaSelecionada) {
+      return;
+    }
+
+    localStorage.setItem(this.chaveModulosEmpresa(), JSON.stringify(this.modulosSistema));
   }
 
   private atualizarContagemModulosSelecionada() {

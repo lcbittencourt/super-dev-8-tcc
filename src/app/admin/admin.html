@@ -10,16 +10,7 @@
 
     <span class="etiqueta-perfil">Administrador</span>
 
-    <details class="menu-perfil">
-      <summary class="identificacao" aria-label="Abrir menu do usuário">AD</summary>
-
-      <nav class="opcoes-perfil" aria-label="Menu do usuário">
-        <a routerLink="/admin">Admin</a>
-        <a routerLink="/gestor">Gestor</a>
-        <a routerLink="/colaborador">Colaborador</a>
-        <a class="sair" routerLink="/">Sair</a>
-      </nav>
-    </details>
+    <app-acoes-topo iniciais="AD"></app-acoes-topo>
   </header>
 
   <main class="pagina">
@@ -123,7 +114,7 @@
                 <strong>{{ empresa.usuarios }}</strong> usuários
               </span>
               <span>
-                <strong>{{ empresa.modulos }}/10</strong> módulos
+                <strong>{{ empresa.modulos }}/{{ totalModulosDisponiveis() }}</strong> módulos
               </span>
               <span>{{ empresa.plano }}</span>
             </div>
@@ -184,8 +175,8 @@
                   {{ modulo.nome }}
                 </a>
               }
-              @if (modulo.nome === 'Colaboradores' && modulo.liberado) {
-                <a class="atalho-modulo" routerLink="/colaboradores">
+              @if (modulo.id === 'colaboradores' && modulo.liberado) {
+                <a class="atalho-modulo" routerLink="/colaboradores" [queryParams]="{ visao: 'admin' }">
                   {{ modulo.nome }}
                 </a>
               }
@@ -216,7 +207,7 @@
               }
               @if (
                 (modulo.nome !== 'Dashboard' &&
-                  modulo.nome !== 'Colaboradores' &&
+                  modulo.id !== 'colaboradores' &&
                   modulo.nome !== 'Controle de ponto' &&
                   modulo.nome !== 'Férias e afastamentos' &&
                   modulo.nome !== 'Treinamentos' &&

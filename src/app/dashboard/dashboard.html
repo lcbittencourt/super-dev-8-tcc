@@ -1,5 +1,4 @@
 <div class="sistema">
-
   <header class="barra-superior">
     <div class="marca">
       <div class="simbolo-marca">P</div>
@@ -11,17 +10,10 @@
 
     <span class="etiqueta-perfil">Dashboard</span>
 
-    <nav class="navegacao">
-      <a routerLink="/admin">Admin</a>
-      <a routerLink="/gestor">Gestor</a>
-      <a routerLink="/colaborador">Colaborador</a>
-    </nav>
-
-    <div class="identificacao">{{ empresa.logo }}</div>
+    <app-acoes-topo [iniciais]="empresa.logo"></app-acoes-topo>
   </header>
 
   <main class="pagina">
-
     <section class="cabecalho-pagina">
       <div>
         <h1>Dashboard</h1>
@@ -41,39 +33,237 @@
     <section class="grade-painel">
       <article class="metrica">
         <span>Funcionários</span>
-        <strong>6</strong>
+        <strong>{{ funcionarios() }}</strong>
       </article>
 
       <article class="metrica">
         <span>Presentes Hoje</span>
-        <strong>3</strong>
+        <strong>{{ presentesHoje() }}</strong>
       </article>
 
       <article class="metrica">
         <span>Férias</span>
-        <strong>1</strong>
+        <strong>{{ ferias() }}</strong>
       </article>
 
       <article class="metrica">
         <span>Licença Médica/Atestado</span>
-        <strong>1</strong>
-        <small>7 dia(s) informados</small>
+        <strong>{{ licencaMedica() }}</strong>
+        <small>{{ totalDiasLicenca() }} dia(s) informados</small>
       </article>
 
       <article class="metrica">
         <span>Aniversariantes</span>
-        <strong>3</strong>
+        <strong>{{ aniversariantes() }}</strong>
       </article>
 
       <article class="metrica">
         <span>Treinamentos Pendentes</span>
-        <strong>4</strong>
+        <strong>{{ treinamentosPendentes() }}</strong>
       </article>
 
       <article class="metrica">
         <span>Chamados Abertos</span>
-        <strong>3</strong>
+        <strong>{{ chamadosAbertos() }}</strong>
       </article>
+    </section>
+
+    <section class="cartao grafico-dashboard">
+      <div class="cabecalho-cartao">
+        <div>
+          <h2>Painel analítico da operação</h2>
+          <p>Composição do quadro, presença, tendência semanal e pontos de atenção</p>
+        </div>
+      </div>
+
+      <div class="painel-analitico">
+        <div class="coluna-indice">
+          <div
+            class="medidor-operacao"
+            [class.bom]="classeIndiceOperacional() === 'bom'"
+            [class.atencao]="classeIndiceOperacional() === 'atencao'"
+            [class.critico]="classeIndiceOperacional() === 'critico'"
+          >
+            <div
+              class="anel-grafico"
+              [style.background]="estiloAnelResumo()"
+              aria-label="Taxa de presença"
+            >
+              <div>
+                <strong>{{ indiceOperacional() }}</strong>
+                <span>índice</span>
+              </div>
+            </div>
+
+            <div>
+              <h3>{{ taxaPresenca() }}% de presença</h3>
+              <p>{{ presentesHoje() }} presente(s) de {{ funcionarios() }} colaborador(es)</p>
+            </div>
+          </div>
+
+          <div class="legenda-grafico">
+            <div>
+              <span class="marcador presenca"></span>
+              Presentes
+            </div>
+            <div>
+              <span class="marcador ferias"></span>
+              Férias
+            </div>
+            <div>
+              <span class="marcador licenca"></span>
+              Licença médica
+            </div>
+          </div>
+        </div>
+
+        <div class="coluna-comparativo">
+          <div class="tarjas-resumo">
+            <article>
+              <span>Ausências hoje</span>
+              <strong>{{ ausenciasHoje() }}</strong>
+            </article>
+            <article>
+              <span>Demandas abertas</span>
+              <strong>{{ demandasAbertas() }}</strong>
+            </article>
+            <article>
+              <span>Licença acumulada</span>
+              <strong>{{ totalDiasLicenca() }}d</strong>
+            </article>
+          </div>
+
+          <div class="bloco-grafico">
+            <div class="subtitulo-grafico">
+              <h3>Composição do quadro</h3>
+              <span>{{ funcionarios() }} colaborador(es)</span>
+            </div>
+
+            <div class="barra-empilhada">
+              @for (segmento of composicaoQuadro(); track segmento.rotulo) {
+                <span
+                  [class.ativo]="segmento.classe === 'ativo'"
+                  [class.ferias]="segmento.classe === 'ferias'"
+                  [class.licenca]="segmento.classe === 'licenca'"
+                  [class.inativo]="segmento.classe === 'inativo'"
+                  [style.width.%]="segmento.percentual"
+                  [title]="segmento.rotulo + ': ' + segmento.valor"
+                ></span>
+              }
+            </div>
+
+            <div class="lista-composicao">
+              @for (segmento of composicaoQuadro(); track segmento.rotulo) {
+                <div>
+                  <span
+                    class="marcador"
+                    [class.ativo]="segmento.classe === 'ativo'"
+                    [class.ferias]="segmento.classe === 'ferias'"
+                    [class.licenca]="segmento.classe === 'licenca'"
+                    [class.inativo]="segmento.classe === 'inativo'"
+                  ></span>
+                  <strong>{{ segmento.valor }}</strong>
+                  <span>{{ segmento.rotulo }}</span>
+                  <small>{{ segmento.percentual }}%</small>
+                </div>
+              }
+            </div>
+          </div>
+
+          <div class="bloco-grafico">
+            <div class="subtitulo-grafico">
+              <h3>Comparativo de indicadores</h3>
+              <span>volume atual</span>
+            </div>
+
+            <div class="grafico-horizontal">
+              @for (item of graficoResumo(); track item.rotulo) {
+                <div
+                  class="linha-grafico"
+                  [class.presenca]="item.classe === 'presenca'"
+                  [class.ferias]="item.classe === 'ferias'"
+                  [class.licenca]="item.classe === 'licenca'"
+                  [class.treinamento]="item.classe === 'treinamento'"
+                  [class.chamado]="item.classe === 'chamado'"
+                >
+                  <div>
+                    <strong>{{ item.rotulo }}</strong>
+                    <span>
+                      {{ item.detalhe }}
+                      @if (item.percentualQuadro > 0) {
+                        · {{ item.percentualQuadro }}% do quadro
+                      }
+                    </span>
+                  </div>
+                  <div class="trilha-grafico">
+                    <div class="barra-grafico" [style.width.%]="item.percentual"></div>
+                  </div>
+                  <strong class="valor-grafico">{{ item.valor }}</strong>
+                </div>
+              }
+            </div>
+          </div>
+        </div>
+
+        <div class="coluna-tendencia">
+          <div class="bloco-grafico">
+            <div class="subtitulo-grafico">
+              <h3>Tendência de presença</h3>
+              <span>últimos 7 dias</span>
+            </div>
+
+            <div class="grafico-colunas">
+              @for (dia of tendenciaPresenca(); track dia.data) {
+                <div class="coluna-dia">
+                  <div class="coluna-trilha">
+                    <span [style.height.%]="dia.percentual"></span>
+                  </div>
+                  <strong>{{ dia.percentual }}%</strong>
+                  <small>{{ dia.dia }}</small>
+                </div>
+              }
+            </div>
+          </div>
+
+          <div class="bloco-grafico sinais-grafico">
+            <div class="subtitulo-grafico">
+              <h3>Sinais de atenção</h3>
+              <span>{{ alertasDashboard().length }} item(ns)</span>
+            </div>
+
+            <div class="lista-alertas">
+              @for (alerta of alertasDashboard(); track alerta.titulo) {
+                <article
+                  [class.positivo]="alerta.classe === 'positivo'"
+                  [class.atencao]="alerta.classe === 'atencao'"
+                  [class.critico]="alerta.classe === 'critico'"
+                  [class.neutro]="alerta.classe === 'neutro'"
+                >
+                  <div>
+                    <strong>{{ alerta.titulo }}</strong>
+                    <span>{{ alerta.detalhe }}</span>
+                  </div>
+                </article>
+              }
+
+              @if (alertasDashboard().length === 0) {
+                <article class="positivo">
+                  <div>
+                    <strong>Sem alertas</strong>
+                    <span>Não há pontos críticos no momento.</span>
+                  </div>
+                </article>
+              }
+            </div>
+          </div>
+        </div>
+
+        @if (funcionarios() === 0 && demandasAbertas() === 0) {
+          <div class="grafico-vazio">
+            Cadastre colaboradores, treinamentos ou chamados para alimentar o gráfico.
+          </div>
+        }
+      </div>
     </section>
 
     <section class="cartao">
@@ -82,47 +272,22 @@
           <h2>Movimentações de colaboradores</h2>
         </div>
 
-        <button class="botao principal" routerLink="/colaboradores">
-          Abrir colaboradores
-        </button>
+        <button class="botao principal" routerLink="/colaboradores">Abrir colaboradores</button>
       </div>
 
       <div class="linha-situacao">
         <span>Ativos no cadastro</span>
-        <strong>6</strong>
+        <strong>{{ funcionarios() - ferias() - licencaMedica() }}</strong>
       </div>
 
       <div class="linha-situacao">
         <span>Em férias</span>
-        <strong>1</strong>
+        <strong>{{ ferias() }}</strong>
       </div>
 
       <div class="linha-situacao">
         <span>Em licença médica/atestado</span>
-        <strong>1</strong>
-      </div>
-    </section>
-
-    <section class="cartao">
-      <div class="cabecalho-cartao">
-        <div>
-          <h2>Aniversariantes do mês</h2>
-        </div>
-      </div>
-
-      <div class="linha-situacao">
-        <span>Ana Lima · Produção</span>
-        <strong>14/05</strong>
-      </div>
-
-      <div class="linha-situacao">
-        <span>Bruno Souza · Administrativo</span>
-        <strong>19/05</strong>
-      </div>
-
-      <div class="linha-situacao">
-        <span>Carla Dias · Financeiro</span>
-        <strong>27/05</strong>
+        <strong>{{ licencaMedica() }}</strong>
       </div>
     </section>
 
@@ -132,27 +297,22 @@
           <h2>Chamados recentes</h2>
         </div>
 
-        <button class="botao principal" routerLink="/chamados">
-          Abrir chamados
-        </button>
+        <button class="botao principal" routerLink="/chamados">Abrir chamados</button>
       </div>
 
-      <div class="linha-situacao">
-        <span>CH-1024 · Notebook não liga · TI</span>
-        <strong>Em andamento</strong>
-      </div>
+      @for (chamado of chamadosRecentes(); track chamado.id || chamado.numero) {
+        <div class="linha-situacao">
+          <span>{{ chamado.numero || chamado.id }} · {{ chamado.titulo || chamado.assunto }}</span>
+          <strong>{{ chamado.situacao || chamado.status }}</strong>
+        </div>
+      }
 
-      <div class="linha-situacao">
-        <span>CH-1023 · Ar-condicionado com vazamento · Predial</span>
-        <strong>Aberto</strong>
-      </div>
-
-      <div class="linha-situacao">
-        <span>CH-1022 · Acesso ao ERP bloqueado · TI</span>
-        <strong>Aberto</strong>
-      </div>
+      @if (chamadosRecentes().length === 0) {
+        <div class="linha-situacao">
+          <span>Nenhum chamado cadastrado</span>
+          <strong>0</strong>
+        </div>
+      }
     </section>
-
   </main>
-
 </div>

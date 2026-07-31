@@ -10,16 +10,7 @@
 
     <span class="etiqueta-perfil">Gestor</span>
 
-    <details class="menu-perfil">
-      <summary class="identificacao" aria-label="Abrir menu do usuário">{{ iniciaisEmpresa() }}</summary>
-
-      <nav class="opcoes-perfil" aria-label="Menu do usuário">
-        <a routerLink="/admin">Admin</a>
-        <a routerLink="/gestor">Gestor</a>
-        <a routerLink="/colaborador">Colaborador</a>
-        <a class="sair" routerLink="/">Sair</a>
-      </nav>
-    </details>
+    <app-acoes-topo [iniciais]="iniciaisEmpresa()"></app-acoes-topo>
   </header>
 
   <main class="pagina">
@@ -42,8 +33,15 @@
           @if (menuAberto) {
             <div class="lista-menu">
               <a routerLink="/aprovacoes">Aprovações</a>
-              <a routerLink="/chamados">Chamados</a>
-              <a routerLink="/treinamentos" [queryParams]="{ perfil: 'gestor' }">Treinamentos</a>
+              @if (moduloLiberado('chamados')) {
+                <a routerLink="/chamados">Chamados</a>
+              }
+              @if (moduloLiberado('colaboradores')) {
+                <a routerLink="/departamentos">Departamentos</a>
+              }
+              @if (moduloLiberado('treinamentos')) {
+                <a routerLink="/treinamentos" [queryParams]="{ perfil: 'gestor' }">Treinamentos</a>
+              }
             </div>
           }
         </div>
@@ -51,42 +49,52 @@
     </section>
 
     <section class="indicadores">
-      <article class="indicador">
-        <span>Colaboradores</span>
-        <strong>6</strong>
-        <small class="positivo">3 ativos</small>
-      </article>
-
-      <article class="indicador">
-        <span>Presentes hoje</span>
-        <strong>3</strong>
-        <small class="positivo">100% do quadro ativo</small>
-      </article>
-
-      <article class="indicador">
-        <span>Chamados abertos</span>
-        <strong>3</strong>
-        <small class="negativo">1 urgente</small>
-      </article>
-
-      <article class="indicador">
-        <span>Pendências do gestor</span>
-        <strong>6</strong>
-        <small class="negativo">Requer ação</small>
-      </article>
+      @for (indicador of indicadores; track indicador.titulo) {
+        <article class="indicador">
+          <span>{{ indicador.titulo }}</span>
+          <strong>{{ indicador.valor }}</strong>
+          <small
+            [class.positivo]="indicador.tendencia === 'positiva'"
+            [class.negativo]="indicador.tendencia === 'negativa'"
+          >
+            {{ indicador.nota }}
+          </small>
+        </article>
+      }
     </section>
 
     <section class="acessos-modulos" aria-label="Acessos aos módulos">
-      <a class="acesso-modulo" routerLink="/dashboard">Dashboard</a>
-      <a class="acesso-modulo" routerLink="/colaboradores">Colaboradores</a>
-      <a class="acesso-modulo" routerLink="/controle-ponto">Controle de ponto</a>
-      <a class="acesso-modulo" routerLink="/ferias" [queryParams]="{ perfil: 'gestor' }">Férias</a>
-      <a class="acesso-modulo" routerLink="/treinamentos" [queryParams]="{ perfil: 'gestor' }">Treinamentos</a>
-      <a class="acesso-modulo" routerLink="/chamados">Chamados</a>
-      <a class="acesso-modulo" routerLink="/comunicados">Comunicados</a>
-      <a class="acesso-modulo" routerLink="/eventos">Eventos</a>
-      <a class="acesso-modulo" routerLink="/fornecedores">Fornecedores</a>
-      <a class="acesso-modulo" routerLink="/relatorios">Relatórios</a>
+      @if (moduloLiberado('dashboard')) {
+        <a class="acesso-modulo" routerLink="/dashboard">Dashboard</a>
+      }
+      @if (moduloLiberado('colaboradores')) {
+        <a class="acesso-modulo" routerLink="/colaboradores">Colaboradores</a>
+        <a class="acesso-modulo" routerLink="/departamentos">Departamentos</a>
+      }
+      @if (moduloLiberado('controle-ponto')) {
+        <a class="acesso-modulo" routerLink="/controle-ponto">Controle de ponto</a>
+      }
+      @if (moduloLiberado('ferias')) {
+        <a class="acesso-modulo" routerLink="/ferias" [queryParams]="{ perfil: 'gestor' }">Férias</a>
+      }
+      @if (moduloLiberado('treinamentos')) {
+        <a class="acesso-modulo" routerLink="/treinamentos" [queryParams]="{ perfil: 'gestor' }">Treinamentos</a>
+      }
+      @if (moduloLiberado('chamados')) {
+        <a class="acesso-modulo" routerLink="/chamados">Chamados</a>
+      }
+      @if (moduloLiberado('comunicados')) {
+        <a class="acesso-modulo" routerLink="/comunicados">Comunicados</a>
+      }
+      @if (moduloLiberado('eventos')) {
+        <a class="acesso-modulo" routerLink="/eventos">Eventos</a>
+      }
+      @if (moduloLiberado('fornecedores')) {
+        <a class="acesso-modulo" routerLink="/fornecedores">Fornecedores</a>
+      }
+      @if (moduloLiberado('relatorios')) {
+        <a class="acesso-modulo" routerLink="/relatorios">Relatórios</a>
+      }
     </section>
 
     <section class="graficos">
@@ -135,30 +143,92 @@
       </article>
     </section>
 
+    @if (moduloLiberado('chamados')) {
+    <section class="cartao">
+      <div class="cabecalho-cartao">
+        <div>
+          <h2>Aprovar chamados</h2>
+          <p>Chamados da {{ empresa.nome }} aguardando análise do gestor.</p>
+        </div>
+
+        <a class="botao" routerLink="/chamados">Abrir central</a>
+      </div>
+
+      <div class="area-tabela">
+        <table>
+          <thead>
+            <tr>
+              <th>Nº</th>
+              <th>Solicitante</th>
+              <th>Setor</th>
+              <th>Assunto</th>
+              <th>Prioridade</th>
+              <th>Status</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            @for (chamado of chamadosParaAprovacao(); track identificarChamado(chamado)) {
+              <tr>
+                <td>{{ chamado.numero || chamado.id || '-' }}</td>
+                <td>{{ chamado.solicitante || '-' }}</td>
+                <td>{{ chamado.setorDestino || chamado.categoria || '-' }}</td>
+                <td>{{ chamado.titulo || chamado.categoria || '-' }}</td>
+                <td>
+                  <span
+                    class="selo"
+                    [class.erro]="chamado.prioridade === 'Urgente' || chamado.prioridade === 'Crítica'"
+                    [class.alerta]="chamado.prioridade === 'Alta'"
+                    [class.informativo]="chamado.prioridade === 'Média'"
+                  >
+                    {{ chamado.prioridade || 'Média' }}
+                  </span>
+                </td>
+                <td>{{ chamado.situacao || chamado.status || 'Aberto' }}</td>
+                <td>
+                  <div class="acoes-tabela">
+                    <button class="botao pequeno" type="button" (click)="aprovarChamado(chamado)">
+                      Aprovar
+                    </button>
+                    <button
+                      class="botao pequeno"
+                      type="button"
+                      (click)="iniciarAtendimentoChamado(chamado)"
+                    >
+                      Em andamento
+                    </button>
+                    <button
+                      class="botao pequeno perigo"
+                      type="button"
+                      (click)="reprovarChamado(chamado)"
+                    >
+                      Reprovar
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            }
+
+            @if (chamadosParaAprovacao().length === 0) {
+              <tr>
+                <td colspan="7" class="vazio">Nenhum chamado aguardando aprovação.</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </section>
+    }
+
     <section class="grade-painel">
-      <article class="metrica">
-        <span>Férias pendentes</span>
-        <strong>1</strong>
-        <small>Solicitações aguardando aprovação</small>
-      </article>
-
-      <article class="metrica">
-        <span>Treinamentos pendentes</span>
-        <strong>4</strong>
-        <small>2 vencendo em 30 dias</small>
-      </article>
-
-      <article class="metrica">
-        <span>Horas extras (mês)</span>
-        <strong>18h</strong>
-        <small>Conforme registros de ponto</small>
-      </article>
-
-      <article class="metrica">
-        <span>Novos colaboradores</span>
-        <strong>1</strong>
-        <small>Admissões neste mês</small>
-      </article>
+      @for (resumo of resumos; track resumo.titulo) {
+        <article class="metrica">
+          <span>{{ resumo.titulo }}</span>
+          <strong>{{ resumo.valor }}</strong>
+          <small>{{ resumo.nota }}</small>
+        </article>
+      }
     </section>
 
     <section class="cartao">

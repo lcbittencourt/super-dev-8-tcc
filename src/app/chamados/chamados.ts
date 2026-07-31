@@ -1,7 +1,7 @@
 import { isPlatformBrowser } from '@angular/common';
 import { Component, Inject, OnInit, PLATFORM_ID } from '@angular/core';
-import { RouterLink } from '@angular/router';
 
+import { AcoesTopoComponent } from '../acoes-topo/acoes-topo';
 type FiltroChamado = 'Todos' | 'Abertos' | 'Em andamento' | 'Resolvidos';
 
 interface EmpresaSelecionada {
@@ -28,7 +28,7 @@ interface ChamadoEmpresa {
 @Component({
   selector: 'app-chamados',
   standalone: true,
-  imports: [RouterLink],
+  imports: [AcoesTopoComponent],
   templateUrl: './chamados.html',
   styleUrl: './chamados.css',
 })

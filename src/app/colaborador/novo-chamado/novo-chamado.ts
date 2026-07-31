@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import { AcoesTopoComponent } from '../../acoes-topo/acoes-topo';
 
 interface Chamado {
   id: number;
@@ -16,7 +17,7 @@ interface Chamado {
 @Component({
   selector: 'app-novo-chamado',
   standalone: true,
-  imports: [CommonModule, RouterLink, FormsModule],
+  imports: [CommonModule, RouterLink, FormsModule, AcoesTopoComponent],
   templateUrl: './novo-chamado.html',
   styleUrl: './novo-chamado.css',
 })

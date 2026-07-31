@@ -3,11 +3,12 @@ import { isPlatformBrowser } from '@angular/common';
 import { Router, RouterLink, ActivatedRoute } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { ApiPulsoService, EmpresaApi } from '../../servicos/api-pulso.service';
+import { AcoesTopoComponent } from '../../acoes-topo/acoes-topo';
 
 @Component({
   selector: 'app-nova-empresa',
   standalone: true,
-  imports: [RouterLink, FormsModule],
+  imports: [RouterLink, FormsModule, AcoesTopoComponent],
   templateUrl: './nova-empresa.html',
   styleUrl: './nova-empresa.css',
 })
@@ -16,6 +17,14 @@ export class NovaEmpresaComponent implements OnInit {
   modoEdicao = false;
   idEdicao = '';
   empresaOriginal: EmpresaApi | null = null;
+  etapaAtual = 1;
+
+  etapasCadastro = [
+    { numero: 1, titulo: 'Dados' },
+    { numero: 2, titulo: 'Plano' },
+    { numero: 3, titulo: 'Responsável' },
+    { numero: 4, titulo: 'Revisão' },
+  ];
 
   empresa = {
     razaoSocial: '',
@@ -60,11 +69,69 @@ export class NovaEmpresaComponent implements OnInit {
     this.planoSelecionado = plano;
   }
 
+  irParaEtapa(etapa: number) {
+    if (etapa < this.etapaAtual || this.podeAvancarEtapa()) {
+      this.etapaAtual = etapa;
+    }
+  }
+
+  avancarEtapa() {
+    if (!this.podeAvancarEtapa()) {
+      alert(this.mensagemEtapa());
+      return;
+    }
+
+    this.etapaAtual = Math.min(this.etapaAtual + 1, this.etapasCadastro.length);
+  }
+
+  voltarEtapa() {
+    this.etapaAtual = Math.max(this.etapaAtual - 1, 1);
+  }
+
+  podeAvancarEtapa(): boolean {
+    if (this.etapaAtual === 1) {
+      return Boolean((this.empresa.nomeFantasia || this.empresa.razaoSocial).trim() && this.empresa.cidade.trim());
+    }
+
+    if (this.etapaAtual === 2) {
+      return Boolean(this.planoSelecionado);
+    }
+
+    if (this.etapaAtual === 3) {
+      return Boolean(this.empresa.responsavel.trim() && this.empresa.email.trim());
+    }
+
+    return true;
+  }
+
+  mensagemEtapa(): string {
+    if (this.etapaAtual === 1) {
+      return 'Informe o nome da empresa e cidade/estado.';
+    }
+
+    if (this.etapaAtual === 2) {
+      return 'Selecione um plano.';
+    }
+
+    if (this.etapaAtual === 3) {
+      return 'Informe nome e e-mail do responsável.';
+    }
+
+    return 'Confira os dados antes de salvar.';
+  }
+
   salvarEmpresa() {
     const nomeEmpresa = this.empresa.nomeFantasia || this.empresa.razaoSocial;
 
     if (!nomeEmpresa.trim()) {
       alert('Informe o nome da empresa.');
+      this.etapaAtual = 1;
+      return;
+    }
+
+    if (!this.empresa.responsavel.trim() || !this.empresa.email.trim()) {
+      alert('Informe nome e e-mail do responsável.');
+      this.etapaAtual = 3;
       return;
     }
 
@@ -135,7 +202,6 @@ export class NovaEmpresaComponent implements OnInit {
     let valor = this.empresa.cnpj.replace(/\D/g, '');
 
     valor = valor.substring(0, 14);
-
     valor = valor.replace(/^(\d{2})(\d)/, '$1.$2');
     valor = valor.replace(/^(\d{2})\.(\d{3})(\d)/, '$1.$2.$3');
     valor = valor.replace(/\.(\d{3})(\d)/, '.$1/$2');
