@@ -34,7 +34,7 @@ p {
 
 .grade {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr;
   align-items: start;
   gap: 14px;
 }
@@ -48,8 +48,7 @@ p {
 
 .lateral {
   display: flex;
-  flex-direction: column;
-  gap: 14px;
+  justify-content: flex-end;
 }
 
 h2 {
@@ -269,15 +268,13 @@ td {
 }
 
 .resumo-etapa,
-.revisao,
-.lista-orientacao {
+.revisao {
   display: grid;
   gap: 10px;
 }
 
 .resumo-etapa,
-.revisao div,
-.lista-orientacao div {
+.revisao div {
   background: #f5efe6;
   border: 1px solid #eadfce;
   border-radius: 8px;
@@ -292,15 +289,8 @@ td {
   margin-bottom: 4px;
 }
 
-.lista-orientacao div.ativo {
-  border-color: #b9152b;
-  color: #b9152b;
-  font-weight: 700;
-}
-
 @media (max-width: 760px) {
-  .passos,
-  .grade {
+  .passos {
     grid-template-columns: 1fr;
   }
 }
