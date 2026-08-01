@@ -167,6 +167,25 @@ export class TreinamentosComponent implements OnInit {
     alert('Curso salvo com sucesso.');
   }
 
+  editandoCursoExistente(): boolean {
+    return !!this.cursoEmCadastro.id && this.cursos.some((item) => item.id === this.cursoEmCadastro.id);
+  }
+
+  excluirCurso() {
+    if (!this.editandoCursoExistente()) {
+      return;
+    }
+
+    if (this.estaNoNavegador() && !confirm('Deseja realmente apagar este treinamento?')) {
+      return;
+    }
+
+    this.cursos = this.cursos.filter((item) => item.id !== this.cursoEmCadastro.id);
+    this.salvarDados();
+    this.telaGestor = 'painel';
+    alert('Treinamento apagado com sucesso.');
+  }
+
   adicionarModulo() {
     this.cursoEmCadastro.modulos.push({
       titulo: `Módulo ${this.cursoEmCadastro.modulos.length + 1}`,

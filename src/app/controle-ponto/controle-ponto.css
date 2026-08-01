@@ -5,9 +5,9 @@
 :host {
   display: block;
   min-height: 100vh;
-  background: #f5efe6;
+  background: var(--c-bg);
   font-family: Arial, Helvetica, sans-serif;
-  color: #161e2f;
+  color: var(--c-text);
 }
 
 .sistema {
@@ -16,8 +16,8 @@
 
 .barra-superior {
   height: 58px;
-  background: #fbf6ee;
-  border-bottom: 1px solid #d9cdb8;
+  background: var(--c-surface-2);
+  border-bottom: 1px solid var(--c-border);
   display: flex;
   align-items: center;
   gap: 14px;
@@ -47,7 +47,7 @@
 }
 
 .etiqueta-perfil {
-  background: #f7e4dd;
+  background: var(--c-accent-weak);
   color: #541a2e;
   padding: 4px 12px;
   border-radius: 999px;
@@ -62,7 +62,7 @@
 
 .navegacao a {
   text-decoration: none;
-  color: #384358;
+  color: var(--c-soft-text);
   padding: 7px 12px;
   border-radius: 8px;
   font-size: 13px;
@@ -114,7 +114,7 @@ h2 {
 
 .cabecalho-pagina p,
 .cabecalho-cartao p {
-  color: #6b7280;
+  color: var(--c-muted);
   margin: 4px 0 0;
   font-size: 13px;
 }
@@ -125,9 +125,9 @@ h2 {
 }
 
 .botao {
-  border: 1px solid #c4b59a;
-  background: #fff;
-  color: #161e2f;
+  border: 1px solid var(--c-border-2);
+  background: var(--c-surface);
+  color: var(--c-text);
   padding: 8px 14px;
   border-radius: 8px;
   cursor: pointer;
@@ -148,8 +148,8 @@ h2 {
 
 .cartao,
 .cartao-futuro {
-  background: #fff;
-  border: 1px solid #d9cdb8;
+  background: var(--c-surface);
+  border: 1px solid var(--c-border);
   border-radius: 12px;
 }
 
@@ -166,7 +166,7 @@ h2 {
 }
 
 label {
-  color: #687386;
+  color: var(--c-muted);
   display: grid;
   gap: 8px;
   font-size: 12px;
@@ -177,17 +177,17 @@ label {
 input {
   width: 100%;
   height: 38px;
-  border: 1px solid #c9b28f;
+  border: 1px solid var(--c-border-2);
   border-radius: 8px;
-  background: #f5efe6;
-  color: #161e2f;
+  background: var(--c-bg);
+  color: var(--c-text);
   padding: 0 10px;
   font-size: 14px;
 }
 
 .resumo span,
 .cartao-futuro span {
-  color: #6b7280;
+  color: var(--c-muted);
   display: block;
   font-size: 13px;
   margin-bottom: 6px;
@@ -211,7 +211,7 @@ table {
 
 th,
 td {
-  border-top: 1px solid #d9cdb8;
+  border-top: 1px solid var(--c-border);
   padding: 12px;
   text-align: left;
   vertical-align: middle;
@@ -219,7 +219,7 @@ td {
 }
 
 th {
-  color: #6b7280;
+  color: var(--c-muted);
   font-size: 11px;
   text-transform: uppercase;
 }
@@ -242,13 +242,13 @@ th {
 }
 
 .selo.neutro {
-  background: #efe6d7;
-  color: #384358;
+  background: var(--c-surface-3);
+  color: var(--c-soft-text);
 }
 
 .vazio {
-  border-top: 1px solid #d9cdb8;
-  color: #6b7280;
+  border-top: 1px solid var(--c-border);
+  color: var(--c-muted);
   padding: 24px;
   text-align: center;
 }
@@ -266,7 +266,7 @@ th {
 .detalhe-futuro {
   margin-top: 12px;
   padding-top: 10px;
-  border-top: 1px solid #eae0cd;
+  border-top: 1px solid var(--c-border-soft);
   display: flex;
   flex-direction: column;
   gap: 6px;

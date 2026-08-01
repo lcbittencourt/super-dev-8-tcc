@@ -1,4 +1,15 @@
 <div class="acoes-topo">
+  <button
+    type="button"
+    class="botao-tema"
+    (click)="tema.alternar()"
+    [attr.aria-label]="tema.ehEscuro ? 'Ativar modo claro' : 'Ativar modo escuro'"
+    [title]="tema.ehEscuro ? 'Modo claro' : 'Modo escuro'"
+  >
+    <svg *ngIf="!tema.ehEscuro" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z" /></svg>
+    <svg *ngIf="tema.ehEscuro" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4" /><path d="M12 2v2" /><path d="M12 20v2" /><path d="M4.93 4.93l1.41 1.41" /><path d="M17.66 17.66l1.41 1.41" /><path d="M2 12h2" /><path d="M20 12h2" /><path d="M4.93 19.07l1.41-1.41" /><path d="M17.66 6.34l1.41-1.41" /></svg>
+  </button>
+
   <app-notificacoes></app-notificacoes>
 
   <details class="menu-acesso">
@@ -8,7 +19,6 @@
 
     <nav class="opcoes-menu" aria-label="Menu da sessão">
       <a [routerLink]="destinoSessao">{{ perfilSessao }}</a>
-      <button type="button" (click)="abrirConfiguracoes()">Configuração</button>
       <button class="sair" type="button" (click)="sair()">Sair</button>
     </nav>
   </details>

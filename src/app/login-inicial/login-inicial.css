@@ -1,6 +1,6 @@
 :host {
-  background: #f5efe6;
-  color: #161e2f;
+  background: var(--c-bg);
+  color: var(--c-text);
   display: block;
   font-family: Arial, Helvetica, sans-serif;
   min-height: 100vh;
@@ -19,8 +19,8 @@
 }
 
 .painel-login {
-  background: #fff;
-  border: 1px solid #d9cdb8;
+  background: var(--c-surface);
+  border: 1px solid var(--c-border);
   border-radius: 12px;
   max-width: 420px;
   padding: 24px;
@@ -65,7 +65,7 @@ h1 {
 }
 
 p {
-  color: #6b7280;
+  color: var(--c-muted);
   font-size: 13px;
   margin-bottom: 0;
 }
@@ -76,17 +76,17 @@ p {
 }
 
 label {
-  color: #384358;
+  color: var(--c-soft-text);
   display: grid;
   font-size: 13px;
   gap: 8px;
 }
 
 input {
-  background: #fbf6ee;
-  border: 1px solid #c9b28f;
+  background: var(--c-surface-2);
+  border: 1px solid var(--c-border-2);
   border-radius: 8px;
-  color: #161e2f;
+  color: var(--c-text);
   font: inherit;
   min-height: 42px;
   padding: 10px 12px;
@@ -107,10 +107,10 @@ input {
 .botao,
 .botao-visualizar-senha {
   align-items: center;
-  background: #fff;
-  border: 1px solid #c4b59a;
+  background: var(--c-surface);
+  border: 1px solid var(--c-border-2);
   border-radius: 8px;
-  color: #161e2f;
+  color: var(--c-text);
   cursor: pointer;
   display: inline-flex;
   justify-content: center;
@@ -135,18 +135,11 @@ input {
 }
 
 .botao-visualizar-senha:hover {
-  background: #fbf6ee;
+  background: var(--c-surface-2);
 }
 
-.material-symbols-outlined {
-  font-family: 'Material Symbols Outlined';
-  font-size: 22px;
-  font-variation-settings:
-    'FILL' 0,
-    'wght' 400,
-    'GRAD' 0,
-    'opsz' 24;
-  line-height: 1;
+.botao-visualizar-senha svg {
+  display: block;
 }
 
 .mensagem-erro {

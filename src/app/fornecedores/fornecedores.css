@@ -1,8 +1,8 @@
 :host {
   display: block;
   min-height: 100vh;
-  background: #f5efe6;
-  color: #161e2f;
+  background: var(--c-bg);
+  color: var(--c-text);
   font-family: Arial, Helvetica, sans-serif;
 }
 
@@ -50,7 +50,7 @@ h3 {
 }
 
 p {
-  color: #5f6b7a;
+  color: var(--c-muted);
   margin-bottom: 8px;
 }
 
@@ -63,14 +63,14 @@ p {
 
 .indicador,
 .cartao {
-  background: #fff;
-  border: 1px solid #d9cdb8;
+  background: var(--c-surface);
+  border: 1px solid var(--c-border);
   border-radius: 10px;
   padding: 18px;
 }
 
 .indicador span {
-  color: #6b7280;
+  color: var(--c-muted);
   display: block;
   font-size: 13px;
 }
@@ -89,10 +89,10 @@ p {
 
 .aba,
 .botao {
-  border: 1px solid #c4b59a;
-  background: #fff;
+  border: 1px solid var(--c-border-2);
+  background: var(--c-surface);
   border-radius: 8px;
-  color: #161e2f;
+  color: var(--c-text);
   cursor: pointer;
   font-weight: 600;
   padding: 9px 14px;
@@ -139,8 +139,8 @@ p {
 input,
 select,
 textarea {
-  background: #fbf6ee;
-  border: 1px solid #c4b59a;
+  background: var(--c-surface-2);
+  border: 1px solid var(--c-border-2);
   border-radius: 8px;
   font-size: 14px;
   padding: 10px;
@@ -148,7 +148,7 @@ textarea {
 }
 
 label {
-  color: #6b7280;
+  color: var(--c-muted);
   display: block;
   font-size: 12px;
   font-weight: 700;
@@ -167,15 +167,15 @@ table {
 }
 
 th {
-  border-bottom: 1px solid #d9cdb8;
-  color: #6b7280;
+  border-bottom: 1px solid var(--c-border);
+  color: var(--c-muted);
   font-size: 12px;
   padding: 0 8px 10px 0;
   text-align: left;
 }
 
 td {
-  border-bottom: 1px solid #eee2cf;
+  border-bottom: 1px solid var(--c-border-soft);
   font-size: 14px;
   padding: 12px 8px 12px 0;
   vertical-align: middle;
@@ -211,8 +211,8 @@ td {
 }
 
 .caixa {
-  background: #fbf6ee;
-  border: 1px solid #d9cdb8;
+  background: var(--c-surface-2);
+  border: 1px solid var(--c-border);
   border-radius: 10px;
   margin-bottom: 12px;
   padding: 14px;
@@ -243,8 +243,8 @@ td {
 }
 
 .modal {
-  background: #fff;
-  border: 1px solid #d9cdb8;
+  background: var(--c-surface);
+  border: 1px solid var(--c-border);
   border-radius: 12px;
   max-height: 90vh;
   max-width: 1000px;

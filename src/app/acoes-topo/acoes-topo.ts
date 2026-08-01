@@ -1,7 +1,8 @@
-import { isPlatformBrowser } from '@angular/common';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { Component, Inject, Input, OnInit, PLATFORM_ID } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { NotificacoesComponent } from '../notificacoes/notificacoes';
+import { TemaService } from '../tema.service';
 
 type PerfilSessao = 'Admin' | 'Gestor' | 'Colaborador';
 
@@ -13,7 +14,7 @@ interface AcessoSessao {
 @Component({
   selector: 'app-acoes-topo',
   standalone: true,
-  imports: [RouterLink, NotificacoesComponent],
+  imports: [CommonModule, RouterLink, NotificacoesComponent],
   templateUrl: './acoes-topo.html',
   styleUrl: './acoes-topo.css',
 })
@@ -26,6 +27,7 @@ export class AcoesTopoComponent implements OnInit {
   constructor(
     private router: Router,
     @Inject(PLATFORM_ID) private platformId: object,
+    public tema: TemaService,
   ) {}
 
   ngOnInit() {
@@ -39,12 +41,6 @@ export class AcoesTopoComponent implements OnInit {
     }
 
     this.router.navigate(['/']);
-  }
-
-  abrirConfiguracoes() {
-    if (this.estaNoNavegador()) {
-      window.alert('Configurações do acesso ' + this.perfilSessao.toLowerCase() + ' em desenvolvimento.');
-    }
   }
 
   private atualizarSessao() {

@@ -1,6 +1,7 @@
 import { isPlatformBrowser } from '@angular/common';
 import { Component, Inject, OnInit, PLATFORM_ID } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+import { TemaService } from './tema.service';
 
 @Component({
   selector: 'app-root',
@@ -10,7 +11,10 @@ import { RouterOutlet } from '@angular/router';
   styleUrl: './app.css',
 })
 export class App implements OnInit {
-  constructor(@Inject(PLATFORM_ID) private platformId: object) { }
+  constructor(
+    @Inject(PLATFORM_ID) private platformId: object,
+    private tema: TemaService,
+  ) { }
 
   ngOnInit() {
     if (!isPlatformBrowser(this.platformId)) {

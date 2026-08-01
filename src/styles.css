@@ -1,5 +1,18 @@
 /* You can add global styles to this file, and also import other style files */
 
+/* Remove o espaço padrão do navegador nas bordas da página, para as telas
+   ocuparem 100% da viewport sem gap externo. */
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  min-height: 100vh;
+  background: var(--c-bg);
+}
+
 .acoes-cabecalho {
   align-items: center;
   display: flex;
@@ -9,4 +22,89 @@
 
 .acoes-cabecalho app-acoes-topo {
   margin-left: 0;
+}
+
+/* ======================================================================
+   Paleta de cores em variáveis.
+   O tema claro usa exatamente as cores originais do app; o tema escuro
+   apenas redefine as mesmas variáveis. Ativado por [data-tema="escuro"]
+   no elemento <html>, gravado em localStorage.
+   ====================================================================== */
+:root {
+  color-scheme: light;
+  --c-bg: #f5efe6;
+  --c-surface: #ffffff;
+  --c-surface-2: #fbf6ee;
+  --c-surface-3: #efe6d7;
+  --c-accent-weak: #f7e4dd;
+  --c-warn-weak: #fff8ea;
+  --c-danger-weak: #fff0f0;
+  --c-border: #d9cdb8;
+  --c-border-2: #c9b28f;
+  --c-border-soft: #eadfce;
+  --c-text: #161e2f;
+  --c-muted: #6b7280;
+  --c-soft-text: #384358;
+}
+
+:root[data-tema="escuro"] {
+  color-scheme: dark;
+  --c-bg: #12161d;
+  --c-surface: #1b212b;
+  --c-surface-2: #232b37;
+  --c-surface-3: #2d3644;
+  --c-accent-weak: #33262b;
+  --c-warn-weak: #2b2718;
+  --c-danger-weak: #2c1b1d;
+  --c-border: #313b49;
+  --c-border-2: #3c4657;
+  --c-border-soft: #2a333f;
+  --c-text: #e7e9ee;
+  --c-muted: #9aa4b2;
+  --c-soft-text: #c2cad6;
+}
+
+/* Fundo geral (o host de cada tela usa var(--c-bg) após a migração) */
+:root[data-tema="escuro"] body {
+  background: var(--c-bg);
+  color: var(--c-text);
+}
+
+/* Ajustes de acentos que não seguem a paleta neutra */
+:root[data-tema="escuro"] .simbolo-marca {
+  background: #2a3342;
+}
+
+:root[data-tema="escuro"] .etiqueta-perfil {
+  background: #33262b;
+  color: #f0b9c4;
+}
+
+:root[data-tema="escuro"] .navegacao a.ativo,
+:root[data-tema="escuro"] .filtro.ativo,
+:root[data-tema="escuro"] .aba-ativa,
+:root[data-tema="escuro"] .abas button.ativo,
+:root[data-tema="escuro"] .passo.ativo {
+  background: #313b49;
+  border-color: #313b49;
+  color: #fff;
+}
+
+/* Dias fora do mês no calendário de férias */
+:root[data-tema="escuro"] .dia.fora-do-mes {
+  background: #171c24;
+}
+
+/* Medidor de operação do dashboard (estados) */
+:root[data-tema="escuro"] .medidor-operacao.bom {
+  background: #17271d;
+  border-color: #2c5a3a;
+}
+
+:root[data-tema="escuro"] .medidor-operacao.atencao {
+  border-color: #6b5a2e;
+}
+
+:root[data-tema="escuro"] .medidor-operacao.critico {
+  border-color: #6b3535;
 }

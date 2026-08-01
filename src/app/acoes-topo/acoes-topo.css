@@ -10,6 +10,24 @@
   justify-content: flex-end;
 }
 
+.botao-tema {
+  align-items: center;
+  background: var(--c-surface);
+  border: 1px solid var(--c-border);
+  border-radius: 999px;
+  color: var(--c-soft-text);
+  cursor: pointer;
+  display: flex;
+  height: 36px;
+  justify-content: center;
+  width: 36px;
+  padding: 0;
+}
+
+.botao-tema:hover {
+  color: #b51a2b;
+}
+
 .menu-acesso {
   position: relative;
 }
@@ -44,8 +62,8 @@
 }
 
 .opcoes-menu {
-  background: #fff;
-  border: 1px solid #d9cdb8;
+  background: var(--c-surface);
+  border: 1px solid var(--c-border);
   border-radius: 8px;
   box-shadow: 0 12px 30px rgba(22, 30, 47, 0.12);
   display: grid;
@@ -63,7 +81,7 @@
   background: transparent;
   border: 0;
   border-radius: 6px;
-  color: #161e2f;
+  color: var(--c-text);
   cursor: pointer;
   font: inherit;
   font-size: 13px;
@@ -75,7 +93,7 @@
 
 .opcoes-menu a:hover,
 .opcoes-menu button:hover {
-  background: #f7e4dd;
+  background: var(--c-accent-weak);
 }
 
 .opcoes-menu .sair {

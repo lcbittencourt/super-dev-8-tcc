@@ -5,8 +5,8 @@
 :host {
   display: block;
   min-height: 100vh;
-  background: #f5efe6;
-  color: #161e2f;
+  background: var(--c-bg);
+  color: var(--c-text);
   font-family: Arial, Helvetica, sans-serif;
 }
 
@@ -16,8 +16,8 @@
 
 .barra-superior {
   align-items: center;
-  background: #fbf6ee;
-  border-bottom: 1px solid #d9cdb8;
+  background: var(--c-surface-2);
+  border-bottom: 1px solid var(--c-border);
   display: flex;
   gap: 14px;
   height: 58px;
@@ -47,7 +47,7 @@
 }
 
 .etiqueta-perfil {
-  background: #f7e4dd;
+  background: var(--c-accent-weak);
   border-radius: 999px;
   color: #541a2e;
   font-size: 12px;
@@ -62,7 +62,7 @@
 
 .navegacao a {
   border-radius: 8px;
-  color: #384358;
+  color: var(--c-soft-text);
   font-size: 13px;
   padding: 7px 12px;
   text-decoration: none;
@@ -118,16 +118,16 @@ h2 {
 
 .cabecalho-pagina p,
 .cabecalho-cartao p {
-  color: #6b7280;
+  color: var(--c-muted);
   font-size: 13px;
   margin: 4px 0 0;
 }
 
 .botao {
-  background: #fff;
-  border: 1px solid #c4b59a;
+  background: var(--c-surface);
+  border: 1px solid var(--c-border-2);
   border-radius: 8px;
-  color: #161e2f;
+  color: var(--c-text);
   cursor: pointer;
   font-weight: 500;
   padding: 8px 14px;
@@ -161,8 +161,8 @@ h2 {
 .cartao,
 .metrica,
 .janela {
-  background: #fff;
-  border: 1px solid #d9cdb8;
+  background: var(--c-surface);
+  border: 1px solid var(--c-border);
   border-radius: 12px;
 }
 
@@ -180,7 +180,7 @@ h2 {
 .linha-info span,
 .resumo-simulacao span,
 .detalhes-solicitacao span {
-  color: #6b7280;
+  color: var(--c-muted);
   display: block;
   font-size: 13px;
 }
@@ -192,7 +192,7 @@ h2 {
 }
 
 .metrica small {
-  color: #6b7280;
+  color: var(--c-muted);
   display: block;
   font-size: 12px;
   margin-top: 8px;
@@ -206,10 +206,10 @@ h2 {
 input,
 select,
 textarea {
-  background: #fbf6ee;
-  border: 1px solid #c9b28f;
+  background: var(--c-surface-2);
+  border: 1px solid var(--c-border-2);
   border-radius: 8px;
-  color: #161e2f;
+  color: var(--c-text);
   font: inherit;
   padding: 9px 10px;
   width: 100%;
@@ -226,14 +226,14 @@ textarea {
 .acao-texto {
   background: transparent;
   border: none;
-  color: #384358;
+  color: var(--c-soft-text);
   cursor: pointer;
   font-weight: 700;
 }
 
 .abas button {
-  background: #fbf6ee;
-  border: 1px solid #d9cdb8;
+  background: var(--c-surface-2);
+  border: 1px solid var(--c-border);
   border-radius: 999px;
   padding: 7px 12px;
 }
@@ -259,14 +259,14 @@ table {
 
 th,
 td {
-  border-bottom: 1px solid #eadfce;
+  border-bottom: 1px solid var(--c-border-soft);
   font-size: 13px;
   padding: 12px;
   text-align: left;
 }
 
 th {
-  color: #6b7280;
+  color: var(--c-muted);
   font-size: 12px;
 }
 
@@ -298,10 +298,10 @@ th {
 
 .botao-calendario {
   align-items: center;
-  background: #fff;
-  border: 1px solid #c4b59a;
+  background: var(--c-surface);
+  border: 1px solid var(--c-border-2);
   border-radius: 8px;
-  color: #161e2f;
+  color: var(--c-text);
   cursor: pointer;
   display: flex;
   font-size: 18px;
@@ -318,7 +318,7 @@ th {
 }
 
 .dia-semana {
-  color: #6b7280;
+  color: var(--c-muted);
   font-size: 12px;
   font-weight: 700;
   padding: 4px 2px;
@@ -327,8 +327,8 @@ th {
 }
 
 .dia {
-  background: #fbf6ee;
-  border: 1px solid #eadfce;
+  background: var(--c-surface-2);
+  border: 1px solid var(--c-border-soft);
   border-radius: 8px;
   min-height: 78px;
   padding: 8px;
@@ -345,14 +345,14 @@ th {
 }
 
 .dia strong {
-  color: #6b7280;
+  color: var(--c-muted);
   display: block;
   font-size: 12px;
   margin-bottom: 6px;
 }
 
 .dia button {
-  background: #f7e4dd;
+  background: var(--c-accent-weak);
   border: none;
   border-radius: 999px;
   color: #541a2e;
@@ -378,8 +378,8 @@ th {
 
 .cartao-pessoa,
 .linha-info {
-  background: #fbf6ee;
-  border: 1px solid #eadfce;
+  background: var(--c-surface-2);
+  border: 1px solid var(--c-border-soft);
   border-radius: 10px;
   padding: 12px;
 }
@@ -393,7 +393,7 @@ th {
 
 .cartao-pessoa span,
 .cartao-pessoa small {
-  color: #6b7280;
+  color: var(--c-muted);
   font-size: 13px;
   margin-top: 4px;
 }
@@ -403,7 +403,7 @@ th {
 }
 
 .formulario label {
-  color: #384358;
+  color: var(--c-soft-text);
   display: grid;
   font-size: 13px;
   gap: 6px;
@@ -415,7 +415,7 @@ th {
 }
 
 .resumo-simulacao {
-  background: #fbf6ee;
+  background: var(--c-surface-2);
   border-radius: 10px;
   margin-bottom: 18px;
   padding: 14px;
@@ -433,8 +433,8 @@ th {
 }
 
 .etapa span {
-  background: #fff;
-  border: 2px solid #c4b59a;
+  background: var(--c-surface);
+  border: 2px solid var(--c-border-2);
   border-radius: 50%;
   height: 18px;
   width: 18px;
@@ -451,12 +451,12 @@ th {
 }
 
 .avisos p {
-  color: #384358;
+  color: var(--c-soft-text);
   line-height: 1.5;
 }
 
 .fluxo span {
-  background: #fbf6ee;
+  background: var(--c-surface-2);
   border-radius: 8px;
   padding: 9px 10px;
 }
@@ -621,8 +621,8 @@ td {
 
 .periodos-fracionados,
 .regras-ferias {
-  background: #fbf6ee;
-  border: 1px solid #eadfce;
+  background: var(--c-surface-2);
+  border: 1px solid var(--c-border-soft);
   border-radius: 10px;
   display: grid;
   gap: 10px;
@@ -644,13 +644,13 @@ td {
 }
 
 .regras-ferias span {
-  color: #384358;
+  color: var(--c-soft-text);
   font-size: 13px;
   line-height: 1.35;
 }
 
 .resumo-simulacao small {
-  color: #6b7280;
+  color: var(--c-muted);
   display: block;
   line-height: 1.4;
 }

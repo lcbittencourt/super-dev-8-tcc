@@ -5,8 +5,8 @@
 :host {
   display: block;
   min-height: 100vh;
-  background: #f5efe6;
-  color: #161e2f;
+  background: var(--c-bg);
+  color: var(--c-text);
   font-family: Arial, Helvetica, sans-serif;
 }
 
@@ -16,8 +16,8 @@
 
 .barra-superior {
   align-items: center;
-  background: #fbf6ee;
-  border-bottom: 1px solid #d9cdb8;
+  background: var(--c-surface-2);
+  border-bottom: 1px solid var(--c-border);
   display: flex;
   gap: 14px;
   min-height: 58px;
@@ -47,7 +47,7 @@
 }
 
 .etiqueta-perfil {
-  background: #f7e4dd;
+  background: var(--c-accent-weak);
   border-radius: 999px;
   color: #541a2e;
   font-size: 12px;
@@ -92,7 +92,7 @@ h2 {
 
 .cabecalho-pagina p,
 .cabecalho-cartao p {
-  color: #6b7280;
+  color: var(--c-muted);
   font-size: 13px;
   margin: 4px 0 0;
 }
@@ -106,8 +106,8 @@ h2 {
 
 .indicador,
 .cartao {
-  background: #fff;
-  border: 1px solid #d9cdb8;
+  background: var(--c-surface);
+  border: 1px solid var(--c-border);
   border-radius: 12px;
   min-width: 0;
 }
@@ -117,7 +117,7 @@ h2 {
 }
 
 .indicador span {
-  color: #6b7280;
+  color: var(--c-muted);
   display: block;
   font-size: 13px;
   margin-bottom: 8px;
@@ -145,7 +145,7 @@ h2 {
 }
 
 label {
-  color: #384358;
+  color: var(--c-soft-text);
   display: grid;
   font-size: 13px;
   gap: 8px;
@@ -160,9 +160,9 @@ input,
 select,
 textarea {
   background: #fffaf4;
-  border: 1px solid #c4b59a;
+  border: 1px solid var(--c-border-2);
   border-radius: 8px;
-  color: #161e2f;
+  color: var(--c-text);
   font: inherit;
   line-height: 1.35;
   min-height: 42px;
@@ -186,10 +186,10 @@ textarea {
 
 .botao {
   align-items: center;
-  background: #fff;
-  border: 1px solid #c4b59a;
+  background: var(--c-surface);
+  border: 1px solid var(--c-border-2);
   border-radius: 8px;
-  color: #161e2f;
+  color: var(--c-text);
   cursor: pointer;
   display: inline-flex;
   font-weight: 600;
@@ -223,7 +223,7 @@ table {
 
 th,
 td {
-  border-top: 1px solid #d9cdb8;
+  border-top: 1px solid var(--c-border);
   font-size: 13px;
   line-height: 1.35;
   padding: 12px;
@@ -232,13 +232,13 @@ td {
 }
 
 th {
-  color: #6b7280;
+  color: var(--c-muted);
   font-size: 11px;
   text-transform: uppercase;
 }
 
 td small {
-  color: #6b7280;
+  color: var(--c-muted);
   display: block;
   margin-top: 4px;
 }
@@ -280,7 +280,7 @@ td small {
 }
 
 .vazio {
-  color: #6b7280;
+  color: var(--c-muted);
   text-align: center;
 }
 

@@ -5,9 +5,9 @@
 :host {
   display: block;
   min-height: 100vh;
-  background: #f5efe6;
+  background: var(--c-bg);
   font-family: Arial, Helvetica, sans-serif;
-  color: #161e2f;
+  color: var(--c-text);
 }
 
 .sistema {
@@ -16,8 +16,8 @@
 
 .barra-superior {
   height: 58px;
-  background: #fbf6ee;
-  border-bottom: 1px solid #d9cdb8;
+  background: var(--c-surface-2);
+  border-bottom: 1px solid var(--c-border);
   display: flex;
   align-items: center;
   gap: 14px;
@@ -47,7 +47,7 @@
 }
 
 .etiqueta-perfil {
-  background: #f7e4dd;
+  background: var(--c-accent-weak);
   color: #541a2e;
   padding: 4px 12px;
   border-radius: 999px;
@@ -62,7 +62,7 @@
 
 .navegacao a {
   text-decoration: none;
-  color: #384358;
+  color: var(--c-soft-text);
   padding: 7px 12px;
   border-radius: 8px;
   font-size: 13px;
@@ -116,8 +116,8 @@
   z-index: 30;
   min-width: 160px;
   padding: 6px;
-  background: #fff;
-  border: 1px solid #d9cdb8;
+  background: var(--c-surface);
+  border: 1px solid var(--c-border);
   border-radius: 8px;
   box-shadow: 0 12px 30px rgba(22, 30, 47, 0.12);
   display: grid;
@@ -126,7 +126,7 @@
 
 .opcoes-perfil a {
   border-radius: 6px;
-  color: #384358;
+  color: var(--c-soft-text);
   font-size: 13px;
   font-weight: 600;
   padding: 9px 10px;
@@ -134,12 +134,12 @@
 }
 
 .opcoes-perfil a:hover {
-  background: #f5efe6;
+  background: var(--c-bg);
   color: #b51a2b;
 }
 
 .opcoes-perfil .sair {
-  border-top: 1px solid #eee2cf;
+  border-top: 1px solid var(--c-border-soft);
   color: #b51a2b;
   margin-top: 4px;
 }
@@ -178,7 +178,7 @@ h2 {
 
 .cabecalho-pagina p,
 .cabecalho-cartao p {
-  color: #6b7280;
+  color: var(--c-muted);
   margin: 4px 0 0;
   font-size: 13px;
 }
@@ -189,9 +189,9 @@ h2 {
 }
 
 .botao {
-  border: 1px solid #c4b59a;
-  background: #fff;
-  color: #161e2f;
+  border: 1px solid var(--c-border-2);
+  background: var(--c-surface);
+  color: var(--c-text);
   padding: 8px 14px;
   border-radius: 8px;
   cursor: pointer;
@@ -224,8 +224,8 @@ h2 {
   z-index: 20;
   min-width: 180px;
   padding: 6px;
-  background: #fff;
-  border: 1px solid #d9cdb8;
+  background: var(--c-surface);
+  border: 1px solid var(--c-border);
   border-radius: 8px;
   display: flex;
   flex-direction: column;
@@ -235,13 +235,13 @@ h2 {
 .lista-menu a {
   padding: 8px 10px;
   border-radius: 6px;
-  color: #384358;
+  color: var(--c-soft-text);
   font-size: 13px;
   cursor: pointer;
 }
 
 .lista-menu a:hover {
-  background: #f5efe6;
+  background: var(--c-bg);
 }
 
 .acessos-modulos {
@@ -253,10 +253,10 @@ h2 {
 
 .acesso-modulo {
   align-items: center;
-  background: #fff;
-  border: 1px solid #d9cdb8;
+  background: var(--c-surface);
+  border: 1px solid var(--c-border);
   border-radius: 8px;
-  color: #161e2f;
+  color: var(--c-text);
   display: flex;
   font-size: 13px;
   font-weight: 700;
@@ -381,8 +381,8 @@ td {
 .indicador,
 .metrica,
 .cartao {
-  background: #fff;
-  border: 1px solid #d9cdb8;
+  background: var(--c-surface);
+  border: 1px solid var(--c-border);
   border-radius: 12px;
 }
 
@@ -394,7 +394,7 @@ td {
 .indicador span,
 .metrica span {
   display: block;
-  color: #6b7280;
+  color: var(--c-muted);
   font-size: 13px;
   margin-bottom: 8px;
 }
@@ -408,7 +408,7 @@ td {
 .metrica small {
   display: inline-block;
   margin-top: 8px;
-  color: #6b7280;
+  color: var(--c-muted);
   font-size: 12px;
 }
 
@@ -477,7 +477,7 @@ td {
 
 .rotulo-barra {
   width: 84px;
-  color: #6b7280;
+  color: var(--c-muted);
   font-size: 13px;
 }
 
@@ -485,7 +485,7 @@ td {
   flex: 1;
   height: 10px;
   border-radius: 999px;
-  background: #efe6d7;
+  background: var(--c-surface-3);
   overflow: hidden;
 }
 
@@ -529,7 +529,7 @@ td {
 }
 
 .vazio {
-  color: #6b7280;
+  color: var(--c-muted);
   text-align: center;
 }
 
@@ -540,7 +540,7 @@ table {
 
 th,
 td {
-  border-top: 1px solid #d9cdb8;
+  border-top: 1px solid var(--c-border);
   padding: 12px;
   text-align: left;
   vertical-align: middle;
@@ -548,7 +548,7 @@ td {
 }
 
 th {
-  color: #6b7280;
+  color: var(--c-muted);
   font-size: 11px;
   text-transform: uppercase;
 }
